@@ -1,5 +1,8 @@
-<form onsubmit='redirect("{{ url_for("user_permissions.html") }}", {"username": $("#newuser").val()}); return false'>
-    <label for='newuser'>Edit permissions for a new user</label>
-    <input type='text' id='newuser' placeholder="username" name='newuser' />
-    <button type="submit" class="btn">Go!</button>
+<h3>Edit permissions for a new user</h3>
+<form role="form" class="form-inline" onsubmit='redirect("{{ url_for("user_permissions.html") }}", {"username": $("#newuser").val()}); return false'>
+    <div class="form-group">
+    <label for='newuser' class="sr-only">Edit permissions for a new user</label>
+    <input type='text' id='newuser' placeholder="username" name='newuser' class="form-control"/>
+    </div>
+    <button type="submit" class="btn btn-primary">Go!</button>
 </form>

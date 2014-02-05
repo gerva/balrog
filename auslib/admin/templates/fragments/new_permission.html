@@ -1,11 +1,13 @@
-<form id='new_permission'
+<form id='new_permission' role="form" class="form-inline"
       onsubmit='addNewPermission($(this), "{{ username }}", $("#{{ form.permission.id }}").val(), $("#{{ form.options.id }}").val(), $("#permissions")); return false'>
-    {{ form.permission.label()|safe }}
-    {{ form.permission()|safe }}
-    {{ form.options.label()|safe }}
-    {{ form.options()|safe }}
-
-    <div>
-        <button type="submit" class="btn">Add</button>
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+    {{ form.permission.label(class='sr-only') }}
+    {{ form.permission(class='form-control', placeholder="Permission") }}
     </div>
+    <div class="form-group">
+    {{ form.options.label(class='sr-only') }}
+    {{ form.options(class='form-control', placeholder="Option") }}
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
 </form>

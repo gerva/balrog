@@ -1,16 +1,16 @@
 {% set permission = form.permission.id %}
-<tr id='{{ permission }}_form' data-username='{{ username }}'>
-    <td>
+<div id="{{ permission }}_form" data-username="{{ username }}">
+    <div class="form-group">
+        {{ form.permission.label|safe() }}
         {{ form.permission()|safe }}
-    </td>
-    <td>
+    </div>
+    <div class="form-group">
+        {{ form.options.label|safe() }}
         {{ form.options()|safe }}
         {{ form.data_version()|safe }}
-    </td>
-    <td>
-        <button class='btn' type='button'
-         onclick='submitPermissionForm("{{ permission }}_form", "update")'>Update</button>
-        <button class='btn' type='button'
-         onclick='submitPermissionForm("{{ permission }}_form", "delete")'>Delete</button>
-    </td>
-</tr>
+    </div>
+    <button class="btn btn-primary" type="button"
+    onclick='submitPermissionForm("{{ permission }}_form", "update")'>Update</button>
+    <button class="btn btn-danger" type="button"
+    onclick='submitPermissionForm("{{ permission }}_form", "delete")'>Delete</button>
+</div>
