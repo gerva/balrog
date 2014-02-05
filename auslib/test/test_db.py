@@ -199,6 +199,13 @@ class TestAUSTable(unittest.TestCase, TestTableMixin, MemoryDatabaseMixin):
                 pass
             self.assertTrue(close.called, "Connection.close() never called by insert()")
 
+    def testInsertWithChangeCallback(self):
+        shared = []
+        self.test.onInsert = lambda *x: shared.extend(x)
+        what = {'id': 4, 'foo': 1}
+        self.test.insert(changed_by='bob', **what)
+        self.assertEquals(shared, [self.test, 'bob', what])
+
     def testDelete(self):
         ret = self.test.delete(changed_by='bill', where=[self.test.id==1, self.test.foo==33],
             old_data_version=1)
@@ -213,6 +220,13 @@ class TestAUSTable(unittest.TestCase, TestTableMixin, MemoryDatabaseMixin):
         with mock.patch('sqlalchemy.engine.base.Connection.close') as close:
             self.test.delete(changed_by='bill', where=[self.test.id==1], old_data_version=1)
             self.assertTrue(close.called, "Connection.close() never called by delete()")
+
+    def testDeleteWithChangeCallback(self):
+        shared = []
+        self.test.onDelete = lambda *x: shared.extend(x)
+        where = [self.test.id==1]
+        self.test.delete(changed_by='bob', where=where, old_data_version=1)
+        self.assertEquals(shared, [self.test, 'bob', where])
 
     def testUpdate(self):
         ret = self.test.update(changed_by='bob', where=[self.test.id==1], what=dict(foo=123),
@@ -229,11 +243,13 @@ class TestAUSTable(unittest.TestCase, TestTableMixin, MemoryDatabaseMixin):
             self.test.update(changed_by='bob', where=[self.test.id==1], what=dict(foo=432), old_data_version=1)
             self.assertTrue(close.called, "Connection.close() never called by update()")
 
-    def testWherePkMatches(self):
-        expected = self.test.id==1
-        res = self.test.wherePkMatches(dict(id=1))
-        self.assertEquals(len(res), 1)
-        self.assertTrue(self.test.wherePkMatches(dict(id=1))[0].compare(expected))
+    def testUpdateWithChangeCallback(self):
+        shared = []
+        self.test.onUpdate = lambda *x: shared.extend(x)
+        where = [self.test.id==1]
+        what = dict(foo=123)
+        self.test.update(changed_by='bob', where=where, what=what, old_data_version=1)
+        self.assertEquals(shared, [self.test, 'bob', what, where])
 
 class TestAUSTableRequiresRealFile(unittest.TestCase, TestTableMixin, NamedFileDatabaseMixin):
     def setUp(self):
@@ -835,6 +851,8 @@ class TestReleases(unittest.TestCase, MemoryDatabaseMixin):
 
 class TestReleasesSchema1(unittest.TestCase, MemoryDatabaseMixin):
     """Tests for the Releases class that depend on version 1 of the blob schema."""
+
+    maxDiff = 1000
     def setUp(self):
         MemoryDatabaseMixin.setUp(self)
         self.db = AUSDatabase(self.dburi)
@@ -855,6 +873,8 @@ class TestReleasesSchema1(unittest.TestCase, MemoryDatabaseMixin):
         },
         "p2": {
             "alias": "p"
+        },
+        "p3": {
         }
     }
 }
@@ -916,6 +936,8 @@ class TestReleasesSchema1(unittest.TestCase, MemoryDatabaseMixin):
         },
         "p2": {
             "alias": "p"
+        },
+        "p3": {
         }
     }
 }
@@ -924,7 +946,7 @@ class TestReleasesSchema1(unittest.TestCase, MemoryDatabaseMixin):
 
     def testAddLocaleToReleaseWithAlias(self):
         data = dict(complete=dict(hashValue='abc'))
-        self.releases.addLocaleToRelease(name='a', platform='p', locale='c', data=data, old_data_version=1, changed_by='bill', alias=['p3'])
+        self.releases.addLocaleToRelease(name='a', platform='p', locale='c', data=data, old_data_version=1, changed_by='bill', alias=['p4'])
         ret = json.loads(select([self.releases.data]).where(self.releases.name=='a').execute().fetchone()[0])
         expected = json.loads("""
 {
@@ -948,6 +970,8 @@ class TestReleasesSchema1(unittest.TestCase, MemoryDatabaseMixin):
             "alias": "p"
         },
         "p3": {
+        },
+        "p4": {
             "alias": "p"
         }
     }
@@ -974,6 +998,8 @@ class TestReleasesSchema1(unittest.TestCase, MemoryDatabaseMixin):
         },
         "p2": {
             "alias": "p"
+        },
+        "p3": {
         }
     }
 }
@@ -989,6 +1015,40 @@ class TestReleasesSchema1(unittest.TestCase, MemoryDatabaseMixin):
     "name": "b",
     "platforms": {
         "q": {
+            "locales": {
+                "l": {
+                    "complete": {
+                        "filesize": "432"
+                    }
+                }
+            }
+        }
+    }
+}
+""")
+        self.assertEqual(ret, expected)
+
+    def testAddLocaleToReleaseNoLocales(self):
+        data = dict(complete=dict(filesize="432"))
+        self.releases.addLocaleToRelease(name='a', platform='p3', locale='l', data=data, old_data_version=1, changed_by='bill')
+        ret = json.loads(select([self.releases.data]).where(self.releases.name=='a').execute().fetchone()[0])
+        expected = json.loads("""
+{
+    "name": "a",
+    "platforms": {
+        "p": {
+            "locales": {
+                "l": {
+                    "complete": {
+                        "filesize": "1234"
+                    }
+                }
+            }
+        },
+        "p2": {
+            "alias": "p"
+        },
+        "p3": {
             "locales": {
                 "l": {
                     "complete": {
@@ -1021,6 +1081,8 @@ class TestReleasesSchema1(unittest.TestCase, MemoryDatabaseMixin):
         },
         "p2": {
             "alias": "p"
+        },
+        "p3": {
         },
         "q": {
             "locales": {
@@ -1060,6 +1122,8 @@ class TestReleasesSchema1(unittest.TestCase, MemoryDatabaseMixin):
         },
         "p2": {
             "alias": "p"
+        },
+        "p3": {
         }
     }
 }
