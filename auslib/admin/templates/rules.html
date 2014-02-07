@@ -20,6 +20,9 @@
 {% block container_class %}container-fluid{% endblock %}
 
 {% block content %}
+<div id='add_rule'>
+    {% include 'fragments/add_rule.html' %}
+</div>
 <div id='rules'>
     {% include 'fragments/rules.html' %}
 </div>
