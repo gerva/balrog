@@ -1,6 +1,5 @@
-<form id='new_rule_form' onsubmit='submitNewRuleForm($("#new_rule_form"), $("#rules_table")); return false;'>
-<table id='new_rule_table'>
-    <thead> <tr>
+<form class="form-horizontal" role="form" id="new_rule_form" onsubmit='submitNewRuleForm($("#new_rule_form"), $("#rules_table")); return false;'>
+<!--
         <th>Mapping</th>
         <th>Background Rate</th>
         <th>Priority</th>
@@ -17,16 +16,33 @@
         <th>Update Type</th>
         <th>Header Architecture</th>
         <th>Update</th>
-    </tr></thead>
-    <tbody>
-        <tr>
-            {% set form = new_rule_form %}
-            {% set suffix = '_new' %}
-            {% include 'fragments/new_rule.html' %}
-            <td id='Update_new'>
-                <input type='submit' name='submit' value='Add' />
-            </td>
-        </tr>
-    </tbody>
-</table>
+-->
+{{ new_rule_form.hidden_tag() }}
+{%- for item in [ "mapping",
+                  "backgroundRate",
+                  "priority",
+                  "product",
+                  "version",
+                  "build_id",
+                  "channel",
+                  "locale",
+                  "distribution",
+                  "build_target",
+                  "os_version",
+                  "dist_version",
+                  "comment",
+                  "update_type",
+                  "header_arch",
+                  "update_type"] %}
+  {%- set element = new_rule_form[item] %}
+  <div class="form-group">
+    {{ element.label(class="col-sm-2 control-label")|safe }}
+    <div class="col-sm-6">
+      <input type="text" id="{{ element.id|safe }}_new" name="{{ element.id|safe }}_new" class="form-control">
+     </div>
+  </div>
+{%- endfor %}
+   <div class="col-sm-offset-2 col-sm-10">
+     <input class="btn btn-primary" type="submit" name="submit" value="Add" />
+   </div>
 </form>
