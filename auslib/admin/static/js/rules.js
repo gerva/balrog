@@ -23,13 +23,89 @@ $.fn.dataTableExt.afnSortData['dom-select'] = function  ( oSettings, iColumn )
 
 $(document).ready(function() {
 
-    $('#rules_table').dataTable({
+    /*
+     * Insert a 'details' column to the table
+     */
+    var nCloneTh = document.createElement( 'th' );
+    var nCloneTd = document.createElement( 'td' );
+    nCloneTd.innerHTML = '<img src="../examples_support/details_open.png">';
+    nCloneTd.className = "center";
+
+    $('#rules_table thead tr').each( function () {
+        this.insertBefore( nCloneTh, this.childNodes[0] );
+    } );
+
+    $('#rules_table tbody tr').each( function () {
+        this.insertBefore(  nCloneTd.cloneNode( true ), this.childNodes[0] );
+    } );
+
+    var oTable = $('#rules_table').dataTable({
         "aoColumnDefs": [
              // The aTarget numbers refer to the columns in the dataTable on which to apply the functions
-             { "sSortDataType": "dom-select", "aTargets":[0] },
+             { "sSortDataType": "dom-select", "aTargets":[1] },
              { "sSortDataType": "dom-text", "aTargets":[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] },
              { "sType": "numeric", "aTargets": [1, 2] }
         ],
+        "aoColumns": [ 
+              /* open/close image    */
+              { "bSortable": false },
+
+              /* Mapping             */
+              null,
+
+              /* Background Rate     */
+              null,
+
+              /* Priority            */
+              null,
+
+              /* Product             */
+              null,
+
+              /* Version             */
+              null,
+
+              /* Build ID            */
+              { "bVisible": false },
+
+              /* Channel             */
+              { "bVisible": false },
+
+              /* Locale              */
+              { "bVisible": false },
+
+              /* Distribution        */
+              { "bVisible": false },
+
+              /* Build Target        */
+              { "bVisible": false },
+
+              /* OS Version          */
+              { "bVisible": false },
+
+              /* Dist Version        */
+              { "bVisible": false },
+
+              /* Comment             */
+              { "bVisible": false },
+
+              /* Update Type         */
+
+              { "bVisible": false },
+
+              /* Header Architecture */
+              { "bVisible": false },
+
+              /* Update              */
+              null,
+
+              /* Clone               */
+              null,
+
+              /* Revisions           */
+              null 
+        ],
+
         "fnDrawCallback": function(){
             $("select","[id*=mapping]").combobox();
         }
@@ -38,7 +114,53 @@ $(document).ready(function() {
     $( "#toggle" ).click(function() {
         $( "select","[id*=mapping]").toggle();
     });
+
+
+    /* Add event listener for opening and closing details
+     * Note that the indicator for showing which row is open is not controlled by DataTables,
+     * rather it is done here
+     */
+    $('#rules_table tbody td img').live('click', function () {
+        var nTr = this.parentNode.parentNode;
+        if ( this.src.match('details_close') )
+        {
+            /* This row is already open - close it */
+            this.src = "../examples_support/details_open.png";
+            oTable.fnClose( nTr );
+        }
+        else
+        {
+            /* Open this row */
+            this.src = "../examples_support/details_close.png";
+            oTable.fnOpen( nTr, fnFormatDetails(oTable, nTr), 'details' );
+        }
+    } );
+
 } );
+
+
+// dataTable ...
+// http://www.datatables.net/examples/api/row_details.html
+/* Formating function for row details */
+function fnFormatDetails ( oTable, nTr )
+{
+    var aData = oTable.fnGetData( nTr );
+    var sOut = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
+    sOut += '<tr><td>Product:</td><td>'+aData[4]+'</td></tr>';
+    sOut += '<tr><td>Version:</td><td>'+aData[5]+'</td></tr>';
+    sOut += '<tr><td>Build ID:</td><td>'+aData[6]+'</td></tr>';
+    sOut += '<tr><td>Channel:</td><td>'+aData[7]+'</td></tr>';
+    sOut += '<tr><td>Locale:</td><td>'+aData[8]+'</td></tr>';
+    sOut += '<tr><td>Distribution:</td><td>'+aData[9]+'</td></tr>';
+    sOut += '<tr><td>build Target:</td><td>'+aData[10]+'</td></tr>';
+    sOut += '<tr><td>OS Version:</td><td>'+aData[11]+'</td></tr>';
+    sOut += '<tr><td>Dist Version:</td><td>'+aData[12]+'</td></tr>';
+    sOut += '<tr><td>Comment:</td><td>'+aData[13]+'</td></tr>';
+    sOut += '<tr><td>Update Type:</td><td>'+aData[14]+'</td></tr>';
+    sOut += '</table>';
+
+    return sOut;
+}
 
 
 

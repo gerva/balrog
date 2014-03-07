@@ -21,10 +21,16 @@
 {% block container_class %}container-fluid{% endblock %}
 
 {% block content %}
-<div id='add_rule'>
+<ul class="nav nav-tabs" id="rules_tab">
+    <li class="active"><a href="#add_rule" data-toggle="tab">Add a new Rule</a></li>
+    <li><a href="#rules" data-toggle="tab">View/Edit Rules</a></li>
+</ul>
+<div id='rules_view' class="tab-content">
+ <div class="tab-pane active" id="add_rule">
     {% include 'fragments/add_rule.html' %}
 </div>
-<div id='rules'>
+ <div class="tab-pane" id="rules">
     {% include 'fragments/rules.html' %}
 </div>
+</div><!-- tab-content -->
 {% endblock %}
