@@ -25,7 +25,7 @@ $(document).ready(function() {
     // Insert a 'details' column to the table
     var nCloneTh = document.createElement( 'th' );
     var nCloneTd = document.createElement( 'td' );
-    nCloneTd.innerHTML = '<button type="button" class="btn btn-info">Edit</button>'
+    nCloneTd.innerHTML = '<button type="button" class="btn btn-info"><span class="glyphicon glyphicon-chevron-down"></span></button>'
     nCloneTd.className = "center";
 
     $('#rules_table thead tr').each( function () {
@@ -41,6 +41,7 @@ $(document).ready(function() {
              // The aTarget numbers refer to the columns in the dataTable on which to apply the functions
              // hide columns
              { "bVisible": false, "aTargets":[6, 7, 8, 9, 10, 11, 12, 13, 15 ] },
+             { "bSortable": false, "aTargets": [ 0 ] },
              { "bSearchable": "true", "aTargets":[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, ] },
              { "sSortDataType": "dom-select", "aTargets":[1] },
              { "sSortDataType": "dom-text", "aTargets":[1, 2, 3, 4, 5, 13] },
@@ -69,14 +70,14 @@ $(document).ready(function() {
         {
             /* This row is already open - close it */
             $(this).removeClass( less ).addClass( more )
-            this.innerHTML = "Edit"
+            this.innerHTML = '<span class="glyphicon glyphicon-chevron-down"></span>'
             oTable.fnClose( nTr );
         }
         else
         {
             /* Open this row */
             $(this).removeClass( more ).addClass( less )
-            this.innerHTML = 'Close'
+            this.innerHTML = '<span class="glyphicon glyphicon-chevron-up"></span>'
             oTable.fnOpen( nTr, fnFormatDetails(oTable, nTr), 'details' );
         }
     } );
