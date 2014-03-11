@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>{% block title %}AUS3 Admin{% endblock %}</title>
+    <title>{% block title %}{{ config.PAGE_TITLE }}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Mozilla">
 
@@ -28,7 +28,7 @@
          <span class="icon-bar"></span>
          <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="/">AUS3 Admin</a>
+        <a class="navbar-brand" href="/">{{ config.PAGE_TITLE }}</a>
       </div>
       <div class="collapse navbar-collapse aus3-navbar">
         <ul class="nav navbar-nav">

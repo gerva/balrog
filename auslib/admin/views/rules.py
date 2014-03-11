@@ -6,8 +6,9 @@ from auslib.admin.base import db
 from auslib.admin.views.base import (
     requirelogin, requirepermission, AdminView, HistoryAdminView
 )
+from auslib.admin.views.csrf import get_csrf_headers
 from auslib.admin.views.forms import EditRuleForm, RuleForm
-from auslib.log import cef_event, CEF_WARN
+from auslib.log import cef_event, CEF_WARN, CEF_ALERT
 from auslib.util import getPagination
 
 class RulesPageView(AdminView):
@@ -54,7 +55,7 @@ class RulesAPIView(AdminView):
     """/rules"""
     # changed_by is available via the requirelogin decorator
     @requirelogin
-    @requirepermission('/rules', options=[])
+    @requirepermission('/rules')
     def _post(self, transaction, changed_by):
         # a Post here creates a new rule
         form = RuleForm()
@@ -79,7 +80,7 @@ class RulesAPIView(AdminView):
                 distVersion = form.dist_version.data,
                 comment = form.comment.data,
                 update_type = form.update_type.data,
-                headerArchitecturerch = form.header_arch.data)
+                headerArchitecture = form.header_arch.data)
         rule_id = db.rules.addRule(changed_by=changed_by, what=what,
             transaction=transaction)
         return Response(status=200, response=rule_id)
@@ -116,16 +117,92 @@ class SingleRuleView(AdminView):
                 releaseNames]
         form.mapping.choices.insert(0, ('', 'NULL' ) )
 
-        return render_template('fragments/single_rule.html', rule=rule, form=form)
+        headers = {'X-Data-Version': rule['data_version']}
+        headers.update(get_csrf_headers())
+        return Response(response=render_template('fragments/single_rule.html', rule=rule, form=form), mimetype='text/html', headers=headers)
 
     # changed_by is available via the requirelogin decorator
     @requirelogin
-    @requirepermission('/rules/:id', options=[])
     def _post(self, rule_id, transaction, changed_by):
         # Verify that the rule_id exists.
-        if not db.rules.getRuleById(rule_id, transaction=transaction):
+        rule = db.rules.getRuleById(rule_id, transaction=transaction)
+        if not rule:
             return Response(status=404)
         form = EditRuleForm()
+
+        # Verify that the user has permission for the existing rule _and_ what the rule would become.
+        toCheck = [rule['product']]
+        # Rules can be partially updated - if product is null/None, we won't update that field, so
+        # we shouldn't check its permission.
+        if form.product.data:
+            toCheck.append(form.product.data)
+        for product in toCheck:
+            if not db.permissions.hasUrlPermission(changed_by, '/rules/:id', 'POST', urlOptions={'product': product}):
+                msg = "%s is not allowed to alter rules that affect %s" % (changed_by, product)
+                cef_event('Unauthorized access attempt', CEF_ALERT, msg=msg)
+                return Response(status=401, response=msg)
+        releaseNames = db.releases.getReleaseNames()
+
+        form.mapping.choices = [(item['name'],item['name']) for item in releaseNames]
+        form.mapping.choices.insert(0, ('', 'NULL' ))
+
+        if not form.validate():
+            cef_event("Bad input", CEF_WARN, errors=form.errors)
+            return Response(status=400, response=form.errors)
+
+        what = dict()
+        if form.backgroundRate.data:
+            what['backgroundRate'] = form.backgroundRate.data
+        if form.mapping.data:
+            what['mapping'] = form.mapping.data
+        if form.priority.data:
+            what['priority'] = form.priority.data
+        if form.product.data:
+            what['product'] = form.product.data
+        if form.version.data:
+            what['version'] = form.version.data
+        if form.build_id.data:
+            what['buildID'] = form.build_id.data
+        if form.channel.data:
+            what['channel'] = form.channel.data
+        if form.locale.data:
+            what['locale'] = form.locale.data
+        if form.distribution.data:
+            what['distribution'] = form.distribution.data
+        if form.build_target.data:
+            what['buildTarget'] = form.build_target.data
+        if form.os_version.data:
+            what['osVersion'] = form.os_version.data
+        if form.dist_version.data:
+            what['distVersion'] = form.dist_version.data
+        if form.comment.data:
+            what['comment'] = form.comment.data
+        if form.update_type.data:
+            what['update_type'] = form.update_type.data
+        if form.header_arch.data:
+            what['headerArchitecture'] = form.header_arch.data
+
+        db.rules.updateRule(changed_by=changed_by, rule_id=rule_id, what=what,
+            old_data_version=form.data_version.data, transaction=transaction)
+        # find out what the next data version is
+        rule = db.rules.getRuleById(rule_id, transaction=transaction)
+        new_data_version = rule['data_version']
+        response = make_response(json.dumps(dict(new_data_version=new_data_version)))
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+    @requirelogin
+    def _delete(self, rule_id, transaction, changed_by):
+        # Verify that the rule_id exists.
+        rule = db.rules.getRuleById(rule_id, transaction=transaction)
+        if not rule:
+            return Response(status=404)
+        # Bodies are ignored for DELETE requests, so we need to force WTForms
+        # to look at the arguments instead.
+        # Even though we aren't going to use most of the form fields (just
+        # rule_id and data_version), we still want to create and validate the
+        # form to make sure that the CSRF token is checked.
+        form = EditRuleForm(request.args)
 
         releaseNames = db.releases.getReleaseNames()
 
@@ -135,30 +212,16 @@ class SingleRuleView(AdminView):
         if not form.validate():
             cef_event("Bad input", CEF_WARN, errors=form.errors)
             return Response(status=400, response=form.errors)
-        what = dict(backgroundRate=form.backgroundRate.data,
-                    mapping=form.mapping.data,
-                    priority=form.priority.data,
-                    product = form.product.data,
-                    version = form.version.data,
-                    buildID = form.build_id.data,
-                    channel = form.channel.data,
-                    locale = form.locale.data,
-                    distribution = form.distribution.data,
-                    buildTarget = form.build_target.data,
-                    osVersion = form.os_version.data,
-                    distVersion = form.dist_version.data,
-                    comment = form.comment.data,
-                    update_type = form.update_type.data,
-                    headerArchitecture = form.header_arch.data)
-        self.log.debug("old_data_version: %s", form.data_version.data)
-        db.rules.updateRule(changed_by=changed_by, rule_id=rule_id, what=what,
+
+        if not db.permissions.hasUrlPermission(changed_by, '/rules/:id', 'DELETE', urlOptions={'product': rule['product']}):
+            msg = "%s is not allowed to alter rules that affect %s" % (changed_by, rule['product'])
+            cef_event('Unauthorized access attempt', CEF_ALERT, msg=msg)
+            return Response(status=401, response=msg)
+
+        db.rules.deleteRule(changed_by=changed_by, rule_id=rule_id,
             old_data_version=form.data_version.data, transaction=transaction)
-        # find out what the next data version is
-        rule = db.rules.getRuleById(rule_id, transaction=transaction)
-        new_data_version = rule['data_version']
-        response = make_response(json.dumps(dict(new_data_version=new_data_version)))
-        response.headers['Content-Type'] = 'application/json'
-        return response
+
+        return Response(status=200)
 
 
 class RuleHistoryView(HistoryAdminView):
@@ -213,7 +276,6 @@ class RuleHistoryView(HistoryAdminView):
         )
 
     @requirelogin
-    @requirepermission('/rules', options=[])
     def _post(self, rule_id, transaction, changed_by):
         rule_id = int(rule_id)
 
@@ -229,6 +291,12 @@ class RuleHistoryView(HistoryAdminView):
         rule = db.rules.getRuleById(rule_id=rule_id)
         if rule is None:
             return Response(status=404, response='bad rule_id')
+        # Verify that the user has permission for the existing rule _and_ what the rule would become.
+        for product in (rule['product'], change['product']):
+            if not db.permissions.hasUrlPermission(changed_by, '/rules/:id', 'POST', urlOptions={'product': product}):
+                msg = "%s is not allowed to alter rules that affect %s" % (changed_by, product)
+                cef_event('Unauthorized access attempt', CEF_ALERT, msg=msg)
+                return Response(status=401, response=msg)
         old_data_version = rule['data_version']
 
         # now we're going to make a new insert based on this

@@ -699,6 +699,11 @@ class TestRulesSimple(unittest.TestCase, RulesTestMixin, MemoryDatabaseMixin):
         expected = [dict(rule_id=1, priority=100, backgroundRate=100, version='3.5', buildTarget='d', mapping='d', update_type='z', data_version=1)]
         self.assertEquals(rule, expected)
 
+    def testDeleteRule(self):
+        self.paths.deleteRule(changed_by='bill', rule_id=2, old_data_version=1)
+        rule = self.paths.t.select().where(self.paths.rule_id==2).execute().fetchall()
+        self.assertEquals(rule, [])
+
     def testGetNumberOfRules(self):
         self.assertEquals(self.paths.countRules(), 7)
 
@@ -1205,20 +1210,27 @@ class TestPermissions(unittest.TestCase, MemoryDatabaseMixin):
     def testGetOptionsNoOptions(self):
         self.assertEquals(self.permissions.getOptions('cathy', '/rules'), {})
 
-    def testHasUrlPermission(self):
-        self.assertTrue(self.permissions.hasUrlPermission('cathy', '/rules', 'PUT', dict(product='fake')))
+    def testHasUrlPermissionAdmin(self):
+        self.assertTrue(self.permissions.hasUrlPermission('bill', '/rules', 'FOO'))
 
-    def testHasUrlPermissionWithOption(self):
-        self.assertTrue(self.permissions.hasUrlPermission('bob', '/rules/:id', 'POST', dict(product='fake')))
+    def testHasUrlPermissionGranular(self):
+        self.assertTrue(self.permissions.hasUrlPermission('cathy', '/rules', 'FOO'))
+
+    def testHasUrlPermissionWithDbOption(self):
+        self.assertTrue(self.permissions.hasUrlPermission('bob', '/rules/:id', 'POST'))
+
+    def testHasUrlPermissionWithUrlOption(self):
+        self.assertTrue(self.permissions.hasUrlPermission('bob', '/releases/:name', 'FOO', dict(product='fake')))
 
     def testHasUrlPermissionNotAllowed(self):
-        self.assertFalse(self.permissions.hasUrlPermission('cathy', '/rules/:id', 'DELETE', dict(product='fake')))
+        self.assertFalse(self.permissions.hasUrlPermission('cathy', '/rules/:id', 'FOO'))
 
-    def testHasUrlPermissionNotAllowedWithOption(self):
-        self.assertFalse(self.permissions.hasUrlPermission('bob', '/rules/:id', 'DELETE', dict(product='fake')))
+    def testHasUrlPermissionNotAllowedWithDbOption(self):
+        self.assertFalse(self.permissions.hasUrlPermission('bob', '/rules/:id', 'NOTPOST'))
 
-    def testHasUrlPermissionWithProduct(self):
-        self.assertTrue(self.permissions.hasUrlPermission('bob', '/releases/:name', 'DELETE', dict(product='fake')))
+    def testHasUrlPermissionNotAllowedWithUrlOption(self):
+        self.assertFalse(self.permissions.hasUrlPermission('bob', '/releases/:name', 'FOO', dict(product='reallyfake')))
+
 
 class TestDB(unittest.TestCase):
     def testSetDburiAlreadySetup(self):

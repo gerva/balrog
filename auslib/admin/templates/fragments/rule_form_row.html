@@ -1,47 +1,47 @@
-<td id='mapping{{ suffix }}' name='mapping{{ suffix }}'>
+<td id='mapping{{ suffix }}' name='mapping{{ suffix }}' class="col-sm-2">
     {{ form.hidden_tag() }}
     {% if 'data_version' in form %} {{ form.data_version()|safe }} {% endif %}
-    {{ form.mapping()|safe }}
+    {{ form.mapping(class="form-control")|safe }}
 </td>
 <td id='backgroundRate{{ suffix }}' name='backgroundRate{{ suffix }}'>
-    {{ form.backgroundRate()|safe }}
+    {{ form.backgroundRate(class="form-control col-sm-1")|safe }}
 </td>
 <td id='priority{{ suffix }}' name='priority{{ suffix }}'>
-    {{ form.priority()|safe }}
+    {{ form.priority(class="form-control col-sm-1")|safe }}
 </td>
 <td id='product{{ suffix }}' name='product{{ suffix }}'>
-    {{ form.product()|safe }}
+    {{ form.product(class="form-control")|safe }}
 </td>
 <td id='version{{ suffix }}' name='version{{ suffix }}'>
-    {{ form.version()|safe }}
+    {{ form.version(class="form-control")|safe }}
 </td>
 <td id='buildID{{ suffix }}' name='buildID{{ suffix }}'>
-    {{ form.build_id()|safe }}
+    {{ form.build_id(class="form-control")|safe }}
 </td>
 <td id='channel{{ suffix }}' name='channel{{ suffix }}'>
-    {{ form.channel()|safe }}
+    {{ form.channel(class="form-control")|safe }}
 </td>
 <td id='locale{{ suffix }}' name='locale{{ suffix }}'>
-    {{ form.locale()|safe }}
+    {{ form.locale(class="form-control")|safe }}
 </td>
 <td id='distribution{{ suffix }}' name='distribution{{ suffix }}'>
-    {{ form.distribution()|safe }}
+    {{ form.distribution(class="form-control")|safe }}
 </td>
 <td id='buildTarget{{ suffix }}' name='buildTarget{{ suffix }}'>
-    {{ form.build_target()|safe }}
+    {{ form.build_target(class="form-control")|safe }}
 </td>
 <td id='osVersion{{ suffix }}' name='osVersion{{ suffix }}'>
-    {{ form.os_version()|safe }}
+    {{ form.os_version(class="form-control")|safe }}
 </td>
 <td id='distVersion{{ suffix }}' name='distVersion{{ suffix }}'>
-    {{ form.dist_version()|safe }}
+    {{ form.dist_version(class="form-control")|safe }}
 </td>
 <td id='comment{{ suffix }}' name='comment{{ suffix }}'>
-    {{ form.comment()|safe }}
+    {{ form.comment(class="form-control")|safe }}
 </td>
 <td id='update_type{{ suffix }}' name='update_type{{ suffix }}'>
-    {{ form.update_type()|safe }}
+    {{ form.update_type(class="form-control")|safe }}
 </td>
 <td id='header_arch{{ suffix }}' name='header_arch{{ suffix }}'>
-    {{ form.header_arch()|safe }}
+    {{ form.header_arch(class="form-control")|safe }}
 </td>

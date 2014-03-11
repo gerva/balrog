@@ -22,13 +22,10 @@ $.fn.dataTableExt.afnSortData['dom-select'] = function  ( oSettings, iColumn )
 };
 
 $(document).ready(function() {
-
-    /*
-     * Insert a 'details' column to the table
-     */
+    // Insert a 'details' column to the table
     var nCloneTh = document.createElement( 'th' );
     var nCloneTd = document.createElement( 'td' );
-    nCloneTd.innerHTML = '<img src="../examples_support/details_open.png">';
+    nCloneTd.innerHTML = '<button type="button" class="btn btn-info">Edit</button>'
     nCloneTd.className = "center";
 
     $('#rules_table thead tr').each( function () {
@@ -42,68 +39,12 @@ $(document).ready(function() {
     var oTable = $('#rules_table').dataTable({
         "aoColumnDefs": [
              // The aTarget numbers refer to the columns in the dataTable on which to apply the functions
+             // hide columns
+             { "bVisible": false, "aTargets":[6, 7, 8, 9, 10, 11, 12, 13, 15 ] },
+             { "bSearchable": "true", "aTargets":[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, ] },
              { "sSortDataType": "dom-select", "aTargets":[1] },
-             { "sSortDataType": "dom-text", "aTargets":[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] },
-             { "sType": "numeric", "aTargets": [1, 2] }
-        ],
-        "aoColumns": [ 
-              /* open/close image    */
-              { "bSortable": false },
-
-              /* Mapping             */
-              null,
-
-              /* Background Rate     */
-              null,
-
-              /* Priority            */
-              null,
-
-              /* Product             */
-              null,
-
-              /* Version             */
-              null,
-
-              /* Build ID            */
-              { "bVisible": false },
-
-              /* Channel             */
-              { "bVisible": false },
-
-              /* Locale              */
-              { "bVisible": false },
-
-              /* Distribution        */
-              { "bVisible": false },
-
-              /* Build Target        */
-              { "bVisible": false },
-
-              /* OS Version          */
-              { "bVisible": false },
-
-              /* Dist Version        */
-              { "bVisible": false },
-
-              /* Comment             */
-              { "bVisible": false },
-
-              /* Update Type         */
-
-              { "bVisible": false },
-
-              /* Header Architecture */
-              { "bVisible": false },
-
-              /* Update              */
-              null,
-
-              /* Clone               */
-              null,
-
-              /* Revisions           */
-              null 
+             { "sSortDataType": "dom-text", "aTargets":[1, 2, 3, 4, 5, 13] },
+             { "sType": "numeric", "aTargets": [2, 3] },
         ],
 
         "fnDrawCallback": function(){
@@ -120,18 +61,22 @@ $(document).ready(function() {
      * Note that the indicator for showing which row is open is not controlled by DataTables,
      * rather it is done here
      */
-    $('#rules_table tbody td img').live('click', function () {
+    $('#rules_table tbody td button').live('click', function () {
         var nTr = this.parentNode.parentNode;
-        if ( this.src.match('details_close') )
+        more = "btn-info"
+        less = "btn-warning"
+        if ( this.className === "btn " + less )
         {
             /* This row is already open - close it */
-            this.src = "../examples_support/details_open.png";
+            $(this).removeClass( less ).addClass( more )
+            this.innerHTML = "Edit"
             oTable.fnClose( nTr );
         }
         else
         {
             /* Open this row */
-            this.src = "../examples_support/details_close.png";
+            $(this).removeClass( more ).addClass( less )
+            this.innerHTML = 'Close'
             oTable.fnOpen( nTr, fnFormatDetails(oTable, nTr), 'details' );
         }
     } );
@@ -142,26 +87,66 @@ $(document).ready(function() {
 // dataTable ...
 // http://www.datatables.net/examples/api/row_details.html
 /* Formating function for row details */
+function _label(id_name, name) {
+    var my_input = jQuery('<label/>', {
+        "for": id_name
+    });
+    return '<label for=' + id_name + '>' + name + '</label>'
+}
+
+function detail_element(id_name, name, type, value) {
+    var sOut = '<div class="form-group col-lg-4" id="' + id_name + '">';
+    sOut += _label(id_name, name);
+    sOut += _input(id_name, type, value);
+    sOut += '</div>';
+    return sOut;
+    //var my_div = jQuery('</div>', {
+    //    "class": 'form-group';
+    //});
+};
+
+function _input(id_name, type, value) {
+//    input = '<input>'
+//    input.type = type
+//    input.id = id_name
+//   input.value = value
+    return '<input id="' + id_name + '" class="form-control" type="' + type + '" value="' + value + '">';
+};
+
+function _detail_element(old_input) {
+    // from column element to id_name, name, ...
+    var id_name = $(old_input).attr('id');
+    var name    = $(old_input).attr('name');
+    if ( name && name.indexOf("-") != -1 ) {
+        name = name.split('-')[1];
+    }
+    if ( name && name.indexOf("_") != -1 ) {
+        name = name.replace('_', ' ');
+    }
+    var type    = $(old_input).attr('type');
+    var value   = $(old_input).attr('value');
+    return detail_element(id_name, name, type, value);
+};
+
+
 function fnFormatDetails ( oTable, nTr )
 {
     var aData = oTable.fnGetData( nTr );
-    var sOut = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
-    sOut += '<tr><td>Product:</td><td>'+aData[4]+'</td></tr>';
-    sOut += '<tr><td>Version:</td><td>'+aData[5]+'</td></tr>';
-    sOut += '<tr><td>Build ID:</td><td>'+aData[6]+'</td></tr>';
-    sOut += '<tr><td>Channel:</td><td>'+aData[7]+'</td></tr>';
-    sOut += '<tr><td>Locale:</td><td>'+aData[8]+'</td></tr>';
-    sOut += '<tr><td>Distribution:</td><td>'+aData[9]+'</td></tr>';
-    sOut += '<tr><td>build Target:</td><td>'+aData[10]+'</td></tr>';
-    sOut += '<tr><td>OS Version:</td><td>'+aData[11]+'</td></tr>';
-    sOut += '<tr><td>Dist Version:</td><td>'+aData[12]+'</td></tr>';
-    sOut += '<tr><td>Comment:</td><td>'+aData[13]+'</td></tr>';
-    sOut += '<tr><td>Update Type:</td><td>'+aData[14]+'</td></tr>';
-    sOut += '</table>';
-
+    var sOut = ''
+    sOut += _detail_element(aData[5])  /* version */
+    sOut += _detail_element(aData[6])  /* build id */
+    sOut += _detail_element(aData[7])  /* channel */
+    sOut += _detail_element(aData[8])  /* locale */
+    sOut += _detail_element(aData[9])  /* distribution */
+    sOut += _detail_element(aData[10]) /* build target */
+    sOut += _detail_element(aData[11]) /* os version */
+    sOut += _detail_element(aData[12]) /* dist version */
+    sOut += _detail_element(aData[13]) /* comment */
+    // sOut += _detail_element(aData[14]) /* update type */
+    sOut += _detail_element(aData[15]) /* header architecture */
+    sOut += "&nbsp;"
     return sOut;
 }
-
 
 
 // This is a modified version of the jquery-ui combobox example:
@@ -319,11 +304,29 @@ function submitRuleForm(rule_id){
 
 }
 
+function deleteRule(rule_id){
+    var ruleForm = $('#rules_form');
+    var data = $.param({
+        'data_version': $('[name='+rule_id+'-data_version]', ruleForm).val(),
+        'csrf_token': $('[name='+rule_id+'-csrf_token]', ruleForm).val()
+    });
+    var url = getRuleUrl(rule_id) + '?' + data;
+
+    return $.ajax(url, {'type': 'delete', 'data': data, 'dataType': 'json'})
+        .error(handleError)
+        .success(function(data) {
+            table = $('#rules_table').dataTable();
+            row = $('#rule_' + rule_id).get(0);
+            table.fnDeleteRow(row);
+            alertify.success('Rule deleted!');
+        });
+
+}
+
 function submitNewRuleForm(ruleForm, table) {
     url = getRuleAPIUrl();
     data = getData('new_rule', ruleForm);
 
-    //console.log(data);
     preAJAXLoad(ruleForm);
 
     $.ajax(url, {'type': 'post', 'data': data})
@@ -334,8 +337,7 @@ function submitNewRuleForm(ruleForm, table) {
         .success(function(data) {
             postAJAXLoad(ruleForm);
             alertify.success('Rule added!');
-            table.append(data);
-            table.dataTable().fnDraw();
+            table.dataTable().fnAddTr($(data)[0]);
         });
     });
 }

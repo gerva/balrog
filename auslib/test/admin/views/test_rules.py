@@ -1,7 +1,7 @@
 import json
 
 from auslib.admin.base import db
-from auslib.test.admin.views.base import ViewTest, HTMLTestMixin
+from auslib.test.admin.views.base import ViewTest, HTMLTestMixin, JSONTestMixin
 
 class TestRulesAPI_HTML(ViewTest, HTMLTestMixin):
     def testNewRulePost(self):
@@ -17,7 +17,9 @@ class TestRulesAPI_HTML(ViewTest, HTMLTestMixin):
 
     # A POST without the required fields shouldn't be valid
     def testMissingFields(self):
-        ret = self._post('/rules', data=dict( ))
+        # But we still need to pass product, because permission checking
+        # is done before what we're testing
+        ret = self._post('/rules', data=dict({'product': 'a'}))
         self.assertEquals(ret.status_code, 400, "Status Code: %d, Data: %s" % (ret.status_code, ret.data))
         self.assertTrue('backgroundRate' in  ret.data, msg=ret.data)
         self.assertTrue('priority' in  ret.data, msg=ret.data)
@@ -26,7 +28,7 @@ class TestSingleRuleView_HTML(ViewTest, HTMLTestMixin):
     def testPost(self):
         # Make some changes to a rule
         ret = self._post('/rules/1', data=dict(backgroundRate=71, mapping='d', priority=73, data_version=1,
-                                                product='Firefox', update_type='minor', channel='nightly'))
+                                                product='Firefox', channel='nightly'))
         self.assertEquals(ret.status_code, 200, "Status Code: %d, Data: %s" % (ret.status_code, ret.data))
         load = json.loads(ret.data)
         self.assertEquals(load['new_data_version'], 2)
@@ -38,16 +40,54 @@ class TestSingleRuleView_HTML(ViewTest, HTMLTestMixin):
         self.assertEquals(r[0]['backgroundRate'], 71)
         self.assertEquals(r[0]['priority'], 73)
         self.assertEquals(r[0]['data_version'], 2)
+        # And that we didn't modify other fields
+        self.assertEquals(r[0]['update_type'], 'minor')
+        self.assertEquals(r[0]['version'], '3.5')
+        self.assertEquals(r[0]['buildTarget'], 'd')
+
+    def testPostWithoutProduct(self):
+        ret = self._post('/rules/4', username='bob',
+                         data=dict(backgroundRate=71, mapping='d', priority=73, data_version=1,
+                                   channel='nightly'))
+        self.assertEquals(ret.status_code, 200, "Status Code: %d, Data: %s" % (ret.status_code, ret.data))
+        load = json.loads(ret.data)
+        self.assertEquals(load['new_data_version'], 2)
+        # Assure the changes made it into the database
+        r = db.rules.t.select().where(db.rules.rule_id==4).execute().fetchall()
+        self.assertEquals(len(r), 1)
+        self.assertEquals(r[0]['mapping'], 'd')
+        self.assertEquals(r[0]['backgroundRate'], 71)
+        self.assertEquals(r[0]['priority'], 73)
+        self.assertEquals(r[0]['data_version'], 2)
+        self.assertEquals(r[0]['channel'], 'nightly')
+        # And that we didn't modify other fields
+        self.assertEquals(r[0]['update_type'], 'minor')
+        self.assertEquals(r[0]['buildTarget'], 'd')
+        self.assertEquals(r[0]['product'], 'fake')
 
     def testBadAuthPost(self):
         ret = self._badAuthPost('/rules/1', data=dict(backgroundRate=100, mapping='c', priority=100, data_version=1))
         self.assertEquals(ret.status_code, 401, "Status Code: %d, Data: %s" % (ret.status_code, ret.data))
-        self.assertTrue("not allowed to access" in ret.data, msg=ret.data)
+        self.assertTrue("not allowed to alter" in ret.data, msg=ret.data)
+
+    def testNoPermissionToAlterExistingProduct(self):
+        ret = self._post('/rules/1', data=dict(backgroundRate=71, data_version=1), username='bob')
+        self.assertEquals(ret.status_code, 401)
+
+    def testNoPermissionToAlterNewProduct(self):
+        ret = self._post('/rules/4', data=dict(product='protected', mapping='a', backgroundRate=71, priority=50, update_type='minor', data_version=1), username='bob')
+        self.assertEquals(ret.status_code, 401)
 
     def testGetSingleRule(self):
         ret = self._get('/rules/1')
         self.assertEquals(ret.status_code, 200)
         self.assertTrue("c" in ret.data, msg=ret.data)
+        for h in ("X-CSRF-Token", "X-Data-Version"):
+            self.assertTrue(h in ret.headers, msg=ret.headers)
+
+    def testDeleteRule(self):
+        ret = self._delete('/rules/1', qs=dict(data_version=1))
+        self.assertEquals(ret.status_code, 200, msg=ret.data)
 
 
 class TestRulesView_HTML(ViewTest, HTMLTestMixin):
@@ -189,6 +229,46 @@ class TestRuleHistoryView(ViewTest, HTMLTestMixin):
         self.assertEqual(row['headerArchitecture'], 'INTEL')
         self.assertEqual(row['distVersion'], '19')
         self.assertEqual(row['buildTarget'], 'MAC')
+
+    def testRollbackWithoutPermission(self):
+        ret = self._post(
+            '/rules/1',
+            data=dict(
+                backgroundRate=71,
+                mapping='d',
+                priority=73,
+                data_version=1,
+                product='',
+                update_type='minor',
+                channel='nightly',
+                build_id='1234',
+                os_version='10.5',
+                header_arch='INTEL',
+                dist_version='19',
+                build_target='MAC',
+            )
+        )
+        ret = self._post(
+            '/rules/1',
+            data=dict(
+                backgroundRate=72,
+                mapping='d',
+                priority=73,
+                product='',
+                data_version=2,
+                update_type='minor',
+                channel='nightly',
+            )
+        )
+        row, = db.rules.history.select(
+            where=[db.rules.history.backgroundRate == 72],
+            limit=1
+        )
+        change_id = row['change_id']
+
+        url = '/rules/1/revisions/'
+        ret = self._post(url, {'change_id': change_id}, username='bob')
+        self.assertEquals(ret.status_code, 401)
 
     def testPostRevisionRollbackBadRequests(self):
         # when posting you need both the rule_id and the change_id
