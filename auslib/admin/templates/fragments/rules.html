@@ -28,12 +28,18 @@
         <tr id='rule_{{ rule_id }}'>
             {% include 'fragments/rule_form_row.html' %}
             <td id='Update{{ suffix }}' name='Update{{ suffix }}'>
-                <button class="btn btn-default" type='submit' name='submit' value='Update' onclick='submitRuleForm({{ rule_id }}); return false;' />Update</button>
-                <button class="btn btn-default" type='submit' name='submit' value='Delete' onclick='deleteRule({{ rule_id }}); return false;' /><span class="glyphicon glyphicon-trash"></span>
-</button>
-                <button class="btn btn-default" type='button' name='clone' value='Clone' onclick='cloneRule($("#rules_form"), $("#new_rule_form"), "{{ rule_id }}")' />Clone</button>
-                <button class="btn btn-default" type='button' name='revisions' value='Revisions'
-                 onclick="location.href='/rules/{{ rule_id }}/revisions/'" />Revisions</button>
+                <button class="btn btn-default" type='submit' name='save' value='Update' onclick='submitRuleForm({{ rule_id }}); return false;' title="save"/>
+                    <span class="glyphicon glyphicon-floppy-save"></span>
+                </button>
+                <button class="btn btn-default" type='submit' name='submit' value='Delete' onclick='deleteRule({{ rule_id }}); return false;' title="delete"/>
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+                <button class="btn btn-default" type='submit' name='clone' value='Clone' onclick='cloneRule($("#rules_form"), $("#new_rule_form"), "{{ rule_id }}")' title="clone"/>
+                    <span class="glyphicon glyphicon-tags"></span>
+                </button>
+                <button class="btn btn-default" type='submit' name='revisions' value='Revisions' onclick="location.href='/rules/{{ rule_id }}/revisions/'" title="revisions"/>
+                    <span class="glyphicon glyphicon-list-alt"></span>
+                </button>
             </td>
         </tr>
         {% endfor %}
