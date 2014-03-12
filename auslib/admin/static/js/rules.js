@@ -135,7 +135,7 @@ $(document).ready(function() {
 } );
 
 // details
-function name_value(name, value) {
+function detail_item(name, value) {
     var div_row = document.createElement( 'div' );
     $(div_row).prop('class', 'row');
 
@@ -149,8 +149,7 @@ function name_value(name, value) {
 
     div_row.appendChild(div_name);
     div_row.appendChild(div_value);
-
-    return $('<div>').append($(div_row).clone()).html();
+    return div_row
 };
 
 
@@ -166,43 +165,19 @@ function generic_button(rule_id, name) {
 
 // TODO onClick(), click() not working
 function button_edit(rule_id) {
-    var button = generic_button(rule_id, 'edit');
-    $(button).click(function() {
-        submitRuleForm(rule_id);
-    });
-    // dom to string
-    return $('<div>').append($(button).clone()).html();
+    return generic_button(rule_id, 'edit');
 };
 
 function button_clone(rule_id) {
-    var button = generic_button(rule_id, 'clone');
-    $(button).click(function() {
-        $('#rules_form'), $('#new_rule_form'), rule_id;
-    });
-    // dom to string
-    return $('<div>').append($(button).clone()).html();
+    return generic_button(rule_id, 'clone');
 };
 
 function button_delete(rule_id) {
-    var button = generic_button(rule_id, 'delete');
-    $(button).click(function() {
-        deleteRule(rule_id);
-        return false;
-    });
-    // dom to string
-    return $('<div>').append($(button).clone()).html();
+    return generic_button(rule_id, 'delete');
 };
 
-
 function button_revision(rule_id) {
-    var button = generic_button(rule_id, 'revision');
-    r_id = rule_id.replace('rule_', '');
-    // dom to string
-    var html = $('<div>').append($(button).clone()).html();
-    var dst = '/rules/' + r_id + '/revisions';
-    html.onclick = function () {location.href=dst;}
-    return html;
-    //return "<button class='btn btn-default' type='submit' name='Revisions' value='Revisions' onclick=location.href=/rules/" + rule_id + "/revisions/' title='Revisions'/>Revisions</button>";
+    return generic_button(rule_id, 'revision');
 };
 
 // this manages the detail
@@ -210,23 +185,27 @@ function fnFormatDetails ( oTable, nTr )
 {
     var aData = oTable.fnGetData( nTr );
     var rule_id = $(nTr).attr('id');
-    sOut = ''
-    sOut += name_value('Version', aData[5]);
-    sOut += name_value('Build Id:', aData[6]);
-    sOut += name_value('Locale:', aData[8]);
-    sOut += name_value('Distribution:', aData[9]);
-    sOut += name_value('Build Target:', aData[10]);
-    sOut += name_value('OS Version:', aData[11]);
-    sOut += name_value('Dist Version:', aData[12]);
-    sOut += name_value('Header Architecture:', aData[15]);
-    sOut += name_value('Version Data:', aData[16]);
-    sOut += "<div class='row col-sm-offset-1'>"
-    sOut += button_edit(rule_id);
-    sOut += button_clone(rule_id);
-    sOut += button_delete(rule_id);
-    sOut += button_revision(rule_id);
-    sOut += '</div>';
-    return sOut;
+    var details = document.createElement( 'div' );
+
+    details.appendChild( detail_item('Version', aData[5]) );
+    details.appendChild( detail_item('Build Id:', aData[6]) );
+    details.appendChild( detail_item('Locale:', aData[8]) );
+    details.appendChild( detail_item('Distribution:', aData[9]) );
+    details.appendChild( detail_item('Build Target:', aData[10]) );
+    details.appendChild( detail_item('OS Version:', aData[11]) );
+    details.appendChild( detail_item('Dist Version:', aData[12]) );
+    details.appendChild( detail_item('Header Architecture:', aData[15]) );
+    details.appendChild( detail_item('Version Data:', aData[16]) );
+    // buttons
+    var buttons = document.createElement( 'div' );
+    $(buttons).prop('class', 'row col-sm-offset-1');
+    buttons.appendChild( button_edit(rule_id) );
+    buttons.appendChild( button_clone(rule_id) );
+    buttons.appendChild( button_delete(rule_id) );
+    buttons.appendChild( button_revision(rule_id) );
+    details.appendChild(buttons);
+
+    return $('<div>').append($(details).clone()).html();
 };
 
 
