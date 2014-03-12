@@ -88,7 +88,7 @@ $(document).ready(function() {
              { "bVisible": false, "aTargets": dt_details },
              { "bSortable": false, "aTargets": [ 0 ] },
              { "bSearchable": "true", "aTargets": dt_all },
-             { "sSortDataType": "dom-select", "aTargets": dt_mappings },
+             { "sSortDataType": "dom-select", "aTargets": [ dt_mappings ] },
              { "sSortDataType": "dom-text", "aTargets":[ 2, 3, 4, 5, 14] },
              { "sType": "numeric", "aTargets": [ dt_backgroundrate,
                                                  dt_priority] },
