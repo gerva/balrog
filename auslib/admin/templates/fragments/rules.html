@@ -1,7 +1,8 @@
 {% if rules %}
+<div class="container">
 <div class="table-responsive">
-<form id='rules_form'>
-<table id='rules_table' class="table table-striped table-condensed">
+<!-- <form id='rules_form'> -->
+<table id='rules_table' class="table table-condensed">
     <thead> <tr>
         <th>Mapping</th>            <!-- 1 -->
         <th>Background Rate</th>    <!-- 2 -->
@@ -18,33 +19,23 @@
         <th>Comment</th>            <!-- 13 -->
         <th>Update Type</th>        <!-- 14 -->
         <th>Header Architecture</th><!-- 15 -->
-        <th>-</th>
+        <th>Version Data</th>       <!-- 16 -->
     </tr></thead>
     <tbody>
-        {% for row in rules %}
-        {% set rule_id = row['rule_id'] %}
-        {% set form = forms[rule_id] %}
-        {% set suffix = '_r'~rule_id %}
-        <tr id='rule_{{ rule_id }}'>
-            {% include 'fragments/rule_form_row.html' %}
-            <td id='Update{{ suffix }}' name='Update{{ suffix }}'>
-                <button class="btn btn-default" type='submit' name='save' value='Update' onclick='submitRuleForm({{ rule_id }}); return false;' title="save"/>
-                    <span class="glyphicon glyphicon-floppy-save"></span>
-                </button>
-                <button class="btn btn-default" type='submit' name='submit' value='Delete' onclick='deleteRule({{ rule_id }}); return false;' title="delete"/>
-                    <span class="glyphicon glyphicon-trash"></span>
-                </button>
-                <button class="btn btn-default" type='submit' name='clone' value='Clone' onclick='cloneRule($("#rules_form"), $("#new_rule_form"), "{{ rule_id }}")' title="clone"/>
-                    <span class="glyphicon glyphicon-tags"></span>
-                </button>
-                <button class="btn btn-default" type='submit' name='revisions' value='Revisions' onclick="location.href='/rules/{{ rule_id }}/revisions/'" title="revisions"/>
-                    <span class="glyphicon glyphicon-list-alt"></span>
-                </button>
-            </td>
-        </tr>
-        {% endfor %}
+      {%- for row in rules %}
+      {%- set rule_id = row['rule_id'] %}
+      {%- set form = forms[rule_id] %}
+      {%- set suffix = '_r'~rule_id %}
+      {{ form.hidden_tag() }}
+      <tr id='rule_{{ rule_id }}'>
+        {%- include 'fragments/rule_form_row.html' %}
+      </tr>
+      {%- endfor %}
     </tbody>
 </table>
-</form>
+<!-- </form> -->
+<!--
+-->
+</div>
 </div>
 {% endif %}

@@ -40,6 +40,7 @@ var dt_dsitversion = 12;
 var dt_comment = 13;
 var dt_updatetype = 14;
 var dt_headerarch = 15;
+var dt_versiondata = 16;
 
 var dt_details = [
     dt_version,
@@ -49,9 +50,9 @@ var dt_details = [
     dt_buildtarget,
     dt_osversion,
     dt_dsitversion,
-    dt_comment,
     dt_updatetype,
     dt_headerarch,
+    dt_versiondata,
 ]
 
 var dt_main = [
@@ -61,6 +62,7 @@ var dt_main = [
     dt_product,
     dt_channel,
     dt_updatetype,
+    dt_comment,
 ]
 
 var dt_all =$.merge(dt_main, dt_details);
@@ -70,8 +72,7 @@ $(document).ready(function() {
     var nCloneTh = document.createElement( 'th' );
     var nCloneTd = document.createElement( 'td' );
     nCloneTd.innerHTML = '<button type="button" class="btn btn-info"><span class="glyphicon glyphicon-chevron-down"></span></button>'
-//    nCloneTd.className = "center";
-
+    // insert details open/close arrow and header (before Mappings)
     $('#rules_table thead tr').each( function () {
         this.insertBefore( nCloneTh, this.childNodes[0] );
     } );
@@ -93,14 +94,14 @@ $(document).ready(function() {
                                                  dt_priority] },
         ],
 
-        "fnDrawCallback": function(){
-            $("select","[id*=mapping]").combobox();
-        }
+//        "fnDrawCallback": function(){
+//            $("select","[id*=mapping]").combobox();
+//        }
     });
 
-    $( "#toggle" ).click(function() {
-        $( "select","[id*=mapping]").toggle();
-    });
+//    $( "#toggle" ).click(function() {
+//        $( "select","[id*=mapping]").toggle();
+//    });
 
 
     /* Add event listener for opening and closing details
@@ -120,70 +121,101 @@ $(document).ready(function() {
         }
         else
         {
+            if ( this.className === "btn " + more ) {
+            // ^ this blocks delete/revision buttons to change their shape
+            // TODO use id
             /* Open this row */
             $(this).removeClass( more ).addClass( less )
             this.innerHTML = '<span class="glyphicon glyphicon-chevron-up"></span>'
             oTable.fnOpen( nTr, fnFormatDetails(oTable, nTr), 'details' );
+            }
         }
     } );
 
 } );
 
-
-// dataTable ...
-// http://www.datatables.net/examples/api/row_details.html
-/* Formating function for row details */
-function _label(id_name, name) {
-    var my_input = jQuery('<label/>', {
-        "for": id_name
-    });
-    return '<label for=' + id_name + '>' + name + '</label>'
-}
-
-function detail_element(id_name, name, type, value) {
-    var sOut = '<div class="form-group col-lg-4" id="' + id_name + '">';
-    sOut += _label(id_name, name);
-    sOut += _input(id_name, type, value);
-    sOut += '</div>';
+// details
+function name_value(name, value) {
+    sOut  = '<div class="row">';
+    sOut += '<div class="col-sm-2 col-sm-offset-1"><strong>' + name + '</strong></div>';
+    sOut += '<div class="col-sm-2">(' + value + ')</div>';
+    sOut += '</div> <!-- row -->';
     return sOut;
-    //var my_div = jQuery('</div>', {
-    //    "class": 'form-group';
-    //});
-};
-
-function _input(id_name, type, value) {
-//    input = '<input>'
-//    input.type = type
-//    input.id = id_name
-//   input.value = value
-    return '<input id="' + id_name + '" class="form-control" type="' + type + '" value="' + value + '">';
-};
-
-function _detail_element(old_input) {
-    // from column element to id_name, name, ...
-    var id_name = $(old_input).attr('id');
-    var name    = $(old_input).attr('name');
-    if ( name && name.indexOf("-") != -1 ) {
-        name = name.split('-')[1];
-    }
-    if ( name && name.indexOf("_") != -1 ) {
-        name = name.replace('_', ' ');
-    }
-    var type    = $(old_input).attr('type');
-    var value   = $(old_input).attr('value');
-    return detail_element(id_name, name, type, value);
 };
 
 
+function generic_button(rule_id, name) {
+    var button = document.createElement( 'button' );
+    $(button).prop('class', 'btn btn-default');
+    $(button).attr('type', 'submit');
+    $(button).attr('name', name);
+    $(button).attr('title', name);
+    $(button).html(name);
+    return button
+};
+
+function button_edit(rule_id) {
+    var button = generic_button(rule_id, 'edit');
+    $(button).click(function() {
+        submitRuleForm(rule_id);
+    });
+    // dom to string
+    return $('<div>').append($(button).clone()).html(); 
+};
+
+function button_clone(rule_id) {
+    var button = generic_button(rule_id, 'clone');
+    $(button).click(function() {
+        $('#rules_form'), $('#new_rule_form'), rule_id;
+    });
+    // dom to string
+    return $('<div>').append($(button).clone()).html(); 
+};
+
+function button_delete(rule_id) {
+    var button = generic_button(rule_id, 'delete');
+    $(button).click(function() {
+        deleteRule(rule_id);
+        return false;
+    });
+    // dom to string
+    return $('<div>').append($(button).clone()).html(); 
+};
+
+
+function button_revision(rule_id) {
+    var button = generic_button(rule_id, 'revision');
+    $(button).click(function() {
+        location.href='/rules/' + rule_id + '/revisions';
+    });
+    // dom to string
+    return $('<div>').append($(button).clone()).html(); 
+    //return "<button class='btn btn-default' type='submit' name='Revisions' value='Revisions' onclick=location.href=/rules/" + rule_id + "/revisions/' title='Revisions'/>Revisions</button>";
+};
+
+// this manages the detail
 function fnFormatDetails ( oTable, nTr )
 {
     var aData = oTable.fnGetData( nTr );
-    var sOut = ''
-    dt_details.forEach(function(element) {
-        sOut += _detail_element(aData[element])
-    });
+    var rule_id = $(nTr).attr('id');
+    sOut = ''
+    sOut += name_value('Version', aData[5]);
+    sOut += name_value('Build Id:', aData[6]);
+    sOut += name_value('Locale:', aData[8]);
+    sOut += name_value('Distribution:', aData[9]);
+    sOut += name_value('Build Target:', aData[10]);
+    sOut += name_value('OS Version:', aData[11]);
+    sOut += name_value('Dist Version:', aData[12]);
+    sOut += name_value('Header Architecture:', aData[15]);
+    sOut += name_value('Version Data:', aData[16]);
+    sOut += "<div class='row col-sm-offset-1'>"
+    sOut += button_edit(rule_id);
+    sOut += button_clone(rule_id);
+    sOut += button_delete(rule_id);
+    sOut += button_revision(rule_id);
+    sOut += '</div>';
     return sOut;
-}
+};
 
 
 // This is a modified version of the jquery-ui combobox example:
