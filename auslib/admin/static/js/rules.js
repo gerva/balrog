@@ -26,7 +26,7 @@ $(document).ready(function() {
     var nCloneTh = document.createElement( 'th' );
     var nCloneTd = document.createElement( 'td' );
     nCloneTd.innerHTML = '<button type="button" class="btn btn-info"><span class="glyphicon glyphicon-chevron-down"></span></button>'
-    nCloneTd.className = "center";
+//    nCloneTd.className = "center";
 
     $('#rules_table thead tr').each( function () {
         this.insertBefore( nCloneTh, this.childNodes[0] );
@@ -40,7 +40,7 @@ $(document).ready(function() {
         "aoColumnDefs": [
              // The aTarget numbers refer to the columns in the dataTable on which to apply the functions
              // hide columns
-             { "bVisible": false, "aTargets":[6, 7, 8, 9, 10, 11, 12, 13, 15 ] },
+             { "bVisible": false, "aTargets":[5, 6, 8, 9, 10, 11, 12, 13, 15 ] },
              { "bSortable": false, "aTargets": [ 0 ] },
              { "bSearchable": "true", "aTargets":[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, ] },
              { "sSortDataType": "dom-select", "aTargets":[1] },
@@ -136,7 +136,6 @@ function fnFormatDetails ( oTable, nTr )
     var sOut = ''
     sOut += _detail_element(aData[5])  /* version */
     sOut += _detail_element(aData[6])  /* build id */
-    sOut += _detail_element(aData[7])  /* channel */
     sOut += _detail_element(aData[8])  /* locale */
     sOut += _detail_element(aData[9])  /* distribution */
     sOut += _detail_element(aData[10]) /* build target */
