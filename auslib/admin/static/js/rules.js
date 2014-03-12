@@ -134,17 +134,31 @@ function fnFormatDetails ( oTable, nTr )
 {
     var aData = oTable.fnGetData( nTr );
     var sOut = ''
-    sOut += _detail_element(aData[5])  /* version */
-    sOut += _detail_element(aData[6])  /* build id */
-    sOut += _detail_element(aData[8])  /* locale */
-    sOut += _detail_element(aData[9])  /* distribution */
-    sOut += _detail_element(aData[10]) /* build target */
-    sOut += _detail_element(aData[11]) /* os version */
-    sOut += _detail_element(aData[12]) /* dist version */
-    sOut += _detail_element(aData[13]) /* comment */
-    // sOut += _detail_element(aData[14]) /* update type */
-    sOut += _detail_element(aData[15]) /* header architecture */
-    sOut += "&nbsp;"
+    var dt_version = 5;
+    var dt_buildid = 6;
+    var dt_locale = 8;
+    var dt_disribution = 9;
+    var dt_buildtarget = 10;
+    var dt_osversion = 11;
+    var dt_dsitversion = 12;
+    var dt_comment = 13;
+    var dt_updatetype = 14;
+    var dt_headerarch = 15;
+    details = [
+        dt_version,
+        dt_buildid,
+        dt_locale,
+        dt_disribution,
+        dt_buildtarget,
+        dt_osversion,
+        dt_dsitversion,
+        dt_comment,
+        dt_updatetype,
+        dt_headerarch,
+    ]
+    details.forEach(function(element) {
+        sOut += _detail_element(aData[element])
+    });
     return sOut;
 }
 
