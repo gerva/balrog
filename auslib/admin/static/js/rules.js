@@ -21,6 +21,50 @@ $.fn.dataTableExt.afnSortData['dom-select'] = function  ( oSettings, iColumn )
                 return aData;
 };
 
+/*
+    dataTables variables
+*/
+
+var dt_mappings = 1;
+var dt_backgroundrate = 2;
+var dt_priority = 3;
+var dt_product = 4;
+var dt_version = 5;
+var dt_buildid = 6;
+var dt_channel = 7;
+var dt_locale = 8;
+var dt_disribution = 9;
+var dt_buildtarget = 10;
+var dt_osversion = 11;
+var dt_dsitversion = 12;
+var dt_comment = 13;
+var dt_updatetype = 14;
+var dt_headerarch = 15;
+
+var dt_details = [
+    dt_version,
+    dt_buildid,
+    dt_locale,
+    dt_disribution,
+    dt_buildtarget,
+    dt_osversion,
+    dt_dsitversion,
+    dt_comment,
+    dt_updatetype,
+    dt_headerarch,
+]
+
+var dt_main = [
+    dt_mappings,
+    dt_backgroundrate,
+    dt_priority,
+    dt_product,
+    dt_channel,
+    dt_updatetype,
+]
+
+var dt_all =$.merge(dt_main, dt_details);
+
 $(document).ready(function() {
     // Insert a 'details' column to the table
     var nCloneTh = document.createElement( 'th' );
@@ -40,12 +84,13 @@ $(document).ready(function() {
         "aoColumnDefs": [
              // The aTarget numbers refer to the columns in the dataTable on which to apply the functions
              // hide columns
-             { "bVisible": false, "aTargets":[5, 6, 8, 9, 10, 11, 12, 13, 15 ] },
+             { "bVisible": false, "aTargets": dt_details },
              { "bSortable": false, "aTargets": [ 0 ] },
-             { "bSearchable": "true", "aTargets":[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, ] },
-             { "sSortDataType": "dom-select", "aTargets":[1] },
-             { "sSortDataType": "dom-text", "aTargets":[1, 2, 3, 4, 5, 13] },
-             { "sType": "numeric", "aTargets": [2, 3] },
+             { "bSearchable": "true", "aTargets": dt_all },
+             { "sSortDataType": "dom-select", "aTargets": dt_mappings },
+             { "sSortDataType": "dom-text", "aTargets":[ 2, 3, 4, 5, 14] },
+             { "sType": "numeric", "aTargets": [ dt_backgroundrate,
+                                                 dt_priority] },
         ],
 
         "fnDrawCallback": function(){
@@ -134,29 +179,7 @@ function fnFormatDetails ( oTable, nTr )
 {
     var aData = oTable.fnGetData( nTr );
     var sOut = ''
-    var dt_version = 5;
-    var dt_buildid = 6;
-    var dt_locale = 8;
-    var dt_disribution = 9;
-    var dt_buildtarget = 10;
-    var dt_osversion = 11;
-    var dt_dsitversion = 12;
-    var dt_comment = 13;
-    var dt_updatetype = 14;
-    var dt_headerarch = 15;
-    details = [
-        dt_version,
-        dt_buildid,
-        dt_locale,
-        dt_disribution,
-        dt_buildtarget,
-        dt_osversion,
-        dt_dsitversion,
-        dt_comment,
-        dt_updatetype,
-        dt_headerarch,
-    ]
-    details.forEach(function(element) {
+    dt_details.forEach(function(element) {
         sOut += _detail_element(aData[element])
     });
     return sOut;
