@@ -136,11 +136,21 @@ $(document).ready(function() {
 
 // details
 function name_value(name, value) {
-    sOut  = '<div class="row">';
-    sOut += '<div class="col-sm-2 col-sm-offset-1"><strong>' + name + '</strong></div>';
-    sOut += '<div class="col-sm-2">(' + value + ')</div>';
-    sOut += '</div> <!-- row -->';
-    return sOut;
+    var div_row = document.createElement( 'div' );
+    $(div_row).prop('class', 'row');
+
+    var div_name = document.createElement( 'div' );
+    $(div_name).prop('class', 'col-sm-2 col-sm-offset-1');
+    div_name.innerHTML = '<strong>' + name +'</strong>'
+
+    var div_value = document.createElement( 'div' );
+    $(div_value).prop('class', 'col-sm-2');
+    div_value.innerHTML = value;
+
+    div_row.appendChild(div_name);
+    div_row.appendChild(div_value);
+
+    return $('<div>').append($(div_row).clone()).html();
 };
 
 
@@ -154,13 +164,14 @@ function generic_button(rule_id, name) {
     return button
 };
 
+// TODO onClick(), click() not working
 function button_edit(rule_id) {
     var button = generic_button(rule_id, 'edit');
     $(button).click(function() {
         submitRuleForm(rule_id);
     });
     // dom to string
-    return $('<div>').append($(button).clone()).html(); 
+    return $('<div>').append($(button).clone()).html();
 };
 
 function button_clone(rule_id) {
@@ -169,7 +180,7 @@ function button_clone(rule_id) {
         $('#rules_form'), $('#new_rule_form'), rule_id;
     });
     // dom to string
-    return $('<div>').append($(button).clone()).html(); 
+    return $('<div>').append($(button).clone()).html();
 };
 
 function button_delete(rule_id) {
@@ -179,17 +190,18 @@ function button_delete(rule_id) {
         return false;
     });
     // dom to string
-    return $('<div>').append($(button).clone()).html(); 
+    return $('<div>').append($(button).clone()).html();
 };
 
 
 function button_revision(rule_id) {
     var button = generic_button(rule_id, 'revision');
-    $(button).click(function() {
-        location.href='/rules/' + rule_id + '/revisions';
-    });
+    r_id = rule_id.replace('rule_', '');
     // dom to string
-    return $('<div>').append($(button).clone()).html(); 
+    var html = $('<div>').append($(button).clone()).html();
+    var dst = '/rules/' + r_id + '/revisions';
+    html.onclick = function () {location.href=dst;}
+    return html;
     //return "<button class='btn btn-default' type='submit' name='Revisions' value='Revisions' onclick=location.href=/rules/" + rule_id + "/revisions/' title='Revisions'/>Revisions</button>";
 };
 
