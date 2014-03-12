@@ -67,11 +67,19 @@ var dt_main = [
 
 var dt_all =$.merge(dt_main, dt_details);
 
+function open_icon() {
+    return '<span class="glyphicon glyphicon-chevron-down"></span>'
+};
+
+function close_icon() {
+    return '<span class="glyphicon glyphicon-chevron-up"></span>'
+};
+
 $(document).ready(function() {
     // Insert a 'details' column to the table
     var nCloneTh = document.createElement( 'th' );
     var nCloneTd = document.createElement( 'td' );
-    nCloneTd.innerHTML = '<button type="button" class="btn btn-info"><span class="glyphicon glyphicon-chevron-down"></span></button>'
+    nCloneTd.innerHTML = '<button class="btn btn-info">' + open_icon() + '</button>';
     // insert details open/close arrow and header (before Mappings)
     $('#rules_table thead tr').each( function () {
         this.insertBefore( nCloneTh, this.childNodes[0] );
@@ -84,12 +92,12 @@ $(document).ready(function() {
     var oTable = $('#rules_table').dataTable({
         "aoColumnDefs": [
              // The aTarget numbers refer to the columns in the dataTable on which to apply the functions
-             // hide columns
+             // hide details
              { "bVisible": false, "aTargets": dt_details },
              { "bSortable": false, "aTargets": [ 0 ] },
              { "bSearchable": "true", "aTargets": dt_all },
-             { "sSortDataType": "dom-select", "aTargets": [ dt_mappings ] },
-             { "sSortDataType": "dom-text", "aTargets":[ 2, 3, 4, 5, 14] },
+//             { "sSortDataType": "dom-select", "aTargets": [ dt_mappings ] },
+//             { "sSortDataType": "dom-text", "aTargets":[ 1, 2, 3, 4, 5, 14] },
              { "sType": "numeric", "aTargets": [ dt_backgroundrate,
                                                  dt_priority] },
         ],
@@ -116,7 +124,7 @@ $(document).ready(function() {
         {
             /* This row is already open - close it */
             $(this).removeClass( less ).addClass( more )
-            this.innerHTML = '<span class="glyphicon glyphicon-chevron-down"></span>'
+            this.innerHTML = open_icon();
             oTable.fnClose( nTr );
         }
         else
@@ -126,7 +134,7 @@ $(document).ready(function() {
             // TODO use id
             /* Open this row */
             $(this).removeClass( more ).addClass( less )
-            this.innerHTML = '<span class="glyphicon glyphicon-chevron-up"></span>'
+            this.innerHTML = close_icon();
             oTable.fnOpen( nTr, fnFormatDetails(oTable, nTr), 'details' );
             }
         }
