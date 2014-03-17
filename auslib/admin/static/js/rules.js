@@ -234,18 +234,18 @@ function get_data(nTr) {
         'product': $( '#product_r' + id ).html(),
         'channel': $( '#channel_r' + id ).html(),
         'comment': $( '#comment_r' + id ).html(),
-        // invisible columns
-        'version': $( '[id="rule_' + id + '_version"]' ).html(),
-        'buildid': $( '[id="rule_' + id + '_buildid"]' ).html(),
-        'locale': $( '[id="rule_' + id + '_locale"]' ).html(),
+        // invisible columns - details
+        'version': $( '[id="rule_' + id + '_version"]' ).val(),
+        'buildid': $( '[id="rule_' + id + '_buildid"]' ).val(),
+        'locale': $( '[id="rule_' + id + '_locale"]' ).val(),
         'distribution': $( '[id="rule_' + id + '_distribution"]' ).val(),
-        'buildtarget': $( '[id="rule_' + id + '_buildtarget"]' ).val(),
-        'osversion': $( '[id="rule_' + id + '_osversion"]' ).val(),
-        'distversion': $( '[id="rule_' + id + '_distversion"]' ).val(),
+        'buildtarget':  $( '[id="rule_' + id + '_buildtarget"]' ).val(),
+        'osversion':    $( '[id="rule_' + id + '_osversion"]' ).val(),
+        'distversion':  $( '[id="rule_' + id + '_distversion"]' ).val(),
         'headerarchitecture': $( '[id="rule_' + id + '_headerarchitecture"]' ).val(),
-        'versiondata': $( '[id="rule_' + id + '_versiondata"]' ).val(),
+        'versiondata':  $( '[id="rule_' + id + '_versiondata"]' ).val(),
+        'token':        $( '[id="' + id + '-csrf_token"]' ).val(),
     };
-    data['token'] = $( '[id="' + id + '-csrf_token"]' ).val();
     return data;
 };
 
