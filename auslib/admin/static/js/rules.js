@@ -430,6 +430,11 @@ function cloneRule(ruleForm, newRuleForm, ruleId){
 
 function activate_buttons() {
 
+    function get_rule_id( button ) {
+        var button_id = $( this ).attr('id');
+        return button_id.split('_')[1];
+    };
+
     // edit
     $( ":button[id$='_edit']" ).click(function() {
         alert('edit');
@@ -451,7 +456,8 @@ function activate_buttons() {
         button_id = button_id.replace('_revision', '');
         button_id = button_id.replace('rule_', '');
         $( this ).click(function() {
-            location.href('/rules/' + button_id + '/revisions' );
+            window.location = '/rules/' + button_id + '/revisions/' ;
+            return false;
         });
     });
 };
