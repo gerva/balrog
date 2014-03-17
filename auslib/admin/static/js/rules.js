@@ -136,6 +136,7 @@ $(document).ready(function() {
             $(this).removeClass( more ).addClass( less )
             this.innerHTML = close_icon();
             oTable.fnOpen( nTr, fnFormatDetails(oTable, nTr), 'details' );
+            activate_buttons();
             }
         }
     } );
@@ -160,9 +161,9 @@ function detail_item(name, value) {
     return div_row
 };
 
-
 function generic_button(rule_id, name) {
     var button = document.createElement( 'button' );
+    $(button).attr('id', rule_id + '_' + name );
     $(button).prop('class', 'btn btn-default');
     $(button).attr('type', 'submit');
     $(button).attr('name', name);
@@ -171,7 +172,6 @@ function generic_button(rule_id, name) {
     return button
 };
 
-// TODO onClick(), click() not working
 function button_edit(rule_id) {
     return generic_button(rule_id, 'edit');
 };
@@ -427,3 +427,32 @@ function cloneRule(ruleForm, newRuleForm, ruleId){
     $('[name*=new_rule-update_type]', newRuleForm).val($('[name='+ruleId+'-update_type]', ruleForm).val());
     $('[name*=new_rule-header_arch]', newRuleForm).val($('[name='+ruleId+'-header_arch]', ruleForm).val());
 }
+
+function activate_buttons() {
+
+    // edit
+    $( ":button[id$='_edit']" ).click(function() {
+        alert('edit');
+    });
+
+    // clone
+    $( ":button[id$='_clone']" ).click(function() {
+        alert('clone');
+    });
+
+    // delete
+    $( ":button[id$='_delete']" ).click(function() {
+        alert('delete');
+    });
+
+    // revision
+    $( ":button[id$='_revision']" ).each(function() {
+        var button_id = $( this ).attr('id');
+        button_id = button_id.replace('_revision', '');
+        button_id = button_id.replace('rule_', '');
+        $( this ).click(function() {
+            location.href('/rules/' + button_id + '/revisions' );
+        });
+    });
+};
+
