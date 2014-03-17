@@ -18,3 +18,8 @@
 {%- set version_data = row.data_version %}
 {%- endif %}
 <td id='version_data' name='versiondata{{ suffix }}'>{{ data_version }}</td>
+{#
+{%- for e in form.hidden_tag() %}
+{{ e }}
+{% endfor %}
+#}
