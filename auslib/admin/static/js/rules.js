@@ -459,12 +459,12 @@ function cloneRule(ruleForm, newRuleForm, ruleId){
 function activate_buttons(nTr) {
     // edit
     $( ":button[id$='_edit']" ).click(function() {
-        alert('edit');
+        alert('edit: not implemented yet');
     });
 
     // clone
     $( ":button[id$='_clone']" ).click(function() {
-        alert('clone');
+        alert('clone: not implemented yet');
     });
 
     // delete
