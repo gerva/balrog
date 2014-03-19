@@ -180,10 +180,6 @@ function button_edit(rule_id) {
     return generic_button(rule_id, 'edit');
 };
 
-function button_clone(rule_id) {
-    return generic_button(rule_id, 'clone');
-};
-
 function button_delete(rule_id, versiondata, csrf_token) {
     return generic_button(rule_id, 'delete');
 };
@@ -214,7 +210,6 @@ function fnFormatDetails ( oTable, nTr )
     var buttons = document.createElement( 'div' );
     $(buttons).prop('class', 'row col-sm-offset-1');
     buttons.appendChild( button_edit(rule_id) );
-    buttons.appendChild( button_clone(rule_id) );
     buttons.appendChild( button_delete(rule_id) );
     buttons.appendChild( button_revision(rule_id) );
     details.appendChild( buttons );
@@ -460,11 +455,6 @@ function activate_buttons(nTr) {
     // edit
     $( ":button[id$='_edit']" ).click(function() {
         alert('edit: not implemented yet');
-    });
-
-    // clone
-    $( ":button[id$='_clone']" ).click(function() {
-        alert('clone: not implemented yet');
     });
 
     // delete
