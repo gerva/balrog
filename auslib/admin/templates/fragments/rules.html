@@ -1,7 +1,7 @@
 {% if rules %}
 <div class="container">
 <div class="table-responsive">
-<!-- <form id='rules_form'> -->
+<form id='rules_form'>
 <table id='rules_table' class="table table-condensed">
     <thead> <tr>
         <th>Mapping</th>            <!-- 1 -->
@@ -29,18 +29,11 @@
       {%- set suffix = '_r'~rule_id %}
       <tr id='rule_{{ rule_id }}'>
         {%- include 'fragments/rule_form_row.html' %}
- <td>
-  <form id='rules_form_{{rule_id}}'>
-   {{ form.hidden_tag() }}
-  </form>
- </td>
-</tr>
+      </tr>
       {%- endfor %}
     </tbody>
 </table>
-<!-- </form> -->
-<!--
--->
+</form>
 </div>
 </div>
 {% endif %}

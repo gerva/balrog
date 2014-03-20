@@ -81,7 +81,7 @@ $(document).ready(function() {
     // Insert a 'details' column to the table
     var nCloneTh = document.createElement( 'th' );
     var nCloneTd = document.createElement( 'td' );
-    nCloneTd.innerHTML = '<button class="btn btn-info">' + open_icon() + '</button>';
+    nCloneTd.innerHTML = '<button class="btn btn-info" type="button">' + open_icon() + '</button>';
     // insert details open/close arrow and header (before Mappings)
     $('#rules_table thead tr').each( function () {
         this.insertBefore( nCloneTh, this.childNodes[0] );
@@ -204,7 +204,7 @@ function fnFormatDetails ( oTable, nTr )
     details.appendChild( detail_item(rule_id, 'Dist Version', aData[12]) );
     details.appendChild( detail_item(rule_id, 'Header Architecture', aData[15]) );
     details.appendChild( detail_item(rule_id, 'Version Data', aData[16]) );
-    details.appendChild( detail_item(rule_id, 'token', aData[17]) );
+//   details.appendChild( detail_item(rule_id, 'token', aData[17]) );
     // buttons
     var aaaa = aData[17];
     var buttons = document.createElement( 'div' );
