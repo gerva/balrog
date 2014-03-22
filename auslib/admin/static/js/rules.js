@@ -147,22 +147,42 @@ $(document).ready(function() {
 
 // details
 function detail_item(id, name, value) {
-    var div_row = document.createElement( 'div' );
-    $(div_row).prop('class', 'row');
+    "use strict";
+    // label
+    var label = document.createElement( 'label' );
+    var element_id = id + '_' + name.toLowerCase().replace(' ', '');
+    $(label).attr('for', element_id);
+    $(label).prop('class', 'col-sm-3 control-label');
+    $(label).text(name);
 
-    var div_name = document.createElement( 'div' );
-    $(div_name).prop('class', 'col-sm-2 col-sm-offset-1');
-    $(div_name).attr('id', id + '_' + name.toLowerCase().replace(' ', ''));
-    $(div_name).attr('value', value);
-    div_name.innerHTML = '<strong>' + name +'</strong>'
+    // div for input
+    var div_input = document.createElement( 'div' );
+    $(div_input).prop('class', 'col-sm-6');
 
-    var div_value = document.createElement( 'div' );
-    $(div_value).prop('class', 'col-sm-2');
-    div_value.innerHTML = value;
+    // input
+    var input = document.createElement( 'input' );
+    $(input).attr('type', 'text');
+    $(input).prop('class', 'form-control');
+    $(input).attr('id', element_id);
+    $(input).attr('value', value);
 
-    div_row.appendChild(div_name);
-    div_row.appendChild(div_value);
-    return div_row
+    // attach input to div_input
+    div_input.appendChild(input);
+
+    // form-group
+    var form_group = document.createElement( 'div' );
+    $(form_group).prop('class', 'form-group col-sm-10');
+
+    // attach label and div_input to form_group
+    form_group.appendChild(label);
+    form_group.appendChild(div_input);
+    return form_group;
+
+    // remove me, just an exepriment
+    var row = document.createElement( 'div' );
+    $(row).prop('class', 'row');
+    row.appendChild(form_group);
+    return row;
 };
 
 function generic_button(rule_id, name) {
@@ -170,7 +190,7 @@ function generic_button(rule_id, name) {
     $(button).attr('id', rule_id + '_' + name );
     $(button).prop('class', 'btn btn-default');
     $(button).attr('type', 'submit');
-    $(button).attr('name', name);
+    //$(button).attr('name', name);
     $(button).attr('title', name);
     $(button).html(name);
     return button
@@ -204,16 +224,15 @@ function fnFormatDetails ( oTable, nTr )
     details.appendChild( detail_item(rule_id, 'Dist Version', aData[12]) );
     details.appendChild( detail_item(rule_id, 'Header Architecture', aData[15]) );
     details.appendChild( detail_item(rule_id, 'Version Data', aData[16]) );
-//   details.appendChild( detail_item(rule_id, 'token', aData[17]) );
     // buttons
-    var aaaa = aData[17];
     var buttons = document.createElement( 'div' );
-    $(buttons).prop('class', 'row col-sm-offset-1');
+    $(buttons).prop('class', 'btn-group col-sm-offset-2 col-sm-10');
     buttons.appendChild( button_edit(rule_id) );
     buttons.appendChild( button_delete(rule_id) );
     buttons.appendChild( button_revision(rule_id) );
     details.appendChild( buttons );
-    return $('<div>').append($(details).clone()).html();
+    return $(details).clone().html();
+    //return $('<div>').append($(details).clone()).html();
 };
 
 

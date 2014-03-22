@@ -1,39 +1,42 @@
 {% if rules %}
 <div class="container">
-<div class="table-responsive">
-<form id='rules_form'>
-<table id='rules_table' class="table table-condensed">
-    <thead> <tr>
-        <th>Mapping</th>            <!-- 1 -->
-        <th>Background Rate</th>    <!-- 2 -->
-        <th>Priority</th>           <!-- 3 -->
-        <th>Product</th>            <!-- 4 -->
-        <th>Version</th>            <!-- 5 -->
-        <th>Build ID</th>           <!-- 6 -->
-        <th>Channel</th>            <!-- 7 -->
-        <th>Locale</th>             <!-- 8 -->
-        <th>Distribution</th>       <!-- 9 -->
-        <th>Build Target</th>       <!-- 10 -->
-        <th>OS Version</th>         <!-- 11 -->
-        <th>Dist Version</th>       <!-- 12 -->
-        <th>Comment</th>            <!-- 13 -->
-        <th>Update Type</th>        <!-- 14 -->
-        <th>Header Architecture</th><!-- 15 -->
-        <th>Version Data</th>       <!-- 16 -->
-        <th>csfr_token</th>         <!-- 17 -->
-    </tr></thead>
-    <tbody>
-      {%- for row in rules %}
-      {%- set rule_id = row['rule_id'] %}
-      {%- set form = forms[rule_id] %}
-      {%- set suffix = '_r'~rule_id %}
-      <tr id='rule_{{ rule_id }}'>
-        {%- include 'fragments/rule_form_row.html' %}
-      </tr>
-      {%- endfor %}
-    </tbody>
+<form id="rules_form" role="form" class="form-horizontal">
+<table id="rules_table" class="table table-condensed">
+ <thead>
+  <tr>
+   <th>Mapping</th>            <!-- 1 -->
+   <th>Background Rate</th>    <!-- 2 -->
+   <th>Priority</th>           <!-- 3 -->
+   <th>Product</th>            <!-- 4 -->
+   <th>Version</th>            <!-- 5 -->
+   <th>Build ID</th>           <!-- 6 -->
+   <th>Channel</th>            <!-- 7 -->
+   <th>Locale</th>             <!-- 8 -->
+   <th>Distribution</th>       <!-- 9 -->
+   <th>Build Target</th>       <!-- 10 -->
+   <th>OS Version</th>         <!-- 11 -->
+   <th>Dist Version</th>       <!-- 12 -->
+   <th>Comment</th>            <!-- 13 -->
+   <th>Update Type</th>        <!-- 14 -->
+   <th>Header Architecture</th><!-- 15 -->
+   <th>Version Data</th>       <!-- 16 -->
+   <th>csfr_token</th>         <!-- 17 -->
+  </tr>
+  </thead>
+ <tbody>
+  {%- for row in rules %}
+  {%- set rule_id = row["rule_id"] %}
+  {%- set form = forms[rule_id] %}
+  {%- set suffix = "_r"~rule_id %}
+  <tr id="rule_{{ rule_id }}">
+   {% include "fragments/rule_form_row.html" %}
+  </tr>
+  {%- endfor %}
+ </tbody>
 </table>
 </form>
+<!--
 </div>
+-->
 </div>
 {% endif %}
