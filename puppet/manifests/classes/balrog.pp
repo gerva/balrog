@@ -9,16 +9,23 @@ class balrog {
     file {
         "/etc/aus":
             ensure => directory;
-        "/etc/aus/admin.ini":
-            content => template("$PROJ_DIR/puppet/templates/admin.ini.erb");
-        "/etc/aus/balrog.ini":
-            content => template("$PROJ_DIR/puppet/templates/balrog.ini.erb");
+        "$PROJ_DIR/admin.ini":
+            content => template("$PROJ_DIR/puppet/templates/admin.ini.erb"),
+            backup => true;
+        "$PROJ_DIR/balrog.ini":
+            content => template("$PROJ_DIR/puppet/templates/balrog.ini.erb"),
+            backup => true;
         "/var/log/aus.log":
             ensure => present,
             owner => apache,
             group => apache,
             mode => 644;
         "/var/log/ausadmin.log":
+            ensure => present,
+            owner => apache,
+            group => apache,
+            mode => 644;
+        "/var/log/auscef.log":
             ensure => present,
             owner => apache,
             group => apache,
