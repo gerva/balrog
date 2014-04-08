@@ -118,7 +118,7 @@ $(document).ready(function() {
      * Note that the indicator for showing which row is open is not controlled by DataTables,
      * rather it is done here
      */
-    $('#rules_table tbody td button').live('click', function () {
+    $('#rules_table tbody td button').on('click', function () {
         var nTr = this.parentNode.parentNode;
         more = "btn-info"
         less = "btn-warning"
@@ -231,7 +231,7 @@ function fnFormatDetails ( oTable, nTr )
     buttons.appendChild( button_delete(rule_id) );
     buttons.appendChild( button_revision(rule_id) );
     details.appendChild( buttons );
-    return $(details).clone().html();
+    return $( details ).clone().html();
     //return $('<div>').append($(details).clone()).html();
 };
 
