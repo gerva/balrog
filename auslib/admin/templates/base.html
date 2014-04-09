@@ -50,9 +50,9 @@
 {% block bottom %}
 <script type='text/javascript'>var SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
 <script type='text/javascript' src='{{ url_for('static', filename='js/jquery-2.1.0.min.js') }}'></script>
+<script type='text/javascript' src='{{ url_for('static', filename='js/bootstrap.min.js') }}'></script>
 <script type='text/javascript' src='{{ url_for('static', filename='js/alertify.min.js') }}'></script>
 <script type='text/javascript' src='{{ url_for('static', filename='js/ausadmin.js') }}'></script>
-<script type='text/javascript' src='{{ url_for('static', filename='js/bootstrap.min.js') }}'></script>
 {% endblock %}
   </body>
 </html>
