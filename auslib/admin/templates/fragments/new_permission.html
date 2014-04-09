@@ -1,11 +1,21 @@
-<form id='new_permission'
+<form id='new_permission' role="form" class="form-horizontal"
       onsubmit='addNewPermission($(this), "{{ username }}", $("#{{ form.permission.id }}").val(), $("#{{ form.options.id }}").val(), $("#permissions")); return false'>
-    {{ form.permission.label()|safe }}
-    {{ form.permission()|safe }}
-    {{ form.options.label()|safe }}
-    {{ form.options()|safe }}
+ <div class="form-group">
+ {{ form.permission.label(class="col-sm-1 control-label")|safe }}
+  <div class="col-sm-6">
+   <input type="text" id="{{ form.permission.id|safe }}" class="form-control" name="{{ form.permission.name|safe }}">
+  </div> <!-- col-sm-10-->
+ </div> <!-- form-group -->
+ <div class="form-group">
+ {{ form.options.label(class="col-sm-1 control-label")|safe }}
+  <div class="col-sm-6">
+   <input type="text" id="{{ form.options.id|safe }}" class="form-control" name="{{ form.options.name|safe }}">
+  </div> <!-- col-sm-10-->
+ </div> <!-- form-group -->
 
-    <div>
-        <button type="submit" class="btn">Add</button>
+  <div class="form-group">
+    <div class="col-sm-offset-1 col-sm-10">
+      <button type="submit" class="btn btn-default">Add</button>
     </div>
+  </div>
 </form>
