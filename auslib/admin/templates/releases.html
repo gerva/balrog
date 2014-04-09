@@ -16,16 +16,18 @@
 {% if addForm %}
 <div class="hidden-sm hidden-xs">
  <h3>Add a new release: </h3>
- <form id='ReleasesForm' method='post' role="form" enctype='multipart/form-data'>
+ <form id="ReleasesForm" method="post" role="form" enctype="multipart/form-data" class="form-horizontal">
   {{ addForm.hidden_tag() }}
   {%- for item in addForm %}
    {%- if item.id in ['new_release-product',
                       'new_release-version',
                       'new_release-name'] %}
    <div class="form-group">
-    {{ item.label()|safe }}
-    <input type="text" id="{{ item.id|safe }}" class="form-control" name="{{ item.name|safe }}">
-   </div>
+    {{ item.label(class="col-sm-1 control-label")|safe }}
+    <div class="col-sm-8">
+     <input type="text" id="{{ item.id|safe }}" class="form-control" name="{{ item.name|safe }}">
+    </div> <!-- col-sm-10-->
+   </div> <!-- form-group -->
   {%- endif %}
   {%- endfor %}
   <div class="form-group">
