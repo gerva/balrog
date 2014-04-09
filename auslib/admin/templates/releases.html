@@ -12,21 +12,34 @@
 {% endblock %}
 
 {% block content %}
-    {% if addForm %}
-    <h3>Add a new release: </h3>
-    <div id='new_release'>
-        <form id='ReleasesForm' method='post' enctype='multipart/form-data'>
-            {{ addForm.hidden_tag() }}
-            {{ addForm.name.label()|safe }} {{ addForm.name|safe }}
-            {{ addForm.product.label()|safe }} {{ addForm.product|safe }}
-            {{ addForm.version.label()|safe }} {{ addForm.version|safe }}
-            {{ addForm.blob.label()|safe }} {{ addForm.blob|safe }}
-	    <div>
-    	        <button type="submit" class="btn">Submit!</button>
-	    </div>
-	</form>
-    </div>
+
+{% if addForm %}
+<div class="hidden-sm hidden-xs">
+ <h3>Add a new release: </h3>
+ <form id='ReleasesForm' method='post' role="form" enctype='multipart/form-data'>
+  {{ addForm.hidden_tag() }}
+  {%- for item in addForm %}
+   {%- if item.id in ['new_release-product',
+                      'new_release-version',
+                      'new_release-name'] %}
+   <div class="form-group">
+    {{ item.label()|safe }}
+    <input type="text" id="{{ item.id|safe }}" class="form-control" name="{{ item.name|safe }}">
+   </div>
+  {%- endif %}
+  {%- endfor %}
+  <div class="form-group">
+   <label for="new_release-blob">Data</label>
+   <span class="btn btn-file">
+    <input id="new_release-blob" name="new_release-blob" type="file">
+   </span>
+  </div>
+  <div class="form-group">
+   <button type="submit" class="btn btn-default">Submit!</button>
+  </div>
+ </form>
     {% endif %}
+</div>
 <div id='releases'>
     {% include 'fragments/releases.html' %}
 </div>
