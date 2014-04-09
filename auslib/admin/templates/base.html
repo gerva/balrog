@@ -6,47 +6,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Mozilla">
 
-    <link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='css/bootstrap.min.css') }}' />
     <style>
       body {
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
       }
     </style>
+    <link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='css/bootstrap.min.css') }}' />
+    <link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='css/bootstrap-modal.css') }}' />
     <link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='css/alertify.core.css') }}' />
     <link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='css/alertify.default.css') }}' />
     <link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='css/ausadmin.css') }}' />
     {% block head %}
     {% endblock %}
-
   </head>
-
   <body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/">{{ config.PAGE_TITLE }}</a>
-          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-              <li><a href="/rules.html">Rules</a></li>
-              <li><a href="/releases.html">Releases</a></li>
-              <li><a href="/permissions.html">Permissions</a></li>
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div>
+    <div class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="navbar-header">
+       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".aus3-navbar">
+         <span class="sr-only">Toggle navigation</span>
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">{{ config.PAGE_TITLE }}</a>
       </div>
-    </nav>
+      <div class="collapse navbar-collapse aus3-navbar">
+        <ul class="nav navbar-nav">
+          <li><a href="/rules.html">Rules</a></li>
+          <li><a href="/releases.html">Releases</a></li>
+          <li><a href="/permissions.html">Permissions</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div>
 
     <div class="{% block container_class %}container{% endblock %}">
-
-   {% block content %}{% endblock %}
-
+    {% block content %}{% endblock %}
     </div> <!-- /container -->
 
     <div id='loading' style='display:none'>
@@ -56,9 +50,9 @@
 {% block bottom %}
 <script type='text/javascript'>var SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
 <script type='text/javascript' src='{{ url_for('static', filename='js/jquery-2.1.0.min.js') }}'></script>
-<script type='text/javascript' src='{{ url_for('static', filename='js/bootstrap.min.js') }}'></script>
 <script type='text/javascript' src='{{ url_for('static', filename='js/alertify.min.js') }}'></script>
 <script type='text/javascript' src='{{ url_for('static', filename='js/ausadmin.js') }}'></script>
+<script type='text/javascript' src='{{ url_for('static', filename='js/bootstrap.min.js') }}'></script>
 {% endblock %}
   </body>
 </html>
