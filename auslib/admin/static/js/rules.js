@@ -152,7 +152,7 @@ function detail_item(id, name, value) {
     var label = document.createElement( 'label' );
     var element_id = id + '_' + name.toLowerCase().replace(' ', '');
     $(label).attr('for', element_id);
-    $(label).prop('class', 'col-sm-3 control-label');
+    $(label).prop('class', 'control-label');
     $(label).text(name);
 
     // div for input
@@ -167,16 +167,17 @@ function detail_item(id, name, value) {
     $(input).attr('value', value);
 
     // attach input to div_input
-    div_input.appendChild(input);
+    //div_input.appendChild(input);
 
     // form-group
     var form_group = document.createElement( 'div' );
-    $(form_group).prop('class', 'form-group col-sm-10');
+    $(form_group).prop('class', 'form-group');
 
     // attach label and div_input to form_group
-    form_group.appendChild(label);
-    form_group.appendChild(div_input);
-    return form_group;
+    form_group.appendChild( label );
+    form_group.appendChild( input );
+
+    return form_group
 
     // remove me, just an exepriment
     var row = document.createElement( 'div' );
