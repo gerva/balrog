@@ -2,9 +2,6 @@
 {% block title %}{{ super() }} - Revisions{% endblock %}
 
 {% block head %}
-<style>
-td.different { font-weight: bold; }
-</style>
 {% endblock %}
 
 {% block bottom %}
@@ -22,7 +19,7 @@ td.different { font-weight: bold; }
     {% endif %}
     <div class="form-actions">
         <button type="submit" class="btn btn-primary">Roll back to selected revision</button>
-        <button type="reset" class="btn">Cancel</button>
+        <button type="reset" class="btn btn-default">Cancel</button>
     </div>
 </form>
 {% endblock %}
