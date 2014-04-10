@@ -1,83 +1,42 @@
-<form id='new_rule_form' onsubmit='submitNewRuleForm($("#new_rule_form"), $("#rules_table")); return false;'>
-<table id='new_rule_table'>
-    <thead> <tr>
-        <th>Mapping</th>
-        <th>Background Rate</th>
-        <th>Priority</th>
-        <th>Product</th>
-        <th>Version</th>
-        <th>Build ID</th>
-        <th>Channel</th>
-        <th>Locale</th>
-        <th>Distribution</th>
-        <th>Build Target</th>
-        <th>OS Version</th>
-        <th>Dist Version</th>
-        <th>Comment</th>
-        <th>Update Type</th>
-        <th>Header Architecture</th>
-        <th>Update</th>
-    </tr></thead>
-    <tbody>
-        <tr>
-            {% set form = new_rule_form %}
-            {% set suffix = '_new' %}
-            {% include 'fragments/rule_form_row.html' %}
-            <td id='Update_new'>
-                <input type='submit' name='submit' value='Add' />
-            </td>
-        </tr>
-    </tbody>
+{% if rules %}
+<div class="container">
+<form id="rules_form" role="form" class="form-horizontal">
+<table id="rules_table" class="table table-condensed">
+ <thead>
+  <tr>
+   <th>Mapping</th>            <!-- 1 -->
+   <th>Background Rate</th>    <!-- 2 -->
+   <th>Priority</th>           <!-- 3 -->
+   <th>Product</th>            <!-- 4 -->
+   <th>Version</th>            <!-- 5 -->
+   <th>Build ID</th>           <!-- 6 -->
+   <th>Channel</th>            <!-- 7 -->
+   <th>Locale</th>             <!-- 8 -->
+   <th>Distribution</th>       <!-- 9 -->
+   <th>Build Target</th>       <!-- 10 -->
+   <th>OS Version</th>         <!-- 11 -->
+   <th>Dist Version</th>       <!-- 12 -->
+   <th>Comment</th>            <!-- 13 -->
+   <th>Update Type</th>        <!-- 14 -->
+   <th>Header Architecture</th><!-- 15 -->
+   <th>Version Data</th>       <!-- 16 -->
+   <th>csfr_token</th>         <!-- 17 -->
+  </tr>
+  </thead>
+ <tbody>
+  {%- for row in rules %}
+  {%- set rule_id = row["rule_id"] %}
+  {%- set form = forms[rule_id] %}
+  {%- set suffix = "_r"~rule_id %}
+  <tr id="rule_{{ rule_id }}">
+   {% include "fragments/rule_form_row.html" %}
+  </tr>
+  {%- endfor %}
+ </tbody>
 </table>
 </form>
-
-
-Below is a complete list of all of the rules:
-<form id='rules_form'>
-<table id='rules_table'>
-    <thead> <tr>
-        <th>Mapping</th>
-        <th>Background Rate</th>
-        <th>Priority</th>
-        <th>Product</th>
-        <th>Version</th>
-        <th>Build ID</th>
-        <th>Channel</th>
-        <th>Locale</th>
-        <th>Distribution</th>
-        <th>Build Target</th>
-        <th>OS Version</th>
-        <th>Dist Version</th>
-        <th>Comment</th>
-        <th>Update Type</th>
-        <th>Header Architecture</th>
-        <th>Update</th>
-        <th>Delete</th>
-        <th>Clone</th>
-        <th>Revisions</th>
-    </tr></thead>
-    <tbody>
-        {% for row in rules %}
-        {% set rule_id = row['rule_id'] %}
-        {% set form = forms[rule_id] %}
-        {% set suffix = '_r'~rule_id %}
-        <tr id='rule_{{ rule_id }}'>
-            {% include 'fragments/rule_form_row.html' %}
-            <td id='Update{{ suffix }}' name='Update{{ suffix }}'>
-                <input type='submit' name='submit' value='Update' onclick='submitRuleForm({{ rule_id }}); return false;' />
-            </td>
-            <td id='Delete{{ suffix }}' name='Delete{{ suffix }}'>
-                <input type='submit' name='submit' value='Delete' onclick='deleteRule({{ rule_id }}); return false;' />
-            </td>
-            <td id='Clone{{ suffix }}' name='Clone{{ suffix }}'>
-                <input type='button' name='clone' value='Clone' onclick='cloneRule($("#rules_form"), $("#new_rule_form"), "{{ rule_id }}")' />
-            </td>
-            <td id='Revisions{{ suffix }}'>
-                <input type='button' name='revisions' value='Revisions'
-                 onclick="location.href='/rules/{{ rule_id }}/revisions/'" />
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-</form>
+<!--
+</div>
+-->
+</div>
+{% endif %}

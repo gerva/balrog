@@ -21,26 +21,248 @@ $.fn.dataTableExt.afnSortData['dom-select'] = function  ( oSettings, iColumn )
                 return aData;
 };
 
-$(document).ready(function() {
+/*
+    dataTables variables
+*/
 
-    $('#rules_table').dataTable({
+var dt_mappings = 1;
+var dt_backgroundrate = 2;
+var dt_priority = 3;
+var dt_product = 4;
+var dt_version = 5;
+var dt_buildid = 6;
+var dt_channel = 7;
+var dt_locale = 8;
+var dt_disribution = 9;
+var dt_buildtarget = 10;
+var dt_osversion = 11;
+var dt_dsitversion = 12;
+var dt_comment = 13;
+var dt_updatetype = 14;
+var dt_headerarch = 15;
+var dt_versiondata = 16;
+var dt_csrftoken = 17;
+
+var dt_details = [
+    dt_version,
+    dt_buildid,
+    dt_locale,
+    dt_disribution,
+    dt_buildtarget,
+    dt_osversion,
+    dt_dsitversion,
+    dt_updatetype,
+    dt_headerarch,
+    dt_versiondata,
+    dt_csrftoken,
+]
+
+var dt_main = [
+    dt_mappings,
+    dt_backgroundrate,
+    dt_priority,
+    dt_product,
+    dt_channel,
+    dt_updatetype,
+    dt_comment,
+]
+
+var dt_all =$.merge(dt_main, dt_details);
+
+function open_icon() {
+    return '<span class="glyphicon glyphicon-chevron-down"></span>'
+};
+
+function close_icon() {
+    return '<span class="glyphicon glyphicon-chevron-up"></span>'
+};
+
+$(document).ready(function() {
+    // Insert a 'details' column to the table
+    var nCloneTh = document.createElement( 'th' );
+    var nCloneTd = document.createElement( 'td' );
+    nCloneTd.innerHTML = '<button class="btn btn-info" type="button">' + open_icon() + '</button>';
+    // insert details open/close arrow and header (before Mappings)
+    $('#rules_table thead tr').each( function () {
+        this.insertBefore( nCloneTh, this.childNodes[0] );
+    } );
+
+    $('#rules_table tbody tr').each( function () {
+        this.insertBefore(  nCloneTd.cloneNode( true ), this.childNodes[0] );
+    } );
+
+    var oTable = $('#rules_table').dataTable({
         "aoColumnDefs": [
              // The aTarget numbers refer to the columns in the dataTable on which to apply the functions
-             { "sSortDataType": "dom-select", "aTargets":[0] },
-             { "sSortDataType": "dom-text", "aTargets":[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] },
-             { "sType": "numeric", "aTargets": [1, 2] }
+             // hide details
+             { "bVisible": false, "aTargets": dt_details },
+             { "bSortable": false, "aTargets": [ 0 ] },
+             { "bSearchable": "true", "aTargets": dt_all },
+//             { "sSortDataType": "dom-select", "aTargets": [ dt_mappings ] },
+//             { "sSortDataType": "dom-text", "aTargets":[ 1, 2, 3, 4, 5, 14] },
+             { "sType": "numeric", "aTargets": [ dt_backgroundrate,
+                                                 dt_priority] },
         ],
-        "fnDrawCallback": function(){
-            $("select","[id*=mapping]").combobox();
-        }
+
+//        "fnDrawCallback": function(){
+//            $("select","[id*=mapping]").combobox();
+//        }
     });
 
-    $( "#toggle" ).click(function() {
-        $( "select","[id*=mapping]").toggle();
-    });
+//    $( "#toggle" ).click(function() {
+//        $( "select","[id*=mapping]").toggle();
+//    });
+
+
+    /* Add event listener for opening and closing details
+     * Note that the indicator for showing which row is open is not controlled by DataTables,
+     * rather it is done here
+     */
+    $('#rules_table tbody td button').on('click', function () {
+        var nTr = this.parentNode.parentNode;
+        more = "btn-info"
+        less = "btn-warning"
+        if ( this.className === "btn " + less )
+        {
+            /* This row is already open - close it */
+            $(this).removeClass( less ).addClass( more )
+            this.innerHTML = open_icon();
+            oTable.fnClose( nTr );
+        }
+        else
+        {
+            if ( this.className === "btn " + more ) {
+            // ^ this blocks delete/revision buttons to change their shape
+            // TODO use id
+            /* Open this row */
+            $(this).removeClass( more ).addClass( less )
+            this.innerHTML = close_icon();
+            oTable.fnOpen( nTr, fnFormatDetails(oTable, nTr), 'details' );
+            activate_buttons(nTr);
+            }
+        }
+    } );
+
 } );
 
+// details
+function detail_item(id, name, value) {
+    "use strict";
+    // label
+    var label = document.createElement( 'label' );
+    var element_id = id + '_' + name.toLowerCase().replace(' ', '');
+    $(label).attr('for', element_id);
+    $(label).prop('class', 'control-label');
+    $(label).text(name);
 
+    // div for input
+    var div_input = document.createElement( 'div' );
+    $(div_input).prop('class', 'col-sm-6');
+
+    // input
+    var input = document.createElement( 'input' );
+    $(input).attr('type', 'text');
+    $(input).prop('class', 'form-control');
+    $(input).attr('id', element_id);
+    $(input).attr('value', value);
+
+    // attach input to div_input
+    //div_input.appendChild(input);
+
+    // form-group
+    var form_group = document.createElement( 'div' );
+    $(form_group).prop('class', 'form-group');
+
+    // attach label and div_input to form_group
+    form_group.appendChild( label );
+    form_group.appendChild( input );
+
+    return form_group
+
+    // remove me, just an exepriment
+    var row = document.createElement( 'div' );
+    $(row).prop('class', 'row');
+    row.appendChild(form_group);
+    return row;
+};
+
+function generic_button(rule_id, name) {
+    var button = document.createElement( 'button' );
+    $(button).attr('id', rule_id + '_' + name );
+    $(button).prop('class', 'btn btn-default');
+    $(button).attr('type', 'submit');
+    //$(button).attr('name', name);
+    $(button).attr('title', name);
+    $(button).html(name);
+    return button
+};
+
+function button_edit(rule_id) {
+    return generic_button(rule_id, 'edit');
+};
+
+function button_delete(rule_id, versiondata, csrf_token) {
+    return generic_button(rule_id, 'delete');
+};
+
+function button_revision(rule_id) {
+    return generic_button(rule_id, 'revision');
+};
+
+// this manages the detail
+function fnFormatDetails ( oTable, nTr )
+{
+    var aData = oTable.fnGetData( nTr );
+    var rule_id = $(nTr).attr('id');
+    var details = document.createElement( 'div' );
+
+    details.appendChild( detail_item(rule_id, 'Version', aData[5]) );
+    details.appendChild( detail_item(rule_id, 'Build Id', aData[6]) );
+    details.appendChild( detail_item(rule_id, 'Locale', aData[8]) );
+    details.appendChild( detail_item(rule_id, 'Distribution', aData[9]) );
+    details.appendChild( detail_item(rule_id, 'Build Target', aData[10]) );
+    details.appendChild( detail_item(rule_id, 'OS Version', aData[11]) );
+    details.appendChild( detail_item(rule_id, 'Dist Version', aData[12]) );
+    details.appendChild( detail_item(rule_id, 'Header Architecture', aData[15]) );
+    details.appendChild( detail_item(rule_id, 'Version Data', aData[16]) );
+    // buttons
+    var buttons = document.createElement( 'div' );
+    $(buttons).prop('class', 'btn-group col-sm-offset-2 col-sm-10');
+    buttons.appendChild( button_edit(rule_id) );
+    buttons.appendChild( button_delete(rule_id) );
+    buttons.appendChild( button_revision(rule_id) );
+    details.appendChild( buttons );
+    return $( details ).clone().html();
+    //return $('<div>').append($(details).clone()).html();
+};
+
+
+function get_data(nTr) {
+    var row = $(nTr);
+    var id = row.attr('id').replace('rule_', '');
+    var token = $(nTr).next();
+    var data = {
+        // visible columns
+        'mapping': $( '#mapping_r' + id ).html(),
+        'backgroundRate': $( '#backgroundRate_r' + id ).html(),
+        'priority': $( '#priority_r' + id ).html(),
+        'product': $( '#product_r' + id ).html(),
+        'channel': $( '#channel_r' + id ).html(),
+        'comment': $( '#comment_r' + id ).html(),
+        // invisible columns - details
+        'version': $( '[id="rule_' + id + '_version"]' ).val(),
+        'buildid': $( '[id="rule_' + id + '_buildid"]' ).val(),
+        'locale': $( '[id="rule_' + id + '_locale"]' ).val(),
+        'distribution': $( '[id="rule_' + id + '_distribution"]' ).val(),
+        'buildtarget':  $( '[id="rule_' + id + '_buildtarget"]' ).val(),
+        'osversion':    $( '[id="rule_' + id + '_osversion"]' ).val(),
+        'distversion':  $( '[id="rule_' + id + '_distversion"]' ).val(),
+        'headerarchitecture': $( '[id="rule_' + id + '_headerarchitecture"]' ).val(),
+        'versiondata':  $( '[id="rule_' + id + '_versiondata"]' ).val(),
+        'token':        $( '[id="' + id + '-csrf_token"]' ).val(),
+    };
+    return data;
+};
 
 // This is a modified version of the jquery-ui combobox example:
 // http://jqueryui.com/demos/autocomplete/#combobox
@@ -181,7 +403,7 @@ function getData(prefix, ruleForm){
         'csrf_token': $('[name='+prefix+'-csrf_token]', ruleForm).val()
     };
     return data;
-}
+};
 
 function submitRuleForm(rule_id){
     var ruleForm = $('#rules_form');
@@ -194,17 +416,14 @@ function submitRuleForm(rule_id){
             $('[name='+rule_id+'-data_version]', ruleForm).val(data.new_data_version);
             alertify.success('Rule updated!');
         });
+};
 
-}
-
-function deleteRule(rule_id){
-    var ruleForm = $('#rules_form');
+function deleteRule(rule_id, versiondata, token) {
     var data = $.param({
-        'data_version': $('[name='+rule_id+'-data_version]', ruleForm).val(),
-        'csrf_token': $('[name='+rule_id+'-csrf_token]', ruleForm).val()
+        'data_version': versiondata,
+        'csrf_token': token,
     });
     var url = getRuleUrl(rule_id) + '?' + data;
-
     return $.ajax(url, {'type': 'delete', 'data': data, 'dataType': 'json'})
         .error(handleError)
         .success(function(data) {
@@ -213,7 +432,6 @@ function deleteRule(rule_id){
             table.fnDeleteRow(row);
             alertify.success('Rule deleted!');
         });
-
 }
 
 function submitNewRuleForm(ruleForm, table) {
@@ -252,3 +470,30 @@ function cloneRule(ruleForm, newRuleForm, ruleId){
     $('[name*=new_rule-update_type]', newRuleForm).val($('[name='+ruleId+'-update_type]', ruleForm).val());
     $('[name*=new_rule-header_arch]', newRuleForm).val($('[name='+ruleId+'-header_arch]', ruleForm).val());
 }
+
+function activate_buttons(nTr) {
+    // edit
+    $( ":button[id$='_edit']" ).click(function() {
+        alert('edit: not implemented yet');
+    });
+
+    // delete
+    $( ":button[id$='_delete']" ).each(function() {
+        var data = get_data(nTr);
+        var button_id = $( this ).attr('id');
+        button_id = button_id.split('_')[1];
+        $( this ).click(function() {
+            deleteRule(button_id, data['versiondata'], data['token']);
+        });
+    });
+
+    // revision
+    $( ":button[id$='_revision']" ).each(function() {
+        var button_id = $( this ).attr('id');
+        button_id = button_id.split('_')[1];
+        $( this ).click(function() {
+            window.location = '/rules/' + button_id + '/revisions/' ;
+            return false;
+        });
+    });
+};

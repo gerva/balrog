@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block title %}{{ super() }} - Rules{% endblock %}
 {% block head %}
-<link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='css/jquery.dataTables.css') }}' />
-<link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='css/smoothness/jquery-ui-1.9.2.custom.min.css') }}' />
+<!--<link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='css/smoothness/jquery-ui-1.9.2.custom.min.css') }}' />-->
+<link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='css/dataTables.bootstrap.css') }}' />
 <style>
     .ui-button { margin-left: -1px; }
     .ui-button-icon-only .ui-button-text { padding: 0.35em; }
@@ -14,14 +14,28 @@
 {{ super() }}
 <script type='text/javascript' src='{{ url_for('static', filename='js/jquery.dataTables.min.js') }}'></script>
 <script type='text/javascript' src='{{ url_for('static', filename='js/jquery.dataTables.fnAddTr.js') }}'></script>
+<!--
 <script type='text/javascript' src='{{ url_for('static', filename='js/jquery-ui-1.9.2.custom.min.js') }}'></script>
+-->
+<script type='text/javascript' src='{{ url_for('static', filename='js/dataTables.bootstrap.js') }}'></script>
 <script type='text/javascript' src='{{ url_for('static', filename='js/rules.js') }}'></script>
 {% endblock %}
 
 {% block container_class %}container-fluid{% endblock %}
 
 {% block content %}
-<div id='rules'>
+<ul class="nav nav-tabs" id="rules_tab">
+    <li class="active"><a href="#add_rule" data-toggle="tab">Add a new Rule</a></li>
+    <li><a href="#rules" data-toggle="tab">View/Edit Rules</a></li>
+</ul>
+<div id='rules_view' class="tab-content">
+ <div class="tab-pane active" id="add_rule">
+    &nbsp;
+    {% include 'fragments/add_rule.html' %}
+</div>
+ <div class="tab-pane" id="rules">
+    &nbsp;
     {% include 'fragments/rules.html' %}
 </div>
+</div><!-- tab-content -->
 {% endblock %}
