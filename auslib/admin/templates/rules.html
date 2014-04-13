@@ -2,7 +2,9 @@
 {% block title %}{{ super() }} - Rules{% endblock %}
 {% block head %}
 <!--<link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='css/smoothness/jquery-ui-1.9.2.custom.min.css') }}' />-->
+<!--
 <link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='css/dataTables.bootstrap.css') }}' />
+-->
 <style>
     .ui-button { margin-left: -1px; }
     .ui-button-icon-only .ui-button-text { padding: 0.35em; }
@@ -30,11 +32,11 @@
 </ul>
 <div id='rules_view' class="tab-content">
  <div class="tab-pane active" id="add_rule">
-    &nbsp;
+    <div class="spacer10"></div>
     {% include 'fragments/add_rule.html' %}
 </div>
  <div class="tab-pane" id="rules">
-    &nbsp;
+    <div class="spacer10"></div>
     {% include 'fragments/rules.html' %}
 </div>
 </div><!-- tab-content -->
