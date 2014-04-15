@@ -98,12 +98,11 @@ $(document).ready(function() {
              { "bVisible": false, "aTargets": dt_details },
              { "bSortable": false, "aTargets": [ 0 ] },
              { "bSearchable": "true", "aTargets": dt_all },
-//             { "sSortDataType": "dom-select", "aTargets": [ dt_mappings ] },
-//             { "sSortDataType": "dom-text", "aTargets":[ 1, 2, 3, 4, 5, 14] },
+             { "sSortDataType": "dom-select", "aTargets": [ dt_mappings ] },
+             { "sSortDataType": "dom-text", "aTargets": [1] },
              { "sType": "numeric", "aTargets": [ dt_backgroundrate,
                                                  dt_priority] },
         ],
-
 //        "fnDrawCallback": function(){
 //            $("select","[id*=mapping]").combobox();
 //        }
@@ -111,7 +110,7 @@ $(document).ready(function() {
 
 //    $( "#toggle" ).click(function() {
 //        $( "select","[id*=mapping]").toggle();
-//    });
+///    });
 
 
     /* Add event listener for opening and closing details
@@ -124,7 +123,7 @@ $(document).ready(function() {
         less = "btn-warning"
         if ( this.className === "btn " + less )
         {
-            /* This row is already open - close it */
+            // This row is already open - close it
             $(this).removeClass( less ).addClass( more )
             this.innerHTML = open_icon();
             oTable.fnClose( nTr );
@@ -134,7 +133,7 @@ $(document).ready(function() {
             if ( this.className === "btn " + more ) {
             // ^ this blocks delete/revision buttons to change their shape
             // TODO use id
-            /* Open this row */
+            // Open this row
             $(this).removeClass( more ).addClass( less )
             this.innerHTML = close_icon();
             oTable.fnOpen( nTr, fnFormatDetails(oTable, nTr), 'details' );
@@ -142,7 +141,6 @@ $(document).ready(function() {
             }
         }
     } );
-
 } );
 
 // details
@@ -151,39 +149,40 @@ function detail_item(id, name, value) {
     // label
     var label = document.createElement( 'label' );
     var element_id = id + '_' + name.toLowerCase().replace(' ', '');
-    $(label).attr('for', element_id);
-    $(label).prop('class', 'control-label');
-    $(label).text(name);
+    if ( value == 'None' ) {
+        value = '';
+    }
+    var div = document.createElement( 'div' );
+    $( div ).prop('class', 'col-sm-10');
+
+    $( label ).attr('for', element_id);
+    $( label ).prop('class', 'control-label col-sm-2');
+    $( label ).text(name);
 
     // div for input
     var div_input = document.createElement( 'div' );
-    $(div_input).prop('class', 'col-sm-6');
+    $( div_input ).prop('class', 'col-sm-8');
 
     // input
     var input = document.createElement( 'input' );
-    $(input).attr('type', 'text');
-    $(input).prop('class', 'form-control');
-    $(input).attr('id', element_id);
-    $(input).attr('value', value);
+    $( input ).attr('type', 'text');
+    $( input ).prop('class', 'form-control');
+    $( input ).attr('id', element_id);
+    $( input ).attr('value', value);
 
     // attach input to div_input
-    //div_input.appendChild(input);
+    div_input.appendChild(input);
 
     // form-group
     var form_group = document.createElement( 'div' );
-    $(form_group).prop('class', 'form-group');
+    $( form_group ).prop('class', 'form-group');
 
     // attach label and div_input to form_group
     form_group.appendChild( label );
-    form_group.appendChild( input );
+    form_group.appendChild( div_input );
 
-    return form_group
-
-    // remove me, just an exepriment
-    var row = document.createElement( 'div' );
-    $(row).prop('class', 'row');
-    row.appendChild(form_group);
-    return row;
+    div.appendChild( form_group );
+    return div;
 };
 
 function generic_button(rule_id, name) {
@@ -216,6 +215,11 @@ function fnFormatDetails ( oTable, nTr )
     var rule_id = $(nTr).attr('id');
     var details = document.createElement( 'div' );
 
+    var div_space_top = document.createElement( 'div' );
+    $( div_space_top ).prop('class', 'spacer10');
+    var div_space_bottom = div_space_top.cloneNode( true );
+
+    details.appendChild( div_space_top );
     details.appendChild( detail_item(rule_id, 'Version', aData[5]) );
     details.appendChild( detail_item(rule_id, 'Build Id', aData[6]) );
     details.appendChild( detail_item(rule_id, 'Locale', aData[8]) );
@@ -232,6 +236,7 @@ function fnFormatDetails ( oTable, nTr )
     buttons.appendChild( button_delete(rule_id) );
     buttons.appendChild( button_revision(rule_id) );
     details.appendChild( buttons );
+    details.appendChild( div_space_bottom );
     return $( details ).clone().html();
     //return $('<div>').append($(details).clone()).html();
 };
@@ -268,6 +273,7 @@ function get_data(nTr) {
 // http://jqueryui.com/demos/autocomplete/#combobox
 //
 (function( $ ) {
+    return;
     $.widget( "ui.combobox", {
         _create: function() {
             var self = this,
