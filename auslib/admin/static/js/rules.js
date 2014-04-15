@@ -51,7 +51,6 @@ var dt_details = [
     dt_buildtarget,
     dt_osversion,
     dt_dsitversion,
-    dt_updatetype,
     dt_headerarch,
     dt_versiondata,
     dt_csrftoken,
@@ -67,8 +66,9 @@ var dt_main = [
     dt_comment,
 ]
 
-var dt_all =$.merge(dt_main, dt_details);
-
+var dt_all = $.merge(dt_main, dt_details).sort(function(a,b){return a-b});
+dt_all = dt_all
+console.log(dt_all);
 function open_icon() {
     return '<span class="glyphicon glyphicon-chevron-down"></span>'
 };
@@ -81,7 +81,7 @@ $(document).ready(function() {
     // Insert a 'details' column to the table
     var nCloneTh = document.createElement( 'th' );
     var nCloneTd = document.createElement( 'td' );
-    nCloneTd.innerHTML = '<button class="btn btn-info" type="button">' + open_icon() + '</button>';
+    nCloneTd.innerHTML = '<button class="btn btn-default" type="button">' + open_icon() + '</button>';
     // insert details open/close arrow and header (before Mappings)
     $('#rules_table thead tr').each( function () {
         this.insertBefore( nCloneTh, this.childNodes[0] );
@@ -98,8 +98,8 @@ $(document).ready(function() {
              { "bVisible": false, "aTargets": dt_details },
              { "bSortable": false, "aTargets": [ 0 ] },
              { "bSearchable": "true", "aTargets": dt_all },
-             { "sSortDataType": "dom-select", "aTargets": [ dt_mappings ] },
-             { "sSortDataType": "dom-text", "aTargets": [1] },
+//             { "sSortDataType": "dom-select", "aTargets": [ dt_mappings ] },
+//             { "sSortDataType": "dom-text", "aTargets": [ dt_main ]  },
              { "sType": "numeric", "aTargets": [ dt_backgroundrate,
                                                  dt_priority] },
         ],
@@ -117,9 +117,9 @@ $(document).ready(function() {
      * Note that the indicator for showing which row is open is not controlled by DataTables,
      * rather it is done here
      */
-    $('#rules_table tbody td button').on('click', function () {
+    $('#rules_table tbody').on('click', 'button', function () {
         var nTr = this.parentNode.parentNode;
-        more = "btn-info"
+        more = "btn-default"
         less = "btn-warning"
         if ( this.className === "btn " + less )
         {
@@ -142,7 +142,6 @@ $(document).ready(function() {
         }
     } );
 } );
-
 // details
 function detail_item(id, name, value) {
     "use strict";
