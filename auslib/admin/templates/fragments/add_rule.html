@@ -1,0 +1,48 @@
+<form class="form-horizontal" role="form" id="new_rule_form" onsubmit='submitNewRuleForm($("#new_rule_form"), $("#rules_table")); return false;'>
+<!--
+        <th>Mapping</th>
+        <th>Background Rate</th>
+        <th>Priority</th>
+        <th>Product</th>
+        <th>Version</th>
+        <th>Build ID</th>
+        <th>Channel</th>
+        <th>Locale</th>
+        <th>Distribution</th>
+        <th>Build Target</th>
+        <th>OS Version</th>
+        <th>Dist Version</th>
+        <th>Comment</th>
+        <th>Update Type</th>
+        <th>Header Architecture</th>
+        <th>Update</th>
+-->
+{{ new_rule_form.hidden_tag() }}
+{%- for item in [ "mapping",
+                  "backgroundRate",
+                  "priority",
+                  "product",
+                  "version",
+                  "build_id",
+                  "channel",
+                  "locale",
+                  "distribution",
+                  "build_target",
+                  "os_version",
+                  "dist_version",
+                  "comment",
+                  "update_type",
+                  "header_arch",
+                  "update_type"] %}
+  {%- set element = new_rule_form[item] %}
+  <div class="form-group">
+    {{ element.label(class="col-sm-2 control-label")|safe }}
+    <div class="col-sm-6">
+      <input type="text" id="{{ element.id|safe }}_new" name="{{ element.id|safe }}_new" class="form-control">
+     </div>
+  </div>
+{%- endfor %}
+   <div class="col-sm-offset-2 col-sm-10">
+     <input class="btn btn-default" type="submit" name="submit" value="Add" />
+   </div>
+</form>
