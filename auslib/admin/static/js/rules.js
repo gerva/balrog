@@ -131,8 +131,6 @@ $(document).ready(function() {
         else
         {
             if ( this.className === "btn " + more ) {
-            // ^ this blocks delete/revision buttons to change their shape
-            // TODO use id
             // Open this row
             $(this).removeClass( more ).addClass( less )
             this.innerHTML = close_icon();
