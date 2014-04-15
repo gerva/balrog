@@ -4,21 +4,21 @@
 /* Create an array with the values of all the input boxes in a column */
 $.fn.dataTableExt.afnSortData['dom-text'] = function  ( oSettings, iColumn )
 {
-        var aData = [];
-            $( 'td:eq('+iColumn+') input', oSettings.oApi._fnGetTrNodes(oSettings) ).each( function () {
-                        aData.push( this.value );
-                            } );
-                return aData;
+    var aData = [];
+    $( 'td:eq('+iColumn+') input', oSettings.oApi._fnGetTrNodes(oSettings) ).each( function () {
+        aData.push( this.value );
+    } );
+    return aData;
 };
 
 /* Create an array with the values of all the select options in a column */
 $.fn.dataTableExt.afnSortData['dom-select'] = function  ( oSettings, iColumn )
 {
-        var aData = [];
-            $( 'td:eq('+iColumn+') select', oSettings.oApi._fnGetTrNodes(oSettings) ).each( function () {
-                        aData.push( $(this).val() );
-                            } );
-                return aData;
+    var aData = [];
+    $( 'td:eq('+iColumn+') select', oSettings.oApi._fnGetTrNodes(oSettings) ).each( function () {
+        aData.push( $(this).val() );
+   } );
+   return aData;
 };
 
 /*
@@ -67,8 +67,7 @@ var dt_main = [
 ]
 
 var dt_all = $.merge(dt_main, dt_details).sort(function(a,b){return a-b});
-dt_all = dt_all
-console.log(dt_all);
+
 function open_icon() {
     return '<span class="glyphicon glyphicon-chevron-down"></span>'
 };
@@ -205,9 +204,54 @@ function button_revision(rule_id) {
     return generic_button(rule_id, 'revision');
 };
 
+
+function resize_input_element( input_element ) {
+    var div = document.createElement( 'div' );
+    $( div ).prop('class', 'form-group');
+    div.appendChild( input_element );
+    var wrapper = document.createElement( 'div' );
+    // in a 12 columns layout, col-sm-6 is 50%
+    $( wrapper ).prop('class', 'col-sm-7');
+    wrapper.appendChild( div );
+    return wrapper
+
+}
+
+function standard_input( nTr, element_name, value) {
+    "use strict";
+    var rule_id = nTr.id
+    rule_id = rule_id.replace('rule_', '_r');
+    var element_id = document.getElementById(element_name + rule_id);
+    $( element_id ).empty();
+
+    var input = document.createElement( 'input' );
+    $( input ).prop('class', 'form-control');
+    $( input ).attr('value', value);
+
+    var wrapper = resize_input_element( input );
+    element_id.appendChild( wrapper );
+};
+
+
+function fnFormatMain( oTable, nTr ) {
+    "use strict";
+    var aData = oTable.fnGetData( nTr );
+    var rule_id = nTr.id
+    standard_input( nTr, 'backgroundRate', aData[dt_backgroundrate]);
+    standard_input( nTr, 'priority', aData[dt_priority]);
+/*
+    var bg_rate_id = document.getElementById('backgroundRate' + rule_id);
+    $( bg_rate_id ).empty();
+    var input = document.createElement( 'input' );
+    $( input ).prop('class', 'form-control col-sm-1');
+    $( input ).attr('value', aData[2]);
+    bg_rate_id.appendChild(input);
+*/
+}
+
 // this manages the detail
-function fnFormatDetails ( oTable, nTr )
-{
+function fnFormatDetails ( oTable, nTr ) {
+    fnFormatMain(oTable, nTr);
     var aData = oTable.fnGetData( nTr );
     var rule_id = $(nTr).attr('id');
     var details = document.createElement( 'div' );
