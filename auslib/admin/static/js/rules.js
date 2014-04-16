@@ -205,17 +205,15 @@ function button_revision(rule_id) {
 };
 
 
-function resize_input_element( input_element ) {
+function resize_input_element( input_element, size=7 ) {
+    "use strict";
     var div = document.createElement( 'div' );
-    $( div ).prop('class', 'form-group');
-    div.appendChild( input_element );
-    var wrapper = document.createElement( 'div' );
     // in a 12 columns layout, col-sm-6 is 50%
-    $( wrapper ).prop('class', 'col-sm-7');
-    wrapper.appendChild( div );
-    return wrapper
-
+    $( div ).prop('class', 'form-group col-sm-' + size);
+    div.appendChild( input_element );
+    return div;
 }
+
 
 function standard_input( nTr, element_name, value) {
     "use strict";
@@ -233,12 +231,40 @@ function standard_input( nTr, element_name, value) {
 };
 
 
+function option_input( nTr, element_name, options, value ) {
+    "use strict";
+    var select = document.createElement( 'select' );
+    $( select ).prop('class', 'form-control');
+    options.forEach(function(entry) {
+        var option = document.createElement( 'option' );
+//        $( option ).attr('value', entry);
+        if ( value == entry ) {
+            $( option ).attr('selected', 'selected');
+        }
+        option.innerHTML = entry;
+        select.appendChild(option);
+    });
+    var rule_id = nTr.id
+    rule_id = rule_id.replace('rule_', '_r');
+    var element_id = document.getElementById(element_name + rule_id);
+    $( element_id ).empty();
+    var wrapper = resize_input_element( select, 12 );
+    element_id.appendChild( wrapper );
+};
+
+
 function fnFormatMain( oTable, nTr ) {
     "use strict";
     var aData = oTable.fnGetData( nTr );
     var rule_id = nTr.id
     standard_input( nTr, 'backgroundRate', aData[dt_backgroundrate]);
     standard_input( nTr, 'priority', aData[dt_priority]);
+    var products = ['', 'Firefox', 'Fennec', 'Thunderbird'];
+    option_input( nTr, 'product', products, aData[dt_product]);
+    standard_input( nTr, 'channel', aData[dt_channel]);
+    standard_input( nTr, 'comment', aData[dt_comment]);
+    var update_type = [ 'minor', 'major' ];
+    option_input( nTr, 'update_type', update_type, aData[dt_updatetype]);
 /*
     var bg_rate_id = document.getElementById('backgroundRate' + rule_id);
     $( bg_rate_id ).empty();
