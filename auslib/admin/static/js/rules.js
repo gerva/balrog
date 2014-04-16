@@ -36,7 +36,7 @@ var dt_locale = 8;
 var dt_disribution = 9;
 var dt_buildtarget = 10;
 var dt_osversion = 11;
-var dt_dsitversion = 12;
+var dt_distversion = 12;
 var dt_comment = 13;
 var dt_updatetype = 14;
 var dt_headerarch = 15;
@@ -50,7 +50,7 @@ var dt_details = [
     dt_disribution,
     dt_buildtarget,
     dt_osversion,
-    dt_dsitversion,
+    dt_distversion,
     dt_headerarch,
     dt_versiondata,
     dt_csrftoken,
@@ -125,6 +125,7 @@ $(document).ready(function() {
             // This row is already open - close it
             $(this).removeClass( less ).addClass( more )
             this.innerHTML = open_icon();
+            remove_editable_fields_on_row( oTable, nTr );
             oTable.fnClose( nTr );
         }
         else
@@ -181,6 +182,7 @@ function detail_item(id, name, value) {
     return div;
 };
 
+
 function generic_button(rule_id, name) {
     var button = document.createElement( 'button' );
     $(button).attr('id', rule_id + '_' + name );
@@ -192,13 +194,16 @@ function generic_button(rule_id, name) {
     return button
 };
 
+
 function button_edit(rule_id) {
     return generic_button(rule_id, 'edit');
 };
 
+
 function button_delete(rule_id, versiondata, csrf_token) {
     return generic_button(rule_id, 'delete');
 };
+
 
 function button_revision(rule_id) {
     return generic_button(rule_id, 'revision');
@@ -253,6 +258,40 @@ function option_input( nTr, element_name, options, value ) {
 };
 
 
+function remove_editable_fields_on_row( oTable, nTr ) {
+    // removes input forms
+    "use strict";
+    var aData = oTable.fnGetData( nTr );
+    var rule_id = nTr.id;
+    rule_id = rule_id.replace('rule_', '_r');
+
+    var element = document.getElementById('backgroundRate' + rule_id);
+    $( element ).empty();
+    element.innerHTML = aData[dt_backgroundrate];
+
+    element = document.getElementById('priority' + rule_id);
+    $( element ).empty();
+    element.innerHTML = aData[dt_priority];
+
+    element = document.getElementById('product' + rule_id);
+    $( element ).empty();
+    element.innerHTML = aData[dt_product];
+
+    element = document.getElementById('channel' + rule_id);
+    $( element ).empty();
+    element.innerHTML = aData[dt_channel];
+
+    element = document.getElementById('comment' + rule_id);
+    $( element ).empty();
+    element.innerHTML = aData[dt_comment];
+
+    element = document.getElementById('update_type' + rule_id);
+    $( element ).empty();
+    element.innerHTML = aData[dt_updatetype];
+
+};
+
+
 function fnFormatMain( oTable, nTr ) {
     "use strict";
     var aData = oTable.fnGetData( nTr );
@@ -265,15 +304,8 @@ function fnFormatMain( oTable, nTr ) {
     standard_input( nTr, 'comment', aData[dt_comment]);
     var update_type = [ 'minor', 'major' ];
     option_input( nTr, 'update_type', update_type, aData[dt_updatetype]);
-/*
-    var bg_rate_id = document.getElementById('backgroundRate' + rule_id);
-    $( bg_rate_id ).empty();
-    var input = document.createElement( 'input' );
-    $( input ).prop('class', 'form-control col-sm-1');
-    $( input ).attr('value', aData[2]);
-    bg_rate_id.appendChild(input);
-*/
-}
+};
+
 
 // this manages the detail
 function fnFormatDetails ( oTable, nTr ) {
@@ -287,15 +319,15 @@ function fnFormatDetails ( oTable, nTr ) {
     var div_space_bottom = div_space_top.cloneNode( true );
 
     details.appendChild( div_space_top );
-    details.appendChild( detail_item(rule_id, 'Version', aData[5]) );
-    details.appendChild( detail_item(rule_id, 'Build Id', aData[6]) );
-    details.appendChild( detail_item(rule_id, 'Locale', aData[8]) );
-    details.appendChild( detail_item(rule_id, 'Distribution', aData[9]) );
-    details.appendChild( detail_item(rule_id, 'Build Target', aData[10]) );
-    details.appendChild( detail_item(rule_id, 'OS Version', aData[11]) );
-    details.appendChild( detail_item(rule_id, 'Dist Version', aData[12]) );
-    details.appendChild( detail_item(rule_id, 'Header Architecture', aData[15]) );
-    details.appendChild( detail_item(rule_id, 'Version Data', aData[16]) );
+    details.appendChild( detail_item( rule_id, 'Version',             aData[dt_version])     );
+    details.appendChild( detail_item( rule_id, 'Build Id',            aData[dt_buildid])     );
+    details.appendChild( detail_item( rule_id, 'Locale',              aData[dt_locale])      );
+    details.appendChild( detail_item( rule_id, 'Distribution',        aData[dt_disribution]) );
+    details.appendChild( detail_item( rule_id, 'Build Target',        aData[dt_buildtarget]) );
+    details.appendChild( detail_item( rule_id, 'OS Version',          aData[dt_osversion])   );
+    details.appendChild( detail_item( rule_id, 'Dist Version',        aData[dt_distversion]) );
+    details.appendChild( detail_item( rule_id, 'Header Architecture', aData[dt_headerarch])  );
+    details.appendChild( detail_item( rule_id, 'Version Data',        aData[dt_versiondata]) );
     // buttons
     var buttons = document.createElement( 'div' );
     $(buttons).prop('class', 'btn-group col-sm-offset-2 col-sm-10');
