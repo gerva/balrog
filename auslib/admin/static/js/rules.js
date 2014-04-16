@@ -99,12 +99,16 @@ $(document).ready(function() {
              { "bSearchable": "true", "aTargets": dt_all },
 //             { "sSortDataType": "dom-select", "aTargets": [ dt_mappings ] },
 //             { "sSortDataType": "dom-text", "aTargets": [ dt_main ]  },
-             { "sType": "numeric", "aTargets": [ dt_backgroundrate,
-                                                 dt_priority] },
+             { "sType": "numeric", "aTargets": [ dt_backgroundrate - 1 ,
+                                                 dt_priority - 1] },
+             { "sWidth": "20%", "aTargets": [dt_comment - 1, ] },
+             { "sWidth": "20%", "aTargets": [dt_channel - 1, dt_mappings - 1] },
         ],
 //        "fnDrawCallback": function(){
 //            $("select","[id*=mapping]").combobox();
 //        }
+        "aoColums": [
+        ],
     });
 
 //    $( "#toggle" ).click(function() {
@@ -214,7 +218,7 @@ function resize_input_element( input_element, size=7 ) {
     "use strict";
     var div = document.createElement( 'div' );
     // in a 12 columns layout, col-sm-6 is 50%
-    $( div ).prop('class', 'form-group col-sm-' + size);
+    $( div ).prop('class', 'form-group col-sm-12'); // + size);
     div.appendChild( input_element );
     return div;
 }
