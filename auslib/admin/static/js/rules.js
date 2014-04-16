@@ -156,7 +156,7 @@ function detail_item(id, name, value) {
     var div = document.createElement( 'div' );
     $( div ).prop('class', 'col-sm-10');
 
-    $( label ).attr('for', element_id);
+    $( label ).attr('for', 'input_' + element_id);
     $( label ).prop('class', 'control-label col-sm-2');
     $( label ).text(name);
 
@@ -168,7 +168,9 @@ function detail_item(id, name, value) {
     var input = document.createElement( 'input' );
     $( input ).attr('type', 'text');
     $( input ).prop('class', 'form-control');
-    $( input ).attr('id', 'input_' + element_id);
+    var short_id = id.replace('rule_', '_r');
+    var input_id = element_id.replace(id, '');
+    $( input ).attr('id', 'input' + input_id + short_id );
     $( input ).attr('value', value);
 
     // attach input to div_input
@@ -236,7 +238,7 @@ function standard_input( nTr, element_name, value) {
     if ( value != 'None' ) {
         $( input ).attr('value', value);
     };
-    $( input ).attr('id', 'input_' + element_name + rule_id);
+    $( input ).attr('id', 'input_' + element_name + rule_id );
 
     var wrapper = resize_input_element( input );
     element_id.appendChild( wrapper );
@@ -245,8 +247,11 @@ function standard_input( nTr, element_name, value) {
 
 function option_input( nTr, element_name, options, value ) {
     "use strict";
+    var rule_id = nTr.id
+    rule_id = rule_id.replace('rule_', '_r');
     var select = document.createElement( 'select' );
     $( select ).prop('class', 'form-control');
+    $( select ).attr('id', 'input_' + element_name + rule_id );
     options.forEach(function(entry) {
         var option = document.createElement( 'option' );
 //        $( option ).attr('value', entry);
@@ -347,33 +352,6 @@ function fnFormatDetails ( oTable, nTr ) {
     //return $('<div>').append($(details).clone()).html();
 };
 
-
-function get_data(nTr) {
-    var row = $(nTr);
-    var id = row.attr('id').replace('rule_', '');
-    var token = $(nTr).next();
-    var data = {
-        // visible columns
-        'mapping': $( '#mapping_r' + id ).html(),
-        'backgroundRate': $( '#backgroundRate_r' + id ).html(),
-        'priority': $( '#priority_r' + id ).html(),
-        'product': $( '#product_r' + id ).html(),
-        'channel': $( '#channel_r' + id ).html(),
-        'comment': $( '#comment_r' + id ).html(),
-        // invisible columns - details
-        'version': $( '[id="rule_' + id + '_version"]' ).val(),
-        'buildid': $( '[id="rule_' + id + '_buildid"]' ).val(),
-        'locale': $( '[id="rule_' + id + '_locale"]' ).val(),
-        'distribution': $( '[id="rule_' + id + '_distribution"]' ).val(),
-        'buildtarget':  $( '[id="rule_' + id + '_buildtarget"]' ).val(),
-        'osversion':    $( '[id="rule_' + id + '_osversion"]' ).val(),
-        'distversion':  $( '[id="rule_' + id + '_distversion"]' ).val(),
-        'headerarchitecture': $( '[id="rule_' + id + '_headerarchitecture"]' ).val(),
-        'versiondata':  $( '[id="rule_' + id + '_versiondata"]' ).val(),
-        'token':        $( '[id="' + id + '-csrf_token"]' ).val(),
-    };
-    return data;
-};
 
 // This is a modified version of the jquery-ui combobox example:
 // http://jqueryui.com/demos/autocomplete/#combobox
@@ -499,30 +477,28 @@ function getData( rule_id ) {
     var rule_number = rule_id.replace('_r', '');
     var data = {
         'backgroundRate': $( '#input_backgroundRate' + rule_id ).val(),
-        'mapping'       : $( '#input_mapping'      + rule_id ).val(),
+        'mapping'       : $( '#mapping'      + rule_id ).text(),
         'priority'      : $( '#input_priority'     + rule_id ).val(),
         'product'       : $( '#input_product'      + rule_id ).val(),
         'version'       : $( '#input_version'      + rule_id ).val(),
-        'build_id'      : $( '#input_build_id'     + rule_id ).val(),
+        'build_id'      : $( '#input_buildid'     + rule_id ).val(),
         'channel'       : $( '#input_channel'      + rule_id ).val(),
         'locale'        : $( '#input_locale'       + rule_id ).val(),
         'distribution'  : $( '#input_distribution' + rule_id ).val(),
-        'build_target'  : $( '#input_build_target' + rule_id ).val(),
-        'os_version'    : $( '#input_os_version'   + rule_id ).val(),
-        'dist_version'  : $( '#input_dist_version' + rule_id ).val(),
+        'build_target'  : $( '#input_buildtarget' + rule_id ).val(),
+        'os_version'    : $( '#input_osversion'   + rule_id ).val(),
+        'dist_version'  : $( '#input_distversion' + rule_id ).val(),
         'comment'       : $( '#input_comment'      + rule_id ).val(),
         'update_type'   : $( '#input_update_type'  + rule_id ).val(),
-        'header_arch'   : $( '#input_header_arch'  + rule_id ).val(),
-        'data_version'  : $( '#input_data_version' + rule_id ).val(),
-        'csrf_token'    : $( '#' + rule_number + '-csrf_token' ).val()
+        'header_arch'   : $( '#input_headerarchitecture'  + rule_id ).val(),
+        'data_version'  : $( '#input_versiondata' + rule_id ).val(),
+        'csrf_token'    : $( '#new_rule-csrf_token' ).val()
     };
     return data;
 };
 
-function submitRuleForm(rule_id){
-    var ruleForm = $('#rules_form');
+function submitRuleForm(rule_id, data){
     var url = getRuleUrl(rule_id);
-    var data = getData(rule_id, ruleForm);
 
     return $.ajax(url, {'type': 'post', 'data': data, 'dataType': 'json'})
         .error(handleError)
@@ -576,7 +552,7 @@ function activate_buttons( nTr ) {
 
     // delete
     $( ":button[id$='_delete']" ).each(function() {
-        var data = get_data(nTr);
+        var data = getData(nTr.id );
         var button_id = $( this ).attr('id');
         button_id = button_id.split('_')[1];
         $( this ).click(function() {
@@ -603,4 +579,5 @@ function edit_row( nTr ) {
     console.log('not implemented yet');
     var data = getData( rule_id );
     console.log( data );
+    submitRuleForm( nTr.id, data );
 };
