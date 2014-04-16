@@ -25,47 +25,60 @@ $.fn.dataTableExt.afnSortData['dom-select'] = function  ( oSettings, iColumn )
     dataTables variables
 */
 
-var dt_mappings = 1;
-var dt_backgroundrate = 2;
-var dt_priority = 3;
-var dt_product = 4;
-var dt_version = 5;
-var dt_buildid = 6;
-var dt_channel = 7;
-var dt_locale = 8;
-var dt_disribution = 9;
-var dt_buildtarget = 10;
-var dt_osversion = 11;
-var dt_distversion = 12;
-var dt_comment = 13;
-var dt_updatetype = 14;
-var dt_headerarch = 15;
-var dt_versiondata = 16;
-var dt_csrftoken = 17;
+var dt_mappings = { 'col': 1, 'id': 'mappings', 'type': 'combobox', };
+var dt_backgroundrate = { 'col': 2, 'id': 'backgroundRate', 'type': 'text', };
+var dt_priority = { 'col': 3, 'id': 'priority', 'type': 'text', };
+var dt_product = { 'col': 4, 'id': 'product', 'type': 'select', };
+var dt_version = { 'col': 5, 'id': 'version', 'type': 'text', };
+var dt_buildid = { 'col': 6, 'id': 'build_id', 'type': 'text', };
+var dt_channel = { 'col': 7, 'id': 'channel', 'type': 'text', };
+var dt_locale = { 'col': 8, 'id': 'locale', 'type': 'text', };
+var dt_distribution = { 'col': 9, ':id': 'distribution', 'type': 'text', };
+var dt_buildtarget = { 'col': 10, 'id': 'build_target', 'type': 'text', };
+var dt_osversion = { 'col': 11, 'id': 'os_version', 'type': 'text', };
+var dt_distversion = { 'col': 12, 'id': 'dist_version', 'type': 'text', };
+var dt_comment = { 'col': 13, 'id': 'comment', 'type': 'text', };
+var dt_updatetype = { 'col': 14, 'id': 'update_type', 'type': 'text', };
+var dt_headerarch = { 'col': 15, 'id': 'headers_architecture', 'type': 'text', };
+var dt_versiondata = { 'col': 16, 'id': 'version_data', 'type': 'text', };
+var dt_csrftoken = { 'col': 17, 'id': 'csrf_token', 'type': 'text', };
 
+dt_version.label = 'Version';
+dt_buildid.label ='Build Id';
+dt_locale.label = 'Locale';
+dt_distribution.label = 'Distribution';
+dt_buildtarget.label = 'Build Target';
+dt_osversion.label = 'OS Version';
+dt_distversion.label = 'Dist Version';
+dt_headerarch.label = 'Header Architecture';
+dt_versiondata.label = 'Version Data';
+
+// details elements
 var dt_details = [
-    dt_version,
-    dt_buildid,
-    dt_locale,
-    dt_disribution,
-    dt_buildtarget,
-    dt_osversion,
-    dt_distversion,
-    dt_headerarch,
-    dt_versiondata,
-    dt_csrftoken,
+    dt_version.col,
+    dt_buildid.col,
+    dt_locale.col,
+    dt_distribution.col,
+    dt_buildtarget.col,
+    dt_osversion.col,
+    dt_distversion.col,
+    dt_headerarch.col,
+    dt_versiondata.col,
+    dt_csrftoken.col,
 ]
 
+// main elements
 var dt_main = [
-    dt_mappings,
-    dt_backgroundrate,
-    dt_priority,
-    dt_product,
-    dt_channel,
-    dt_updatetype,
-    dt_comment,
+    dt_mappings.col,
+    dt_backgroundrate.col,
+    dt_priority.col,
+    dt_product.col,
+    dt_channel.col,
+    dt_updatetype.col,
+    dt_comment.col,
 ]
 
+// all elements
 var dt_all = $.merge(dt_main, dt_details).sort(function(a,b){return a-b});
 
 function open_icon() {
@@ -99,10 +112,10 @@ $(document).ready(function() {
              { "bSearchable": "true", "aTargets": dt_all },
 //             { "sSortDataType": "dom-select", "aTargets": [ dt_mappings ] },
 //             { "sSortDataType": "dom-text", "aTargets": [ dt_main ]  },
-             { "sType": "numeric", "aTargets": [ dt_backgroundrate - 1 ,
-                                                 dt_priority - 1] },
-             { "sWidth": "20%", "aTargets": [dt_comment - 1, ] },
-             { "sWidth": "20%", "aTargets": [dt_channel - 1, dt_mappings - 1] },
+             { "sType": "numeric", "aTargets": [ dt_backgroundrate.col - 1 ,
+                                                 dt_priority.col - 1] },
+             { "sWidth": "20%", "aTargets": [dt_comment.col - 1, ] },
+             { "sWidth": "20%", "aTargets": [dt_channel.col - 1, dt_mappings.col - 1] },
         ],
 //        "fnDrawCallback": function(){
 //            $("select","[id*=mapping]").combobox();
@@ -270,37 +283,27 @@ function option_input( nTr, element_name, options, value ) {
 };
 
 
+function reset_element(element, rule_id, value) {
+    "use strict";
+    var element = document.getElementById(element.id + rule_id);
+    $( element ).empty();
+    element.innerHTML = value;
+};
+
+
 function remove_editable_fields_on_row( oTable, nTr ) {
-    // removes input forms
+    // removes the any input fields from current row,
+    // this function is called before fnClose
     "use strict";
     var aData = oTable.fnGetData( nTr );
     var rule_id = nTr.id;
     rule_id = rule_id.replace('rule_', '_r');
 
-    var element = document.getElementById('backgroundRate' + rule_id);
-    $( element ).empty();
-    element.innerHTML = aData[dt_backgroundrate];
-
-    element = document.getElementById('priority' + rule_id);
-    $( element ).empty();
-    element.innerHTML = aData[dt_priority];
-
-    element = document.getElementById('product' + rule_id);
-    $( element ).empty();
-    element.innerHTML = aData[dt_product];
-
-    element = document.getElementById('channel' + rule_id);
-    $( element ).empty();
-    element.innerHTML = aData[dt_channel];
-
-    element = document.getElementById('comment' + rule_id);
-    $( element ).empty();
-    element.innerHTML = aData[dt_comment];
-
-    element = document.getElementById('update_type' + rule_id);
-    $( element ).empty();
-    element.innerHTML = aData[dt_updatetype];
-
+    var elements = [dt_backgroundrate, dt_priority, dt_product, dt_channel,
+                    dt_comment, dt_updatetype]
+    elements.forEach(function(element){
+        reset_element(element, rule_id, aData[element.col]);
+    });
 };
 
 
@@ -308,14 +311,14 @@ function fnFormatMain( oTable, nTr ) {
     "use strict";
     var aData = oTable.fnGetData( nTr );
     var rule_id = nTr.id
-    standard_input( nTr, 'backgroundRate', aData[dt_backgroundrate]);
-    standard_input( nTr, 'priority', aData[dt_priority]);
+    standard_input( nTr, 'backgroundRate', aData[dt_backgroundrate.col]);
+    standard_input( nTr, 'priority', aData[dt_priority.col]);
     var products = ['', 'Firefox', 'Fennec', 'Thunderbird'];
-    option_input( nTr, 'product', products, aData[dt_product]);
-    standard_input( nTr, 'channel', aData[dt_channel]);
-    standard_input( nTr, 'comment', aData[dt_comment]);
+    option_input( nTr, 'product', products, aData[dt_product.col]);
+    standard_input( nTr, 'channel', aData[dt_channel.col]);
+    standard_input( nTr, 'comment', aData[dt_comment.col]);
     var update_type = [ 'minor', 'major' ];
-    option_input( nTr, 'update_type', update_type, aData[dt_updatetype]);
+    option_input( nTr, 'update_type', update_type, aData[dt_updatetype.col]);
 };
 
 
@@ -323,7 +326,7 @@ function fnFormatMain( oTable, nTr ) {
 function fnFormatDetails ( oTable, nTr ) {
     fnFormatMain(oTable, nTr);
     var aData = oTable.fnGetData( nTr );
-    var rule_id = $(nTr).attr('id');
+    var rule_id = nTr.id;
     var details = document.createElement( 'div' );
 
     var div_space_top = document.createElement( 'div' );
@@ -331,18 +334,17 @@ function fnFormatDetails ( oTable, nTr ) {
     var div_space_bottom = div_space_top.cloneNode( true );
 
     details.appendChild( div_space_top );
-    details.appendChild( detail_item( rule_id, 'Version',             aData[dt_version])     );
-    details.appendChild( detail_item( rule_id, 'Build Id',            aData[dt_buildid])     );
-    details.appendChild( detail_item( rule_id, 'Locale',              aData[dt_locale])      );
-    details.appendChild( detail_item( rule_id, 'Distribution',        aData[dt_disribution]) );
-    details.appendChild( detail_item( rule_id, 'Build Target',        aData[dt_buildtarget]) );
-    details.appendChild( detail_item( rule_id, 'OS Version',          aData[dt_osversion])   );
-    details.appendChild( detail_item( rule_id, 'Dist Version',        aData[dt_distversion]) );
-    details.appendChild( detail_item( rule_id, 'Header Architecture', aData[dt_headerarch])  );
-    details.appendChild( detail_item( rule_id, 'Version Data',        aData[dt_versiondata]) );
+    var elements = [dt_version, dt_buildid, dt_locale, dt_distribution,
+                    dt_buildtarget, dt_osversion, dt_distversion,
+                    dt_headerarch, dt_versiondata]
+    elements.forEach(function(element) {
+        details.appendChild( detail_item( rule_id,
+                                          element.label,
+                                          aData[element.col]));
+    });
     // buttons
     var buttons = document.createElement( 'div' );
-    $(buttons).prop('class', 'btn-group col-sm-offset-2 col-sm-10');
+    $( buttons ).prop('class', 'btn-group col-sm-offset-2 col-sm-10');
     buttons.appendChild( button_edit(rule_id) );
     buttons.appendChild( button_delete(rule_id) );
     buttons.appendChild( button_revision(rule_id) );
