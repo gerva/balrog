@@ -80,7 +80,7 @@ $(document).ready(function() {
     // Insert a 'details' column to the table
     var nCloneTh = document.createElement( 'th' );
     var nCloneTd = document.createElement( 'td' );
-    nCloneTd.innerHTML = '<button class="btn btn-default" type="button">' + open_icon() + '</button>';
+    nCloneTd.innerHTML = '<button class="btn btn-default closed" type="button">' + open_icon() + '</button>';
     // insert details open/close arrow and header (before Mappings)
     $('#rules_table thead tr').each( function () {
         this.insertBefore( nCloneTh, this.childNodes[0] );
@@ -122,8 +122,8 @@ $(document).ready(function() {
      */
     $('#rules_table tbody').on('click', 'button', function () {
         var nTr = this.parentNode.parentNode;
-        more = "btn-default"
-        less = "btn-warning"
+        more = "btn-default closed"
+        less = "btn-warning opened"
         if ( this.className === "btn " + less )
         {
             // This row is already open - close it
@@ -168,7 +168,7 @@ function detail_item(id, name, value) {
     var input = document.createElement( 'input' );
     $( input ).attr('type', 'text');
     $( input ).prop('class', 'form-control');
-    $( input ).attr('id', element_id);
+    $( input ).attr('id', 'input_' + element_id);
     $( input ).attr('value', value);
 
     // attach input to div_input
@@ -233,7 +233,10 @@ function standard_input( nTr, element_name, value) {
 
     var input = document.createElement( 'input' );
     $( input ).prop('class', 'form-control');
-    $( input ).attr('value', value);
+    if ( value != 'None' ) {
+        $( input ).attr('value', value);
+    };
+    $( input ).attr('id', 'input_' + element_name + rule_id);
 
     var wrapper = resize_input_element( input );
     element_id.appendChild( wrapper );
@@ -491,25 +494,27 @@ function getRuleAPIUrl() {
     return SCRIPT_ROOT + '/rules';
 }
 
-function getData(prefix, ruleForm){
-    data = {
-        'backgroundRate': $('[name='+prefix+'-backgroundRate]', ruleForm).val(),
-        'mapping': $('[name='+prefix+'-mapping]', ruleForm).val(),
-        'priority': $('[name='+prefix+'-priority]', ruleForm).val(),
-        'product': $('[name='+prefix+'-product]', ruleForm).val(),
-        'version' : $('[name='+prefix+'-version]', ruleForm).val(),
-        'build_id' : $('[name='+prefix+'-build_id]', ruleForm).val(),
-        'channel' : $('[name='+prefix+'-channel]', ruleForm).val(),
-        'locale' : $('[name='+prefix+'-locale]', ruleForm).val(),
-        'distribution' : $('[name='+prefix+'-distribution]', ruleForm).val(),
-        'build_target' : $('[name='+prefix+'-build_target]', ruleForm).val(),
-        'os_version' : $('[name='+prefix+'-os_version]', ruleForm).val(),
-        'dist_version' : $('[name='+prefix+'-dist_version]', ruleForm).val(),
-        'comment' : $('[name='+prefix+'-comment]', ruleForm).val(),
-        'update_type' : $('[name='+prefix+'-update_type]', ruleForm).val(),
-        'header_arch' : $('[name='+prefix+'-header_arch]', ruleForm).val(),
-        'data_version': $('[name='+prefix+'-data_version]', ruleForm).val(),
-        'csrf_token': $('[name='+prefix+'-csrf_token]', ruleForm).val()
+function getData( rule_id ) {
+    "use strict";
+    var rule_number = rule_id.replace('_r', '');
+    var data = {
+        'backgroundRate': $( '#input_backgroundRate' + rule_id ).val(),
+        'mapping'       : $( '#input_mapping'      + rule_id ).val(),
+        'priority'      : $( '#input_priority'     + rule_id ).val(),
+        'product'       : $( '#input_product'      + rule_id ).val(),
+        'version'       : $( '#input_version'      + rule_id ).val(),
+        'build_id'      : $( '#input_build_id'     + rule_id ).val(),
+        'channel'       : $( '#input_channel'      + rule_id ).val(),
+        'locale'        : $( '#input_locale'       + rule_id ).val(),
+        'distribution'  : $( '#input_distribution' + rule_id ).val(),
+        'build_target'  : $( '#input_build_target' + rule_id ).val(),
+        'os_version'    : $( '#input_os_version'   + rule_id ).val(),
+        'dist_version'  : $( '#input_dist_version' + rule_id ).val(),
+        'comment'       : $( '#input_comment'      + rule_id ).val(),
+        'update_type'   : $( '#input_update_type'  + rule_id ).val(),
+        'header_arch'   : $( '#input_header_arch'  + rule_id ).val(),
+        'data_version'  : $( '#input_data_version' + rule_id ).val(),
+        'csrf_token'    : $( '#' + rule_number + '-csrf_token' ).val()
     };
     return data;
 };
@@ -562,28 +567,11 @@ function submitNewRuleForm(ruleForm, table) {
     });
 }
 
-function cloneRule(ruleForm, newRuleForm, ruleId){
-    $('[name*=new_rule-backgroundRate]', newRuleForm).val($('[name='+ruleId+'-backgroundRate]', ruleForm).val());
-    $('[name*=new_rule-mapping]', newRuleForm).combobox('newVal', $('[name='+ruleId+'-mapping]', ruleForm).val());
-    $('[name*=new_rule-priority]', newRuleForm).val($('[name='+ruleId+'-priority]', ruleForm).val());
-    $('[name*=new_rule-product]', newRuleForm).val($('[name='+ruleId+'-product]', ruleForm).val());
-    $('[name*=new_rule-version]', newRuleForm).val($('[name='+ruleId+'-version]', ruleForm).val());
-    $('[name*=new_rule-build_id]', newRuleForm).val($('[name='+ruleId+'-build_id]', ruleForm).val());
-    $('[name*=new_rule-channel]', newRuleForm).val($('[name='+ruleId+'-channel]', ruleForm).val());
-    $('[name*=new_rule-locale]', newRuleForm).val($('[name='+ruleId+'-locale]', ruleForm).val());
-    $('[name*=new_rule-distribution]', newRuleForm).val($('[name='+ruleId+'-distribution]', ruleForm).val());
-    $('[name*=new_rule-build_target]', newRuleForm).val($('[name='+ruleId+'-build_target]', ruleForm).val());
-    $('[name*=new_rule-os_version]', newRuleForm).val($('[name='+ruleId+'-os_version]', ruleForm).val());
-    $('[name*=new_rule-dist_version]', newRuleForm).val($('[name='+ruleId+'-dist_version]', ruleForm).val());
-    $('[name*=new_rule-comment]', newRuleForm).val($('[name='+ruleId+'-comment]', ruleForm).val());
-    $('[name*=new_rule-update_type]', newRuleForm).val($('[name='+ruleId+'-update_type]', ruleForm).val());
-    $('[name*=new_rule-header_arch]', newRuleForm).val($('[name='+ruleId+'-header_arch]', ruleForm).val());
-}
 
-function activate_buttons(nTr) {
+function activate_buttons( nTr ) {
     // edit
     $( ":button[id$='_edit']" ).click(function() {
-        alert('edit: not implemented yet');
+        edit_row( nTr );
     });
 
     // delete
@@ -605,4 +593,14 @@ function activate_buttons(nTr) {
             return false;
         });
     });
+};
+
+
+function edit_row( nTr ) {
+    "use strict";
+    var rule_id = nTr.id
+    rule_id = rule_id.replace('rule_', '_r');
+    console.log('not implemented yet');
+    var data = getData( rule_id );
+    console.log( data );
 };
