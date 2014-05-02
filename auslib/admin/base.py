@@ -14,13 +14,14 @@ sentry = Sentry()
 
 from auslib.admin.views.csrf import CSRFView
 from auslib.admin.views.permissions import UsersView, PermissionsView, \
-  SpecificPermissionView, PermissionsPageView, UserPermissionsPageView
+    SpecificPermissionView, PermissionsPageView, UserPermissionsPageView
 from auslib.admin.views.releases import SingleLocaleView, SingleBlobView, \
-  SingleReleaseView, ReleasesPageView, ReleaseHistoryView
+    SingleReleaseView, ReleasesPageView, ReleaseHistoryView
 from auslib.admin.views.rules import RulesPageView, RulesAPIView, \
-  SingleRuleView, RuleHistoryView
+    SingleRuleView, RuleHistoryView, MappingsView
 from auslib.admin.views.history import DiffView, FieldView
 from auslib.admin.views.index import IndexPageView, RecentChangesTableView
+
 
 @app.errorhandler(500)
 def isa(error):
@@ -30,6 +31,7 @@ def isa(error):
     log.debug("Request environment is: %s", request.environ)
     log.debug("Request headers are: %s", request.headers)
     return error
+
 
 # bug 887790: add necessary security headers
 @app.after_request
@@ -59,3 +61,4 @@ app.add_url_rule('/history/diff/<type_>/<change_id>/<field>', view_func=DiffView
 app.add_url_rule('/history/view/<type_>/<change_id>/<field>', view_func=FieldView.as_view('field'))
 app.add_url_rule('/recent_changes_table.html', view_func=RecentChangesTableView.as_view(''))
 app.add_url_rule('/', view_func=IndexPageView.as_view('index.html'))
+app.add_url_rule('/mappings', view_func=MappingsView.as_view('mappings'))
