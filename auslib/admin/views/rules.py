@@ -1,6 +1,6 @@
 import json
 
-from flask import render_template, Response, make_response, request
+from flask import render_template, Response, make_response, request, jsonify
 
 from auslib.admin.base import db
 from auslib.admin.views.base import (
@@ -84,6 +84,13 @@ class RulesAPIView(AdminView):
         rule_id = db.rules.addRule(changed_by=changed_by, what=what,
             transaction=transaction)
         return Response(status=200, response=rule_id)
+
+
+class MappingsView(AdminView):
+    """/mappings"""
+    def get(self):
+        mappings = [m['mapping'] for m in db.rules.getMappings()]
+        return jsonify({'mappings': mappings})
 
 
 class SingleRuleView(AdminView):
