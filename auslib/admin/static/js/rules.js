@@ -25,7 +25,7 @@ $.fn.dataTableExt.afnSortData['dom-select'] = function  ( oSettings, iColumn )
     dataTables variables
 */
 
-var dt_mappings = { 'col': 1, 'id': 'mappings', 'type': 'combobox', };
+var dt_mappings = { 'col': 1, 'id': 'mapping', 'type': 'combobox', };
 var dt_backgroundrate = { 'col': 2, 'id': 'backgroundRate', 'type': 'text', };
 var dt_priority = { 'col': 3, 'id': 'priority', 'type': 'text', };
 var dt_product = { 'col': 4, 'id': 'product', 'type': 'select', };
@@ -117,16 +117,17 @@ $(document).ready(function() {
              { "sWidth": "20%", "aTargets": [dt_comment.col - 1, ] },
              { "sWidth": "20%", "aTargets": [dt_channel.col - 1, dt_mappings.col - 1] },
         ],
-//        "fnDrawCallback": function(){
-//            $("select","[id*=mapping]").combobox();
-//        }
-        "aoColums": [
-        ],
+/*
+        "fnDrawCallback": function(){
+            $("select","[id*=mapping]").combobox();
+        }
+*/
     });
-
-//    $( "#toggle" ).click(function() {
-//        $( "select","[id*=mapping]").toggle();
-///    });
+/*
+    $( "#toggle" ).click(function() {
+        $( "select","[id*=mapping]").toggle();
+    });
+*/
 
 
     /* Add event listener for opening and closing details
@@ -204,12 +205,12 @@ function detail_item(id, name, value) {
 
 function generic_button(rule_id, name) {
     var button = document.createElement( 'button' );
-    $(button).attr('id', rule_id + '_' + name );
-    $(button).prop('class', 'btn btn-default');
-    $(button).attr('type', 'submit');
+    $( button ).attr('id', rule_id + '_' + name );
+    $( button ).prop('class', 'btn btn-default');
+    $( button ).attr('type', 'submit');
     //$(button).attr('name', name);
-    $(button).attr('title', name);
-    $(button).html(name);
+    $( button ).attr('title', name);
+    $( button ).html( name );
     return button
 };
 
@@ -267,7 +268,6 @@ function option_input( nTr, element_name, options, value ) {
     $( select ).attr('id', 'input_' + element_name + rule_id );
     options.forEach(function(entry) {
         var option = document.createElement( 'option' );
-//        $( option ).attr('value', entry);
         if ( value == entry ) {
             $( option ).attr('selected', 'selected');
         }
@@ -299,26 +299,98 @@ function remove_editable_fields_on_row( oTable, nTr ) {
     var rule_id = nTr.id;
     rule_id = rule_id.replace('rule_', '_r');
 
-    var elements = [dt_backgroundrate, dt_priority, dt_product, dt_channel,
-                    dt_comment, dt_updatetype]
+    var elements = [dt_mappings, dt_backgroundrate, dt_priority, dt_product,
+                    dt_channel, dt_comment, dt_updatetype]
     elements.forEach(function(element){
         reset_element(element, rule_id, aData[element.col]);
     });
 };
 
 
+function available_mappings() {
+    var mappings = [
+        'mapping-1',
+        'mapping-2',
+    ];
+    return mappings;
+};
+
+function add_combobox( nTr, element_name, value ) {
+    "use strict";
+    //
+    var rule_id = nTr.id
+    rule_id = rule_id.replace('rule_', '_r');
+
+    var element_id = document.getElementById(element_name + rule_id);
+    var e_id = element_name + rule_id;
+    var element_id = document.getElementById(e_id);;
+    $( element_id ).empty();
+
+    var div = document.createElement( 'div' );
+    $( div ).attr( 'id', element_id );
+
+    var input = document.createElement( 'input' );
+    $( input ).attr( 'class', 'typeahead form-control' );
+    $( input ).attr( 'type', 'text' );
+    div.appendChild( input );
+    element_id.appendChild( div );
+
+    get_mappings( function(mappings) {
+
+        var substringMatcher = function(strs) {
+            return function findMatches(q, cb) {
+            var matches, substringRegex;
+            // an array that will be populated with substring matches
+            matches = [];
+
+            // regex used to determine if a string contains the substring `q`
+            var substrRegex = new RegExp(q, 'i');
+
+            // iterate through the pool of strings and for any string that
+            // contains the substring `q`, add it to the `matches` array
+            $.each(strs, function(i, str) {
+                if (substrRegex.test(str)) {
+                    // the typeahead jQuery plugin expects suggestions to a
+                    // JavaScript object, refer to typeahead docs for more info
+                    matches.push({ value: str });
+                }
+            });
+                cb(matches);
+            };
+        };
+
+        $('#' + e_id +  ' .typeahead').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 1
+        },
+        {
+            name: 'mappings',
+            displayKey: 'value',
+            source: substringMatcher(mappings['mappings'])
+        });
+    });
+
+};
+
+function get_products() {
+    "use strict";
+    return ['', 'Firefox', 'Fennec', 'Thunderbird'];
+}
+
 function fnFormatMain( oTable, nTr ) {
     "use strict";
     var aData = oTable.fnGetData( nTr );
     var rule_id = nTr.id
-    standard_input( nTr, 'backgroundRate', aData[dt_backgroundrate.col]);
-    standard_input( nTr, 'priority', aData[dt_priority.col]);
-    var products = ['', 'Firefox', 'Fennec', 'Thunderbird'];
-    option_input( nTr, 'product', products, aData[dt_product.col]);
-    standard_input( nTr, 'channel', aData[dt_channel.col]);
-    standard_input( nTr, 'comment', aData[dt_comment.col]);
+    var products = get_products();
+    add_combobox( nTr, dt_mappings.id, aData[dt_mappings.col]);
+    standard_input( nTr, dt_backgroundrate.id, aData[dt_backgroundrate.col]);
+    standard_input( nTr, dt_priority.id, aData[dt_priority.col]);
+    option_input( nTr, dt_product.id, products, aData[dt_product.col]);
+    standard_input( nTr, dt_channel.id, aData[dt_channel.col]);
+    standard_input( nTr, dt_comment.id, aData[dt_comment.col]);
     var update_type = [ 'minor', 'major' ];
-    option_input( nTr, 'update_type', update_type, aData[dt_updatetype.col]);
+    option_input( nTr, dt_updatetype.id, update_type, aData[dt_updatetype.col]);
 };
 
 
@@ -351,7 +423,6 @@ function fnFormatDetails ( oTable, nTr ) {
     details.appendChild( buttons );
     details.appendChild( div_space_bottom );
     return $( details ).clone().html();
-    //return $('<div>').append($(details).clone()).html();
 };
 
 
@@ -468,7 +539,10 @@ function fnFormatDetails ( oTable, nTr ) {
 }( jQuery ));
 
 function getRuleUrl(rule_id) {
-    return SCRIPT_ROOT + '/rules/' + rule_id;
+    "use strict";
+    var rule_number = rule_id.replace('rule_', '');
+    rule_number = rule_number.replace('r_', '');
+    return SCRIPT_ROOT + '/rules/' + rule_number;
 }
 function getRuleAPIUrl() {
     return SCRIPT_ROOT + '/rules';
@@ -478,25 +552,35 @@ function getData( rule_id ) {
     "use strict";
     var rule_number = rule_id.replace('_r', '');
     var data = {
-        'backgroundRate': $( '#input_backgroundRate' + rule_id ).val(),
-        'mapping'       : $( '#mapping'      + rule_id ).text(),
-        'priority'      : $( '#input_priority'     + rule_id ).val(),
-        'product'       : $( '#input_product'      + rule_id ).val(),
-        'version'       : $( '#input_version'      + rule_id ).val(),
-        'build_id'      : $( '#input_buildid'     + rule_id ).val(),
-        'channel'       : $( '#input_channel'      + rule_id ).val(),
-        'locale'        : $( '#input_locale'       + rule_id ).val(),
-        'distribution'  : $( '#input_distribution' + rule_id ).val(),
-        'build_target'  : $( '#input_buildtarget' + rule_id ).val(),
-        'os_version'    : $( '#input_osversion'   + rule_id ).val(),
-        'dist_version'  : $( '#input_distversion' + rule_id ).val(),
-        'comment'       : $( '#input_comment'      + rule_id ).val(),
-        'update_type'   : $( '#input_update_type'  + rule_id ).val(),
-        'header_arch'   : $( '#input_headerarchitecture'  + rule_id ).val(),
-        'data_version'  : $( '#input_versiondata' + rule_id ).val(),
+        'backgroundRate': $( '#input_' + dt_backgroundrate.id + rule_id ).val(),
+        'mapping'       : $( '#mapping' + rule_id ).text(),
+        'priority'      : $( '#input_' + dt_priority.id + rule_id ).val(),
+        'product'       : $( '#input_' + dt_product.id + rule_id ).val(),
+        'version'       : $( '#input_' + dt_version.id + rule_id ).val(),
+        'build_id'      : $( '#input_' + dt_buildid.id + rule_id ).val(),
+        'channel'       : $( '#input_' + dt_channel.id + rule_id ).val(),
+        'locale'        : $( '#input_' + dt_locale.id + rule_id ).val(),
+        'distribution'  : $( '#input_' + dt_distribution.id + rule_id ).val(),
+        'build_target'  : $( '#input_' + dt_buildtarget.id + rule_id ).val(),
+        'os_version'    : $( '#input_' + dt_osversion.id + rule_id ).val(),
+        'dist_version'  : $( '#input_' + dt_distversion.id + rule_id ).val(),
+        'comment'       : $( '#input_' + dt_comment.id + rule_id ).val(),
+        'update_type'   : $( '#input_' + dt_updatetype.id + rule_id ).val(),
+        'header_arch'   : $( '#input_' + dt_headerarch.id + rule_id ).val(),
+        'data_version'  : $( '#input_' + dt_versiondata.id + rule_id ).val(),
         'csrf_token'    : $( '#new_rule-csrf_token' ).val()
     };
     return data;
+};
+
+
+function get_mappings(callback) {
+    var url = SCRIPT_ROOT + '/mappings';
+    $.ajax(url, {
+        type: 'get',
+        dataType: 'json',
+        success: callback,
+    });
 };
 
 function submitRuleForm(rule_id, data){
