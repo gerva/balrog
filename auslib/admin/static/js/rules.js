@@ -437,7 +437,7 @@ function submitRuleForm(rule_id, data){
     return $.ajax(url, {'type': 'post', 'data': data, 'dataType': 'json'})
         .error(handleError)
         .success(function(data) {
-            $('[name='+rule_id+'-data_version]', ruleForm).val(data.new_data_version);
+            $('#input_data_version_' + rule_id).val(data.new_data_version);
             alertify.success('Rule updated!');
         });
 };
