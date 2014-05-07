@@ -208,7 +208,6 @@ function generic_button(rule_id, name) {
     $( button ).attr('id', rule_id + '_' + name );
     $( button ).prop('class', 'btn btn-default');
     $( button ).attr('type', 'submit');
-    //$(button).attr('name', name);
     $( button ).attr('title', name);
     $( button ).html( name );
     return button
@@ -307,7 +306,7 @@ function remove_editable_fields_on_row( oTable, nTr ) {
 };
 
 
-function add_combobox( nTr, element_name, value ) {
+function add_datalist( nTr, element_name, value ) {
     "use strict";
     //
     var rule_id = nTr.id
@@ -318,56 +317,30 @@ function add_combobox( nTr, element_name, value ) {
     var element_id = document.getElementById(e_id);;
     $( element_id ).empty();
 
-    var div = document.createElement( 'div' );
-    $( div ).attr( 'id', element_name );
-    $( div ).prop( 'class', 'col-sm-12' );
+    var datalist = document.createElement( 'datalist' );
+    $( datalist ).attr( 'id', element_name );
 
     var input = document.createElement( 'input' );
-    $( input ).attr( 'class', 'typeahead form-control col-sm-12' );
+    $( input ).prop( 'class', 'form-control' );
     $( input ).attr( 'id', 'input_' + element_name + rule_id );
-    div.appendChild( input );
-    element_id.appendChild( div );
+    $( input ).attr( 'id', 'input_' + element_name + rule_id );
+    $( input ).attr( 'list', element_name );
+    $( input ).attr( 'value', value );
+    element_id.appendChild( input );
 
     get_mappings( function(mappings) {
-
-        var substringMatcher = function(strs) {
-            return function findMatches(q, cb) {
-            var matches, substringRegex;
-            // an array that will be populated with substring matches
-            matches = [];
-
-            // regex used to determine if a string contains the substring `q`
-            var substrRegex = new RegExp(q, 'i');
-
-            // iterate through the pool of strings and for any string that
-            // contains the substring `q`, add it to the `matches` array
-            $.each(strs, function(i, str) {
-                if (substrRegex.test(str)) {
-                    // the typeahead jQuery plugin expects suggestions to a
-                    // JavaScript object, refer to typeahead docs for more info
-                    matches.push({ value: str });
-                }
-            });
-                cb(matches);
-            };
-        };
-
-        $('#' + e_id +  ' .typeahead').typeahead({
-            hint: true,
-            highlight: true,
-            minLength: 1
-        },
-        {
-            name: 'mappings',
-            displayKey: 'value',
-            source: substringMatcher(mappings['mappings'])
+        mappings['mappings'].forEach(function(mapping) {
+            var option = document.createElement( 'option' );
+            $( option ).attr('value', mapping);
+            datalist.appendChild( option );
         });
     });
-
+    element_id.appendChild( datalist );
 };
 
 function get_products() {
     "use strict";
+    // get them from the db as "mappings" does
     return ['', 'Firefox', 'Fennec', 'Thunderbird'];
 }
 
@@ -376,7 +349,7 @@ function fnFormatMain( oTable, nTr ) {
     var aData = oTable.fnGetData( nTr );
     var rule_id = nTr.id
     var products = get_products();
-    add_combobox( nTr, dt_mappings.id, aData[dt_mappings.col]);
+    add_datalist( nTr, dt_mappings.id, aData[dt_mappings.col]);
     standard_input( nTr, dt_backgroundrate.id, aData[dt_backgroundrate.col]);
     standard_input( nTr, dt_priority.id, aData[dt_priority.col]);
     option_input( nTr, dt_product.id, products, aData[dt_product.col]);
