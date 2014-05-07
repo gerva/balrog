@@ -26,7 +26,7 @@
   {%- for row in rules %}
   {%- set rule_id = row["rule_id"] %}
   {%- set form = forms[rule_id] %}
-  {%- set suffix = "_r"~rule_id %}
+  {%- set suffix = "_rule_"~rule_id %}
   <tr id="rule_{{ rule_id }}">
    {% include "fragments/rule_form_row.html" %}
   </tr>

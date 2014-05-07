@@ -161,11 +161,11 @@ $(document).ready(function() {
     } );
 } );
 // details
-function detail_item(id, name, value) {
+function detail_item(id, element, value) {
     "use strict";
     // label
     var label = document.createElement( 'label' );
-    var element_id = id + '_' + name.toLowerCase().replace(' ', '');
+    var element_id = element.id + '_' + id;
     if ( value == 'None' ) {
         value = '';
     }
@@ -174,7 +174,7 @@ function detail_item(id, name, value) {
 
     $( label ).attr('for', 'input_' + element_id);
     $( label ).prop('class', 'control-label col-sm-2');
-    $( label ).text(name);
+    $( label ).text(element.label);
 
     // div for input
     var div_input = document.createElement( 'div' );
@@ -184,9 +184,7 @@ function detail_item(id, name, value) {
     var input = document.createElement( 'input' );
     $( input ).attr('type', 'text');
     $( input ).prop('class', 'form-control');
-    var short_id = id.replace('rule_', '_r');
-    var input_id = element_id.replace(id, '');
-    $( input ).attr('id', 'input' + input_id + short_id );
+    $( input ).attr('id', 'input_' + element_id );
     $( input ).attr('value', value);
 
     // attach input to div_input
@@ -241,11 +239,10 @@ function resize_input_element( input_element, size=7 ) {
 }
 
 
-function standard_input( nTr, element_name, value) {
+function standard_input( nTr, element, value) {
     "use strict";
     var rule_id = nTr.id
-    rule_id = rule_id.replace('rule_', '_r');
-    var element_id = document.getElementById(element_name + rule_id);
+    var element_id = document.getElementById(element.id + '_' + rule_id);
     $( element_id ).empty();
 
     var input = document.createElement( 'input' );
@@ -253,20 +250,19 @@ function standard_input( nTr, element_name, value) {
     if ( value != 'None' ) {
         $( input ).attr('value', value);
     };
-    $( input ).attr('id', 'input_' + element_name + rule_id );
+    $( input ).attr('id', 'input_' + element.id + '_' + rule_id );
 
     var wrapper = resize_input_element( input );
     element_id.appendChild( wrapper );
 };
 
 
-function option_input( nTr, element_name, options, value ) {
+function option_input( nTr, element, options, value ) {
     "use strict";
     var rule_id = nTr.id
-    rule_id = rule_id.replace('rule_', '_r');
     var select = document.createElement( 'select' );
     $( select ).prop('class', 'form-control');
-    $( select ).attr('id', 'input_' + element_name + rule_id );
+    $( select ).attr('id', 'input_' + element.id + '_' + rule_id );
     options.forEach(function(entry) {
         var option = document.createElement( 'option' );
         if ( value == entry ) {
@@ -276,8 +272,7 @@ function option_input( nTr, element_name, options, value ) {
         select.appendChild(option);
     });
     var rule_id = nTr.id
-    rule_id = rule_id.replace('rule_', '_r');
-    var element_id = document.getElementById(element_name + rule_id);
+    var element_id = document.getElementById(element.id + '_' + rule_id);
     $( element_id ).empty();
     var wrapper = resize_input_element( select, 12 );
     element_id.appendChild( wrapper );
@@ -308,25 +303,21 @@ function remove_editable_fields_on_row( oTable, nTr ) {
 };
 
 
-function add_datalist( nTr, element_name, value ) {
+function add_datalist( nTr, element, value ) {
     "use strict";
     //
     var rule_id = nTr.id
-    rule_id = rule_id.replace('rule_', '_r');
-
-    var element_id = document.getElementById(element_name + rule_id);
-    var e_id = element_name + rule_id;
-    var element_id = document.getElementById(e_id);;
+    var element_id = document.getElementById(element.id + '_' + rule_id);
     $( element_id ).empty();
 
     var datalist = document.createElement( 'datalist' );
-    $( datalist ).attr( 'id', element_name );
+    var datalist_id = 'list_' + element.id + '_' + rule_id;
+    $( datalist ).attr( 'id', datalist_id );
 
     var input = document.createElement( 'input' );
     $( input ).prop( 'class', 'form-control' );
-    $( input ).attr( 'id', 'input_' + element_name + rule_id );
-    $( input ).attr( 'id', 'input_' + element_name + rule_id );
-    $( input ).attr( 'list', element_name );
+    $( input ).attr( 'id', 'input_' + element.id + '_' + rule_id );
+    $( input ).attr( 'list', datalist_id );
     $( input ).attr( 'value', value );
     element_id.appendChild( input );
 
@@ -351,14 +342,14 @@ function fnFormatMain( oTable, nTr ) {
     var aData = oTable.fnGetData( nTr );
     var rule_id = nTr.id
     var products = get_products();
-    add_datalist( nTr, dt_mappings.id, aData[dt_mappings.col]);
-    standard_input( nTr, dt_backgroundrate.id, aData[dt_backgroundrate.col]);
-    standard_input( nTr, dt_priority.id, aData[dt_priority.col]);
-    option_input( nTr, dt_product.id, products, aData[dt_product.col]);
-    standard_input( nTr, dt_channel.id, aData[dt_channel.col]);
-    standard_input( nTr, dt_comment.id, aData[dt_comment.col]);
+    add_datalist( nTr, dt_mappings, aData[dt_mappings.col]);
+    standard_input( nTr, dt_backgroundrate, aData[dt_backgroundrate.col]);
+    standard_input( nTr, dt_priority, aData[dt_priority.col]);
+    option_input( nTr, dt_product, products, aData[dt_product.col]);
+    standard_input( nTr, dt_channel, aData[dt_channel.col]);
+    standard_input( nTr, dt_comment, aData[dt_comment.col]);
     var update_type = [ 'minor', 'major' ];
-    option_input( nTr, dt_updatetype.id, update_type, aData[dt_updatetype.col]);
+    option_input( nTr, dt_updatetype, update_type, aData[dt_updatetype.col]);
 };
 
 
@@ -379,7 +370,7 @@ function fnFormatDetails ( oTable, nTr ) {
                     dt_headerarch, dt_versiondata]
     elements.forEach(function(element) {
         details.appendChild( detail_item( rule_id,
-                                          element.label,
+                                          element,
                                           aData[element.col]));
     });
     // buttons
@@ -407,10 +398,10 @@ function getRuleAPIUrl() {
 
 function getData( rule_id ) {
     "use strict";
-    var rule_number = rule_id.replace('_r', '');
+    rule_id = '_' + rule_id;
     var data = {
         'backgroundRate': $( '#input_' + dt_backgroundrate.id + rule_id ).val(),
-        'mapping'       : $( '#mapping' + rule_id ).text(),
+        'mapping'       : $( '#input_' + dt_mappings.id + rule_id ).val(),
         'priority'      : $( '#input_' + dt_priority.id + rule_id ).val(),
         'product'       : $( '#input_' + dt_product.id + rule_id ).val(),
         'version'       : $( '#input_' + dt_version.id + rule_id ).val(),
@@ -495,7 +486,7 @@ function activate_buttons( nTr ) {
 
     // delete
     $( ":button[id$='_delete']" ).each(function() {
-        var data = getData(nTr.id );
+        var data = getData( nTr.id );
         var button_id = $( this ).attr('id');
         button_id = button_id.split('_')[1];
         $( this ).click(function() {
@@ -518,8 +509,7 @@ function activate_buttons( nTr ) {
 function edit_row( nTr ) {
     "use strict";
     var rule_id = nTr.id
-    rule_id = rule_id.replace('rule_', '_r');
-    console.log('not implemented yet');
+    /* rule_id = rule_id.replace('rule_', '_r'); */
     var data = getData( rule_id );
     console.log( data );
     submitRuleForm( nTr.id, data );
