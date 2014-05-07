@@ -307,14 +307,6 @@ function remove_editable_fields_on_row( oTable, nTr ) {
 };
 
 
-function available_mappings() {
-    var mappings = [
-        'mapping-1',
-        'mapping-2',
-    ];
-    return mappings;
-};
-
 function add_combobox( nTr, element_name, value ) {
     "use strict";
     //
@@ -327,11 +319,12 @@ function add_combobox( nTr, element_name, value ) {
     $( element_id ).empty();
 
     var div = document.createElement( 'div' );
-    $( div ).attr( 'id', element_id );
+    $( div ).attr( 'id', element_name );
+    $( div ).prop( 'class', 'col-sm-12' );
 
     var input = document.createElement( 'input' );
-    $( input ).attr( 'class', 'typeahead form-control' );
-    $( input ).attr( 'type', 'text' );
+    $( input ).attr( 'class', 'typeahead form-control col-sm-12' );
+    $( input ).attr( 'id', 'input_' + element_name + rule_id );
     div.appendChild( input );
     element_id.appendChild( div );
 
@@ -426,127 +419,16 @@ function fnFormatDetails ( oTable, nTr ) {
 };
 
 
-// This is a modified version of the jquery-ui combobox example:
-// http://jqueryui.com/demos/autocomplete/#combobox
-//
-(function( $ ) {
-    return;
-    $.widget( "ui.combobox", {
-        _create: function() {
-            var self = this,
-            select = this.element.hide(),
-            selected = select.children( ":selected" ),
-            value = selected.val() ? selected.text() : "";
-            var input = this.input = $( "<input>" ).insertAfter( select ).val( value ) .autocomplete({
-                    delay: 0,
-                    minLength: 0,
-                    source: function( request, response ) {
-                        var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
-                        response( select.children( "option" ).map(function() {
-                            var text = $( this ).text();
-                            if ( this.value && ( !request.term || matcher.test(text) ) )
-                            {
-                                return {
-                                    label: text.replace(
-                                               new RegExp(
-                                                   "(?![^&;]+;)(?!<[^<>]*)(" +
-                                                   $.ui.autocomplete.escapeRegex(request.term) +
-                                                   ")(?![^<>]*>)(?![^&;]+;)", "gi"
-                                                   ), "<strong>$1</strong>" ),
-                                        value: text,
-                                option: this
-                                };
-                            }
-                        }) );
-                    },
-                    select: function( event, ui ) {
-                        ui.item.option.selected = true;
-                        self._trigger( "selected", event, {
-                            item: ui.item.option
-                        });
-                    },
-                    change: function( event, ui ) {
-                        if ( !ui.item ) {
-                            var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( $(this).val() ) + "$", "i" ),
-                                valid = false;
-                            select.children( "option" ).each(function() {
-                                if ( $( this ).text().match( matcher ) ) {
-                                    this.selected = valid = true;
-                                    return false;
-                                }
-                            });
-                            if ( !valid ) {
-                                // remove invalid value, as it didn't match anything
-                                $( this ).val( "" );
-                                select.val( "" );
-                                input.data( "autocomplete" ).term = "";
-                                return false;
-                            }
-                        }
-                    }
-                })
-                .addClass( "ui-widget ui-widget-content ui-corner-left" );
-
-            input.data( "autocomplete" )._renderItem = function( ul, item ) {
-                return $( "<li></li>" )
-                    .data( "item.autocomplete", item )
-                    .append( "<a>" + item.label + "</a>" )
-                    .appendTo( ul );
-            };
-
-            this.button = $( "<button type='button'>&nbsp;</button>" )
-                .attr( "tabIndex", -1 )
-                .attr( "title", "Show All Items" )
-                .insertAfter( input )
-                .button({
-                    icons: {
-                        primary: "ui-icon-triangle-1-s"
-                    },
-                    text: false
-                })
-                .removeClass( "ui-corner-all" )
-                    .addClass( "ui-corner-right ui-button-icon" )
-
-                    .click(function() {
-                        // close if already visible
-                        if ( input.autocomplete( "widget" ).is( ":visible" ) ) {
-                            input.autocomplete( "close" );
-                            return;
-                        }
-
-                        // work around a bug (likely same cause as #5265)
-                        $( this ).blur();
-
-                        // pass empty string as value to search for, displaying all results
-                        input.autocomplete( "search", "" );
-                        input.focus();
-                    });
-        },
-
-            destroy: function() {
-                this.input.remove();
-                this.button.remove();
-                this.element.show();
-                $.Widget.prototype.destroy.call( this );
-            },
-            // Change the value of the combobox:
-            // To do this we need to change both the select box and the input
-            newVal: function(value) {
-                this.element.val(value);
-                this.input.val(value);
-            }
-    });
-}( jQuery ));
-
 function getRuleUrl(rule_id) {
     "use strict";
     var rule_number = rule_id.replace('rule_', '');
     rule_number = rule_number.replace('r_', '');
     return SCRIPT_ROOT + '/rules/' + rule_number;
-}
+};
+
 function getRuleAPIUrl() {
     return SCRIPT_ROOT + '/rules';
-}
+};
 
 function getData( rule_id ) {
     "use strict";
