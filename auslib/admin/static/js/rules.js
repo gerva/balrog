@@ -281,7 +281,7 @@ function option_input( nTr, element, options, value ) {
 
 function reset_element(element, rule_id, value) {
     "use strict";
-    var element = document.getElementById(element.id + rule_id);
+    var element = document.getElementById(element.id + '_' + rule_id);
     $( element ).empty();
     element.innerHTML = value;
 };
@@ -293,8 +293,6 @@ function remove_editable_fields_on_row( oTable, nTr ) {
     "use strict";
     var aData = oTable.fnGetData( nTr );
     var rule_id = nTr.id;
-    rule_id = rule_id.replace('rule_', '_r');
-
     var elements = [dt_mappings, dt_backgroundrate, dt_priority, dt_product,
                     dt_channel, dt_comment, dt_updatetype]
     elements.forEach(function(element){
