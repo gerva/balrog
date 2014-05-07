@@ -144,6 +144,7 @@ $(document).ready(function() {
             $(this).removeClass( less ).addClass( more )
             this.innerHTML = open_icon();
             remove_editable_fields_on_row( oTable, nTr );
+            $( nTr ).removeClass('active');
             oTable.fnClose( nTr );
         }
         else
@@ -152,7 +153,8 @@ $(document).ready(function() {
             // Open this row
             $(this).removeClass( more ).addClass( less )
             this.innerHTML = close_icon();
-            oTable.fnOpen( nTr, fnFormatDetails(oTable, nTr), 'details' );
+            $( nTr ).attr('class', 'active');
+            oTable.fnOpen( nTr, fnFormatDetails(oTable, nTr), 'details active' );
             activate_buttons(nTr);
             }
         }
