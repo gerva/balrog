@@ -25,23 +25,23 @@ $.fn.dataTableExt.afnSortData['dom-select'] = function  ( oSettings, iColumn )
     dataTables variables
 */
 
-var dt_mappings = { 'col': 1, 'id': 'mapping', 'type': 'combobox', };
-var dt_backgroundrate = { 'col': 2, 'id': 'backgroundRate', 'type': 'text', };
-var dt_priority = { 'col': 3, 'id': 'priority', 'type': 'text', };
+var dt_mappings = { 'col': 1, 'id': 'mapping', 'disabled': 'false', };
+var dt_backgroundrate = { 'col': 2, 'id': 'backgroundRate', 'disabled': false, };
+var dt_priority = { 'col': 3, 'id': 'priority', 'disabled': false, };
 var dt_product = { 'col': 4, 'id': 'product', 'type': 'select', };
-var dt_version = { 'col': 5, 'id': 'version', 'type': 'text', };
-var dt_buildid = { 'col': 6, 'id': 'build_id', 'type': 'text', };
-var dt_channel = { 'col': 7, 'id': 'channel', 'type': 'text', };
-var dt_locale = { 'col': 8, 'id': 'locale', 'type': 'text', };
-var dt_distribution = { 'col': 9, ':id': 'distribution', 'type': 'text', };
-var dt_buildtarget = { 'col': 10, 'id': 'build_target', 'type': 'text', };
-var dt_osversion = { 'col': 11, 'id': 'os_version', 'type': 'text', };
-var dt_distversion = { 'col': 12, 'id': 'dist_version', 'type': 'text', };
-var dt_comment = { 'col': 13, 'id': 'comment', 'type': 'text', };
-var dt_updatetype = { 'col': 14, 'id': 'update_type', 'type': 'text', };
-var dt_headerarch = { 'col': 15, 'id': 'headers_architecture', 'type': 'text', };
-var dt_versiondata = { 'col': 16, 'id': 'version_data', 'type': 'text', };
-var dt_csrftoken = { 'col': 17, 'id': 'csrf_token', 'type': 'text', };
+var dt_version = { 'col': 5, 'id': 'version', 'disabled': false, };
+var dt_buildid = { 'col': 6, 'id': 'build_id', 'disabled': false, };
+var dt_channel = { 'col': 7, 'id': 'channel', 'disabled': false, };
+var dt_locale = { 'col': 8, 'id': 'locale', 'disabled': false, };
+var dt_distribution = { 'col': 9, ':id': 'distribution', 'disabled': false, };
+var dt_buildtarget = { 'col': 10, 'id': 'build_target', 'disabled': false, };
+var dt_osversion = { 'col': 11, 'id': 'os_version', 'disabled': false, };
+var dt_distversion = { 'col': 12, 'id': 'dist_version', 'disabled': false, };
+var dt_comment = { 'col': 13, 'id': 'comment', 'disabled': false, };
+var dt_updatetype = { 'col': 14, 'id': 'update_type', 'disabled': false, };
+var dt_headerarch = { 'col': 15, 'id': 'headers_architecture', 'disabled': false, };
+var dt_versiondata = { 'col': 16, 'id': 'version_data', 'disabled': true, };
+var dt_csrftoken = { 'col': 17, 'id': 'csrf_token', 'disabled': false, };
 
 dt_version.label = 'Version';
 dt_buildid.label ='Build Id';
@@ -161,7 +161,7 @@ $(document).ready(function() {
     } );
 } );
 // details
-function detail_item(id, element, value) {
+function detail_item(id, element, value, disabled=false) {
     "use strict";
     // label
     var label = document.createElement( 'label' );
@@ -183,9 +183,10 @@ function detail_item(id, element, value) {
     // input
     var input = document.createElement( 'input' );
     $( input ).attr('type', 'text');
-    $( input ).prop('class', 'form-control');
-    $( input ).attr('id', 'input_' + element_id );
+    $( input ).attr('id', 'input_' + element_id);
     $( input ).attr('value', value);
+    $( input ).prop('class', 'form-control');
+    $( input ).prop('disabled', disabled);
 
     // attach input to div_input
     div_input.appendChild(input);
@@ -369,7 +370,8 @@ function fnFormatDetails ( oTable, nTr ) {
     elements.forEach(function(element) {
         details.appendChild( detail_item( rule_id,
                                           element,
-                                          aData[element.col]));
+                                          aData[element.col],
+                                          element.disabled));
     });
     // buttons
     var buttons = document.createElement( 'div' );
@@ -397,9 +399,12 @@ function getRuleAPIUrl() {
 function getData( rule_id ) {
     "use strict";
     rule_id = '_' + rule_id;
+    // $( '#input_' + dt_mappings.id + rule_id ).val
+    // returns the default value, not the one entered
+    var mapping_value = document.getElementById( 'input_' + dt_mappings.id + rule_id ).value;
     var data = {
         'backgroundRate': $( '#input_' + dt_backgroundrate.id + rule_id ).val(),
-        'mapping'       : $( '#input_' + dt_mappings.id + rule_id ).val(),
+        'mapping'       : mapping_value,
         'priority'      : $( '#input_' + dt_priority.id + rule_id ).val(),
         'product'       : $( '#input_' + dt_product.id + rule_id ).val(),
         'version'       : $( '#input_' + dt_version.id + rule_id ).val(),
