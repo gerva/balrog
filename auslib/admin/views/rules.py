@@ -26,8 +26,12 @@ class RuleAddView(AdminView):
 class RulesPageView(AdminView):
     """/rules.html"""
     def get(self):
-        rules = db.rules.getOrderedRules()
         releaseNames = db.releases.getReleaseNames()
+        rule_form = RuleForm(prefix="new_rule")
+        rule_form.mapping.choices = [(item['name'], item['name']) for item in
+                                     releaseNames]
+        rule_form.mapping.choices.insert(0, ('', 'NULL'))
+        rules = db.rules.getOrderedRules()
         forms = {}
         for rule in rules:
             _id = rule['rule_id']
@@ -53,7 +57,8 @@ class RulesPageView(AdminView):
                                           releaseNames]
             forms[_id].mapping.choices.insert(0, ('', 'NULL'))
 
-        return render_template('view_edit_rules.html', rules=rules, forms=forms)
+        return render_template('view_edit_rules.html', rules=rules, forms=forms,
+                               new_rule_form=rule_form)
 
 
 class RulesAPIView(AdminView):

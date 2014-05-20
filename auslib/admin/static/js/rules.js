@@ -366,13 +366,15 @@ function fnFormatDetails ( oTable, nTr ) {
     details.appendChild( div_space_top );
     var elements = [dt_version, dt_buildid, dt_locale, dt_distribution,
                     dt_buildtarget, dt_osversion, dt_distversion,
-                    dt_headerarch, dt_versiondata]
+                    dt_headerarch, dt_versiondata,]
     elements.forEach(function(element) {
         details.appendChild( detail_item( rule_id,
                                           element,
                                           aData[element.col],
                                           element.disabled));
     });
+    // csfr_token, it's already invisible
+    $( details ).append( aData[dt_csrftoken.col] );
     // buttons
     var buttons = document.createElement( 'div' );
     $( buttons ).prop('class', 'btn-group col-sm-offset-2 col-sm-10');
@@ -400,6 +402,7 @@ function getData( rule_id ) {
     "use strict";
     rule_id = '_' + rule_id;
     // $( '#input_' + dt_mappings.id + rule_id ).val
+    var rule_nu = rule_id.replace('_rule_', '')
     // returns the default value, not the one entered
     var mapping_value = document.getElementById( 'input_' + dt_mappings.id + rule_id ).value;
     var data = {
@@ -419,7 +422,7 @@ function getData( rule_id ) {
         'update_type'   : $( '#input_' + dt_updatetype.id + rule_id ).val(),
         'header_arch'   : $( '#input_' + dt_headerarch.id + rule_id ).val(),
         'data_version'  : $( '#input_' + dt_versiondata.id + rule_id ).val(),
-        'csrf_token'    : $( '#new_rule-csrf_token' ).val()
+        'csrf_token'    : $( '#' + rule_nu + '-' + dt_csrftoken.id ).val(),
     };
     return data;
 };

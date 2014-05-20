@@ -143,6 +143,7 @@ class WSGIRequestHandler(BaseHTTPRequestHandler, object):
             return write
 
         def execute(app):
+            print 'this execute ==='
             application_iter = app(environ, start_response)
             try:
                 for data in application_iter:
