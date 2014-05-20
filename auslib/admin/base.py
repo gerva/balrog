@@ -17,7 +17,7 @@ from auslib.admin.views.permissions import UsersView, PermissionsView, \
     SpecificPermissionView, PermissionsPageView, UserPermissionsPageView
 from auslib.admin.views.releases import SingleLocaleView, SingleBlobView, \
     SingleReleaseView, ReleasesPageView, ReleaseHistoryView
-from auslib.admin.views.rules import RulesPageView, RulesAPIView, \
+from auslib.admin.views.rules import RulesPageView, RulesAPIView, RuleAddView,\
     SingleRuleView, RuleHistoryView, MappingsView
 from auslib.admin.views.history import DiffView, FieldView
 from auslib.admin.views.index import IndexPageView, RecentChangesTableView
@@ -53,7 +53,8 @@ app.add_url_rule('/releases/<release>/data', view_func=SingleBlobView.as_view('r
 app.add_url_rule('/releases/<release>/revisions/', view_func=ReleaseHistoryView.as_view('release_revisions'))
 app.add_url_rule('/releases/<release>', view_func=SingleReleaseView.as_view('release'))
 app.add_url_rule('/releases.html', view_func=ReleasesPageView.as_view('releases.html'))
-app.add_url_rule('/rules.html', view_func=RulesPageView.as_view('rules.html'))
+app.add_url_rule('/add_rule.html', view_func=RuleAddView.as_view('add_rule.html'))
+app.add_url_rule('/view_edit_rules.html', view_func=RulesPageView.as_view('view_edit_rules.html'))
 app.add_url_rule('/rules', view_func=RulesAPIView.as_view('rules'))
 app.add_url_rule('/rules/<rule_id>/revisions/', view_func=RuleHistoryView.as_view('revisions.html'))
 app.add_url_rule('/rules/<rule_id>', view_func=SingleRuleView.as_view('setrule'))

@@ -13,9 +13,9 @@
 <td id="comment{{ suffix }}">{{ row.comment|safe }}</td>
 <td id="update_type{{ suffix }}">{{ row.update_type|safe }}</td>
 <td id="header_arch{{ suffix }}">{{ row.header_arch|safe }}</td>
-{%- set version_data = 0 %}
+{%- set data_version = 0 %}
 {%- if "data_version" in row %}
-{%- set version_data = row.data_version %}
+{%- set data_version = row.data_version %}
 {%- endif %}
 <td id="version_data{{ suffix }}">{{ data_version }}</td>
 <td>{{ form.hidden_tag() }}</td>
