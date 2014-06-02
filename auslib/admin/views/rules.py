@@ -70,12 +70,11 @@ class RulesAPIView(AdminView):
         # a Post here creates a new rule
         form = RuleForm()
         releaseNames = db.releases.getReleaseNames()
-        form.mapping.choices = [(item['name'],item['name']) for item in releaseNames]
-        form.mapping.choices.insert(0, ('', 'NULL' ) )
+        form.mapping.choices = [(item['name'], item['name']) for item in releaseNames]
+        form.mapping.choices.insert(0, ('', 'NULL'))
         if not form.validate():
             cef_event("Bad input", CEF_WARN, errors=form.errors)
             return Response(status=400, response=form.errors)
-
         what = dict(backgroundRate=form.backgroundRate.data,
                     mapping=form.mapping.data,
                     priority=form.priority.data,
@@ -92,7 +91,7 @@ class RulesAPIView(AdminView):
                     update_type=form.update_type.data,
                     headerArchitecture=form.header_arch.data)
         rule_id = db.rules.addRule(changed_by=changed_by, what=what,
-            transaction=transaction)
+                                   transaction=transaction)
         return Response(status=200, response=rule_id)
 
 
@@ -142,18 +141,10 @@ class SingleRuleView(AdminView):
     @requirelogin
     def _post(self, rule_id, transaction, changed_by):
         # Verify that the rule_id exists.
-        print "===REMOVEME==="
-        print "rule id => {0}".format(rule_id)
-        print "transaction => {0}".format(transaction)
-        print "changed by => {0}".format(changed_by)
-        print "===REMOVEME==="
         rule = db.rules.getRuleById(rule_id, transaction=transaction)
         if not rule:
             return Response(status=404)
         form = EditRuleForm()
-        print "===REMOVEME==="
-        print "got form: {0}".format(form)
-        print "===REMOVEME==="
 
         # Verify that the user has permission for the existing rule _and_ what the rule would become.
         toCheck = [rule['product']]
@@ -162,18 +153,11 @@ class SingleRuleView(AdminView):
         if form.product.data:
             toCheck.append(form.product.data)
 
-        print "===REMOVEME==="
-        print "to check: {0}".format(toCheck)
-        print "===REMOVEME==="
-
         for product in toCheck:
             if not db.permissions.hasUrlPermission(changed_by, '/rules/:id', 'POST', urlOptions={'product': product}):
                 msg = "%s is not allowed to alter rules that affect %s" % (changed_by, product)
                 cef_event('Unauthorized access attempt', CEF_ALERT, msg=msg)
                 return Response(status=401, response=msg)
-        print "===REMOVEME==="
-        print "after to check"
-        print "===REMOVEME==="
         releaseNames = db.releases.getReleaseNames()
 
         form.mapping.choices = [(item['name'],item['name']) for item in releaseNames]
@@ -182,10 +166,6 @@ class SingleRuleView(AdminView):
         if not form.validate():
             cef_event("Bad input", CEF_WARN, errors=form.errors)
             return Response(status=400, response=form.errors)
-
-        print "===REMOVEME==="
-        print "form is valid"
-        print "===REMOVEME==="
 
         what = dict()
         if form.backgroundRate.data:
@@ -219,9 +199,6 @@ class SingleRuleView(AdminView):
         if form.header_arch.data:
             what['headerArchitecture'] = form.header_arch.data
 
-        print "===REMOVEME==="
-        print "what: {0}".format(what)
-        print "===REMOVEME==="
         db.rules.updateRule(changed_by=changed_by, rule_id=rule_id, what=what,
                             old_data_version=form.data_version.data,
                             transaction=transaction)

@@ -87,10 +87,6 @@ class AUSTransaction(object):
             self.conn.close()
 
     def execute(self, statement):
-        self.log.debug("===REMOVEME===")
-        import inspect
-        self.log.debug('caller name:', inspect.stack()[1][3])
-        self.log.debug("===REMOVEME===")
         try:
             self.log.debug("Attempting to execute %s" % statement)
             return self.conn.execute(statement)

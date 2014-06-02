@@ -45,11 +45,6 @@ class AdminView(MethodView):
 
     def post(self, *args, **kwargs):
         self.log.debug("processing POST request to %s" % request.path)
-        print "====REMOVEME===="
-        print "kwargs: "
-        for key, value in kwargs.iteritems():
-            self.log.debug("%s = %s" % (key, value))
-        print "====REMOVEME===="
         with db.begin() as trans:
             return self._post(*args, transaction=trans, **kwargs)
 

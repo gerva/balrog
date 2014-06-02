@@ -19,9 +19,6 @@ class DisableableTextInput(TextInput):
 
 class JSONFieldMixin(object):
     def process_formdata(self, valuelist):
-        log.debug("====REMOVEME====")
-        log.debug("valuelist: {0}".format(valuelist))
-        log.debug("====REMOVEME====")
         if valuelist and valuelist[0]:
             try:
                 self._process_JSON_data(valuelist)
