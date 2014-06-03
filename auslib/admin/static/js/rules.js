@@ -354,6 +354,7 @@ function fnFormatMain( oTable, nTr ) {
 
 // this manages the detail
 function fnFormatDetails ( oTable, nTr ) {
+    "use strict"
     fnFormatMain(oTable, nTr);
     var aData = oTable.fnGetData( nTr );
     var rule_id = nTr.id;
