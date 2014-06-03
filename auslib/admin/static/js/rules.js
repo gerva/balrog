@@ -25,26 +25,24 @@ $.fn.dataTableExt.afnSortData['dom-select'] = function  ( oSettings, iColumn )
     dataTables variables
 */
 
-var dt_mappings = { 'col': 1, 'id': 'mapping', 'disabled': 'false', };
-var dt_backgroundrate = { 'col': 2, 'id': 'backgroundRate', 'disabled': false, };
-var dt_priority = { 'col': 3, 'id': 'priority', 'disabled': false, };
-var dt_product = { 'col': 4, 'id': 'product', 'type': 'select', };
-var dt_version = { 'col': 5, 'id': 'version', 'disabled': false, };
-var dt_buildid = { 'col': 6, 'id': 'build_id', 'disabled': false, };
-var dt_channel = { 'col': 7, 'id': 'channel', 'disabled': false, };
-var dt_locale = { 'col': 8, 'id': 'locale', 'disabled': false, };
-var dt_distribution = { 'col': 9, ':id': 'distribution', 'disabled': false, };
-var dt_buildtarget = { 'col': 10, 'id': 'build_target', 'disabled': false, };
-var dt_osversion = { 'col': 11, 'id': 'os_version', 'disabled': false, };
-var dt_distversion = { 'col': 12, 'id': 'dist_version', 'disabled': false, };
-var dt_comment = { 'col': 13, 'id': 'comment', 'disabled': false, };
-var dt_updatetype = { 'col': 14, 'id': 'update_type', 'disabled': false, };
-var dt_headerarch = { 'col': 15, 'id': 'headers_architecture', 'disabled': false, };
-var dt_versiondata = { 'col': 16, 'id': 'version_data', 'disabled': true, };
-var dt_csrftoken = { 'col': 17, 'id': 'csrf_token', 'disabled': false, };
+var dt_mappings       = { 'col': 1, 'id': 'mapping', 'label': 'Version', 'disabled': false, };
+var dt_backgroundrate = { 'col': 2, 'id': 'backgroundRate', 'label': 'Build Id', 'disabled': false, };
+var dt_priority       = { 'col': 3, 'id': 'priority', 'disabled': false, };
+var dt_product        = { 'col': 4, 'id': 'product', 'disabled': false, };
+var dt_version        = { 'col': 5, 'id': 'version', 'disabled': false, };
+var dt_buildid        = { 'col': 6,  'id': 'build_id',       'disabled': false, };
+var dt_channel        = { 'col': 7,  'id': 'channel',        'disabled': false, };
+var dt_locale         = { 'col': 8,  'id': 'locale',         'disabled': false, };
+var dt_distribution   = { 'col': 9,  'id': 'distribution',   'disabled': false, };
+var dt_buildtarget    = { 'col': 10, 'id': 'build_target',   'disabled': false, };
+var dt_osversion      = { 'col': 11, 'id': 'os_version',     'disabled': false, };
+var dt_distversion    = { 'col': 12, 'id': 'dist_version',   'disabled': false, };
+var dt_comment        = { 'col': 13, 'id': 'comment',        'disabled': false, };
+var dt_updatetype     = { 'col': 14, 'id': 'update_type',    'disabled': false, };
+var dt_headerarch     = { 'col': 15, 'id': 'headers_architecture', 'disabled': false, };
+var dt_versiondata    = { 'col': 16, 'id': 'version_data',   'disabled': true, };
+var dt_csrftoken      = { 'col': 17, 'id': 'csrf_token',     'disabled': false, };
 
-dt_version.label = 'Version';
-dt_buildid.label ='Build Id';
 dt_locale.label = 'Locale';
 dt_distribution.label = 'Distribution';
 dt_buildtarget.label = 'Build Target';
@@ -114,6 +112,8 @@ $(document).ready(function() {
 //             { "sSortDataType": "dom-text", "aTargets": [ dt_main ]  },
              { "sType": "numeric", "aTargets": [ dt_backgroundrate.col - 1 ,
                                                  dt_priority.col - 1] },
+             { "sWidth": "5%",  "aTargets": [0] },
+             { "sWidth": "5%",  "aTargets": [ dt_backgroundrate - 1, ] },
              { "sWidth": "20%", "aTargets": [dt_comment.col - 1, ] },
              { "sWidth": "20%", "aTargets": [dt_channel.col - 1, dt_mappings.col - 1] },
         ],
