@@ -765,8 +765,6 @@ class Rules(AUSTable):
         where = [self.rule_id==rule_id]
         self.delete(changed_by=changed_by, where=where, old_data_version=old_data_version, transaction=transaction)
 
-    def getMappings(self, limit=10):
-        return self.select(columns=[self.mapping], distinct=True, limit=limit)
 
 class Releases(AUSTable):
     def __init__(self, metadata, dialect):
@@ -935,6 +933,9 @@ class Releases(AUSTable):
             return True
         except KeyError:
             return False
+
+    def getNames(self, limit=10):
+        return self.select(columns=[self.name], distinct=True, limit=limit)
 
 class Permissions(AUSTable):
     """allPermissions defines the structure and possible options for all

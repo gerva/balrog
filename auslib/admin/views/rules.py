@@ -98,7 +98,7 @@ class RulesAPIView(AdminView):
 class MappingsView(AdminView):
     """/mappings"""
     def get(self):
-        mappings = [m['mapping'] for m in db.rules.getMappings()]
+        mappings = [m['name'] for m in db.releases.getNames()]
         return jsonify({'mappings': mappings})
 
 
