@@ -102,20 +102,28 @@ $(document).ready(function() {
     } );
 
     var oTable = $('#rules_table').dataTable({
+        // disable automatic column width calculation
+        "bAutoWidth": false,
         "aoColumnDefs": [
              // The aTarget numbers refer to the columns in the dataTable on which to apply the functions
              // hide details
              { "bVisible": false, "aTargets": dt_details },
+             // make the 1st column (hide/show details) not sortable
              { "bSortable": false, "aTargets": [ 0 ] },
+             // make all columns searchable
              { "bSearchable": "true", "aTargets": dt_all },
 //             { "sSortDataType": "dom-select", "aTargets": [ dt_mappings ] },
 //             { "sSortDataType": "dom-text", "aTargets": [ dt_main ]  },
              { "sType": "numeric", "aTargets": [ dt_backgroundrate.col - 1 ,
                                                  dt_priority.col - 1] },
              { "sWidth": "5%",  "aTargets": [0] },
-             { "sWidth": "5%",  "aTargets": [ dt_backgroundrate - 1, ] },
-             { "sWidth": "20%", "aTargets": [dt_comment.col - 1, ] },
-             { "sWidth": "20%", "aTargets": [dt_channel.col - 1, dt_mappings.col - 1] },
+             { "sWidth": "20%", "aTargets": [ dt_mappings -1 ] },
+             { "sWidth": "8%",  "aTargets": [ dt_backgroundrate - 1, ] },
+             { "sWidth": "5%",  "aTargets": [ dt_priority - 1, ] },
+             { "sWidth": "7%",  "aTargets": [ dt_product - 1, ] },
+             { "sWidth": "10%", "aTargets": [ dt_channel.col - 1, ] },
+             { "sWidth": "10%", "aTargets": [ dt_comment - 1, ] },
+             { "sWidth": "15%", "aTargets": [ dt_updatetype - 1, ] },
         ],
 /*
         "fnDrawCallback": function(){
