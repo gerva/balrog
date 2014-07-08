@@ -1,5 +1,4 @@
 import time
-from datetime import datetime
 
 from flask import request, Response
 from flask.views import MethodView
@@ -97,12 +96,7 @@ class HistoryAdminView(AdminView):
 
             rev['_different'] = different
             rev['_time_ago'] = getTimeAgo(rev['timestamp'])
-            rev['_human_timestamp'] = getHumanTimestamp(rev['timestamp'])
 
-
-def getHumanTimestamp(timestamp):
-    dt = datetime.fromtimestamp(timestamp // 1000000000)
-    return dt.strftime('%Y-%m-%d %H:%M:%S epoch')
 
 def getTimeAgo(timestamp):
     # keeping this here amongst the view code because the use of the

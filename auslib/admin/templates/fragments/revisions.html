@@ -22,7 +22,6 @@
               {% else %}
               <input type="radio" name="change_id" value="{{ revision['change_id'] }}">
               {{ revision['_time_ago'] }}<br>
-              ({{ revision['_human_timestamp'] }})<br>
               by {{ revision['changed_by'] }}
               {% endif %}
             </td>
