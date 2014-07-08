@@ -101,6 +101,7 @@ class HistoryAdminView(AdminView):
 
 
 def getHumanTimestamp(timestamp):
+    return timestamp
     dt = datetime.fromtimestamp(timestamp)
     return dt.strftime('%Y-%m-%d %H:%M:%S epoch')
 
