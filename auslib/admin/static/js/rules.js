@@ -25,33 +25,27 @@ $.fn.dataTableExt.afnSortData['dom-select'] = function  ( oSettings, iColumn )
     dataTables variables
 */
 
-var dt_mappings       = { 'col': 1, 'id': 'mapping', 'label': 'Version', 'disabled': false, };
-var dt_backgroundrate = { 'col': 2, 'id': 'backgroundRate', 'label': 'Build Id', 'disabled': false, };
-var dt_priority       = { 'col': 3, 'id': 'priority', 'disabled': false, };
-var dt_product        = { 'col': 4, 'id': 'product', 'disabled': false, };
-var dt_version        = { 'col': 5, 'id': 'version', 'disabled': false, };
-var dt_buildid        = { 'col': 6,  'id': 'build_id',       'disabled': false, };
-var dt_channel        = { 'col': 7,  'id': 'channel',        'disabled': false, };
-var dt_locale         = { 'col': 8,  'id': 'locale',         'disabled': false, };
-var dt_distribution   = { 'col': 9,  'id': 'distribution',   'disabled': false, };
-var dt_buildtarget    = { 'col': 10, 'id': 'build_target',   'disabled': false, };
-var dt_osversion      = { 'col': 11, 'id': 'os_version',     'disabled': false, };
-var dt_distversion    = { 'col': 12, 'id': 'dist_version',   'disabled': false, };
-var dt_comment        = { 'col': 13, 'id': 'comment',        'disabled': false, };
-var dt_updatetype     = { 'col': 14, 'id': 'update_type',    'disabled': false, };
-var dt_headerarch     = { 'col': 15, 'id': 'headers_architecture', 'disabled': false, };
-var dt_versiondata    = { 'col': 16, 'id': 'version_data',   'disabled': true, };
-var dt_csrftoken      = { 'col': 17, 'id': 'csrf_token',     'disabled': false, };
+var dt_mappings       = { 'col': 1,  'id': 'mapping',              'label': 'Version',              'disabled': false, };
+var dt_backgroundrate = { 'col': 2,  'id': 'backgroundRate',       'label': 'Build Id',             'disabled': false, };
+var dt_priority       = { 'col': 3,  'id': 'priority',             'label': 'Priority',             'disabled': false, };
+var dt_product        = { 'col': 4,  'id': 'product',              'label': 'Product',              'disabled': false, };
+var dt_version        = { 'col': 5,  'id': 'version',              'label': 'Version',              'disabled': false, };
+var dt_buildid        = { 'col': 6,  'id': 'build_id',             'label': 'Build ID',             'disabled': false, };
+var dt_channel        = { 'col': 7,  'id': 'channel',              'label': 'Channel',              'disabled': false, };
+var dt_locale         = { 'col': 8,  'id': 'locale',               'label': 'Locale',               'disabled': false, };
+var dt_distribution   = { 'col': 9,  'id': 'distribution',         'label': 'Distribution',         'disabled': false, };
+var dt_buildtarget    = { 'col': 10, 'id': 'build_target',         'label': 'Build Target',         'disabled': false, };
+var dt_osversion      = { 'col': 11, 'id': 'os_version',           'label': 'OS Version',           'disabled': false, };
+var dt_distversion    = { 'col': 12, 'id': 'dist_version',         'label': 'Dist Version',         'disabled': false, };
+var dt_comment        = { 'col': 13, 'id': 'comment',              'label': 'Comment',              'disabled': false, };
+var dt_updatetype     = { 'col': 14, 'id': 'update_type',          'label': 'Update Type',          'disabled': false, };
+var dt_headerarch     = { 'col': 15, 'id': 'headers_architecture', 'label': 'Headers Architecture', 'disabled': false, };
+var dt_versiondata    = { 'col': 16, 'id': 'version_data',         'label': 'Version Data',         'disabled': true, };
+var dt_csrftoken      = { 'col': 17, 'id': 'csrf_token',           'label': '',                     'disabled': false, };
 
-dt_locale.label = 'Locale';
-dt_distribution.label = 'Distribution';
-dt_buildtarget.label = 'Build Target';
-dt_osversion.label = 'OS Version';
-dt_distversion.label = 'Dist Version';
-dt_headerarch.label = 'Header Architecture';
-dt_versiondata.label = 'Version Data';
 
 // details elements
+// elements listed here appear in the detail area
 var dt_details = [
     dt_version.col,
     dt_buildid.col,
@@ -66,6 +60,7 @@ var dt_details = [
 ]
 
 // main elements
+// elements always shown
 var dt_main = [
     dt_mappings.col,
     dt_backgroundrate.col,
@@ -73,20 +68,27 @@ var dt_main = [
     dt_product.col,
     dt_channel.col,
     dt_updatetype.col,
-    dt_comment.col,
+    dt_comment.col
 ]
 
 // all elements
+// all the elements: main + details, sorted by id
 var dt_all = $.merge(dt_main, dt_details).sort(function(a,b){return a-b});
 
+// open details icon
 function open_icon() {
     return '<span class="glyphicon glyphicon-chevron-down"></span>'
-};
+}
 
+// close details icon
 function close_icon() {
     return '<span class="glyphicon glyphicon-chevron-up"></span>'
-};
+}
 
+// this function changes the rules table doing the following actions:
+// * hides the details
+// * scales the main elements so they fit in the page
+// * adds the button for expanding the details
 $(document).ready(function() {
     // Insert a 'details' column to the table
     var nCloneTh = document.createElement( 'th' );
@@ -112,10 +114,11 @@ $(document).ready(function() {
              { "bSortable": false, "aTargets": [ 0 ] },
              // make all columns searchable
              { "bSearchable": "true", "aTargets": dt_all },
-//             { "sSortDataType": "dom-select", "aTargets": [ dt_mappings ] },
-//             { "sSortDataType": "dom-text", "aTargets": [ dt_main ]  },
+             // background rate and priority are numeric fields, so just tell
+             // datatables we want to sort them in a numeric fashion
              { "sType": "numeric", "aTargets": [ dt_backgroundrate.col - 1 ,
                                                  dt_priority.col - 1] },
+             // size of columns
              { "sWidth": "5%",  "aTargets": [0] },
              { "sWidth": "20%", "aTargets": [ dt_mappings -1 ] },
              { "sWidth": "8%",  "aTargets": [ dt_backgroundrate - 1, ] },
@@ -125,18 +128,7 @@ $(document).ready(function() {
              { "sWidth": "10%", "aTargets": [ dt_comment - 1, ] },
              { "sWidth": "15%", "aTargets": [ dt_updatetype - 1, ] },
         ],
-/*
-        "fnDrawCallback": function(){
-            $("select","[id*=mapping]").combobox();
-        }
-*/
     });
-/*
-    $( "#toggle" ).click(function() {
-        $( "select","[id*=mapping]").toggle();
-    });
-*/
-
 
     /* Add event listener for opening and closing details
      * Note that the indicator for showing which row is open is not controlled by DataTables,
@@ -168,7 +160,8 @@ $(document).ready(function() {
         }
     } );
 } );
-// details
+
+// format the details section
 function detail_item(id, element, value, disabled=false) {
     "use strict";
     // label
@@ -179,7 +172,6 @@ function detail_item(id, element, value, disabled=false) {
     }
     var div = document.createElement( 'div' );
     $( div ).prop('class', 'col-sm-10');
-
     $( label ).attr('for', 'input_' + element_id);
     $( label ).prop('class', 'control-label col-sm-2');
     $( label ).text(element.label);
@@ -209,9 +201,9 @@ function detail_item(id, element, value, disabled=false) {
 
     div.appendChild( form_group );
     return div;
-};
+}
 
-
+// wrapper for buttons, it has all the elements needed (div/button/..)
 function generic_button(rule_id, name) {
     var button = document.createElement( 'button' );
     $( button ).attr('id', rule_id + '_' + name );
@@ -220,24 +212,26 @@ function generic_button(rule_id, name) {
     $( button ).attr('title', name);
     $( button ).html( name );
     return button
-};
+}
 
 
+// edit button
 function button_edit(rule_id) {
     return generic_button(rule_id, 'edit');
-};
+}
 
 
+// delete button
 function button_delete(rule_id, versiondata, csrf_token) {
     return generic_button(rule_id, 'delete');
-};
+}
 
-
+// revision button
 function button_revision(rule_id) {
     return generic_button(rule_id, 'revision');
-};
+}
 
-
+// scales the input_element
 function resize_input_element( input_element, size=7 ) {
     "use strict";
     var div = document.createElement( 'div' );
@@ -247,7 +241,7 @@ function resize_input_element( input_element, size=7 ) {
     return div;
 }
 
-
+// a generic input filed element
 function standard_input( nTr, element, value) {
     "use strict";
     var rule_id = nTr.id
@@ -258,14 +252,14 @@ function standard_input( nTr, element, value) {
     $( input ).prop('class', 'form-control');
     if ( value != 'None' ) {
         $( input ).attr('value', value);
-    };
+    }
     $( input ).attr('id', 'input_' + element.id + '_' + rule_id );
 
     var wrapper = resize_input_element( input );
     element_id.appendChild( wrapper );
-};
+}
 
-
+// generic option input element
 function option_input( nTr, element, options, value ) {
     "use strict";
     var rule_id = nTr.id
@@ -285,7 +279,7 @@ function option_input( nTr, element, options, value ) {
     $( element_id ).empty();
     var wrapper = resize_input_element( select, 12 );
     element_id.appendChild( wrapper );
-};
+}
 
 
 function reset_element(element, rule_id, value) {
@@ -293,7 +287,7 @@ function reset_element(element, rule_id, value) {
     var element = document.getElementById(element.id + '_' + rule_id);
     $( element ).empty();
     element.innerHTML = value;
-};
+}
 
 
 function remove_editable_fields_on_row( oTable, nTr ) {
@@ -307,12 +301,12 @@ function remove_editable_fields_on_row( oTable, nTr ) {
     elements.forEach(function(element){
         reset_element(element, rule_id, aData[element.col]);
     });
-};
+}
 
 
+// datalist element (for mapping)
 function add_datalist( nTr, element, value ) {
     "use strict";
-    //
     var rule_id = nTr.id
     var element_id = document.getElementById(element.id + '_' + rule_id);
     $( element_id ).empty();
@@ -336,14 +330,16 @@ function add_datalist( nTr, element, value ) {
         });
     });
     element_id.appendChild( datalist );
-};
+}
 
+// get a list of products, do no hardcode, add an entry point in the backend
 function get_products() {
     "use strict";
     // get them from the db as "mappings" does
     return ['', 'Firefox', 'Fennec', 'Thunderbird'];
 }
 
+// formats the main section of the rules table
 function fnFormatMain( oTable, nTr ) {
     "use strict";
     var aData = oTable.fnGetData( nTr );
@@ -357,7 +353,7 @@ function fnFormatMain( oTable, nTr ) {
     standard_input( nTr, dt_comment, aData[dt_comment.col]);
     var update_type = [ 'minor', 'major' ];
     option_input( nTr, dt_updatetype, update_type, aData[dt_updatetype.col]);
-};
+}
 
 
 // this manages the detail
@@ -393,19 +389,67 @@ function fnFormatDetails ( oTable, nTr ) {
     details.appendChild( buttons );
     details.appendChild( div_space_bottom );
     return $( details ).clone().html();
-};
+}
 
 
 function getRuleUrl(rule_id) {
     "use strict";
     var rule_number = rule_id.replace('rule_', '');
     rule_number = rule_number.replace('r_', '');
-    return SCRIPT_ROOT + '/rules/' + rule_number;
-};
+    url = SCRIPT_ROOT + '/rules/' + rule_number;
+    $.ajax(url, {
+        type: 'get',
+        dataType: 'json',
+        success: callback,
+    });
+}
+
+function submitRuleForm(rule_id, data){
+    var url = getRuleUrl(rule_id);
+
+    return $.ajax(url, {'type': 'post', 'data': data, 'dataType': 'json'})
+        .error(handleError)
+        .success(function(data) {
+            $('#input_data_version_' + rule_id).val(data.new_data_version);
+            alertify.success('Rule updated!');
+        });
+}
+
+function deleteRule(rule_id, versiondata, token) {
+    var data = $.param({
+        'data_version': versiondata,
+        'csrf_token': token,
+    });
+    var url = getRuleUrl(rule_id) + '?' + data;
+    return $.ajax(url, {'type': 'delete', 'data': data, 'dataType': 'json'})
+        .error(handleError)
+        .success(function(data) {
+            table = $('#rules_table').dataTable();
+            row = $('#rule_' + rule_id).get(0);
+            table.fnDeleteRow(row);
+            alertify.success('Rule deleted!');
+        });
+}
+
+/*
+function submitNewRuleForm(ruleForm, table) {
+    url = getRuleAPIUrl();
+    data = getData('new_rule', ruleForm);
+
+    preAJAXLoad(ruleForm);
+
+    $.ajax(url, {'type': 'post', 'data': data})
+    .error(handleError)
+    .success(function(data) {
+        $.get(getRuleUrl(data))
+        .error(handleError)
+    });
+}
+*/
 
 function getRuleAPIUrl() {
     return SCRIPT_ROOT + '/rules';
-};
+}
 
 function getData( rule_id ) {
     "use strict";
@@ -434,7 +478,7 @@ function getData( rule_id ) {
         'csrf_token'    : $( '#' + rule_nu + '-' + dt_csrftoken.id ).val(),
     };
     return data;
-};
+}
 
 
 function get_mappings(callback) {
@@ -444,7 +488,7 @@ function get_mappings(callback) {
         dataType: 'json',
         success: callback,
     });
-};
+}
 
 function submitRuleForm(rule_id, data){
     var url = getRuleUrl(rule_id);
@@ -455,7 +499,7 @@ function submitRuleForm(rule_id, data){
             $('#input_data_version_' + rule_id).val(data.new_data_version);
             alertify.success('Rule updated!');
         });
-};
+}
 
 function deleteRule(rule_id, versiondata, token) {
     var data = $.param({
@@ -518,7 +562,7 @@ function activate_buttons( nTr ) {
             return false;
         });
     });
-};
+}
 
 
 function edit_row( nTr ) {
@@ -528,4 +572,4 @@ function edit_row( nTr ) {
     var data = getData( rule_id );
     console.log( data );
     submitRuleForm( nTr.id, data );
-};
+}

@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask_compress import Compress
 
 from raven.contrib.flask import Sentry
 
@@ -39,6 +40,8 @@ def add_security_headers(response):
     response.headers['X-Frame-Options'] = 'DENY'
     response.headers['X-Content-Type-Options'] = 'nosniff'
     return response
+
+Compress(app)
 
 app.add_url_rule('/csrf_token', view_func=CSRFView.as_view('csrf'))
 app.add_url_rule('/users', view_func=UsersView.as_view('users'))
