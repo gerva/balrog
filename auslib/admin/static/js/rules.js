@@ -57,7 +57,7 @@ var dt_details = [
     dt_headerarch.col,
     dt_versiondata.col,
     dt_csrftoken.col,
-]
+];
 
 // main elements
 // elements always shown
@@ -69,20 +69,20 @@ var dt_main = [
     dt_channel.col,
     dt_updatetype.col,
     dt_comment.col
-]
+];
 
 // all elements
 // all the elements: main + details, sorted by id
-var dt_all = $.merge(dt_main, dt_details).sort(function(a,b){return a-b});
+var dt_all = $.merge(dt_main, dt_details).sort(function(a,b){return a-b;});
 
 // open details icon
 function open_icon() {
-    return '<span class="glyphicon glyphicon-chevron-down"></span>'
+    return '<span class="glyphicon glyphicon-chevron-down"></span>';
 }
 
 // close details icon
 function close_icon() {
-    return '<span class="glyphicon glyphicon-chevron-up"></span>'
+    return '<span class="glyphicon glyphicon-chevron-up"></span>';
 }
 
 // this function changes the rules table doing the following actions:
@@ -136,12 +136,12 @@ $(document).ready(function() {
      */
     $('#rules_table tbody').on('click', 'button', function () {
         var nTr = this.parentNode.parentNode;
-        more = "btn-default closed"
-        less = "btn-warning opened"
+        var more = "btn-default closed";
+        var less = "btn-warning opened";
         if ( this.className === "btn " + less )
         {
             // This row is already open - close it
-            $(this).removeClass( less ).addClass( more )
+            $(this).removeClass( less ).addClass( more );
             this.innerHTML = open_icon();
             remove_editable_fields_on_row( oTable, nTr );
             $( nTr ).removeClass('active');
@@ -151,7 +151,7 @@ $(document).ready(function() {
         {
             if ( this.className === "btn " + more ) {
             // Open this row
-            $(this).removeClass( more ).addClass( less )
+            $(this).removeClass( more ).addClass( less );
             this.innerHTML = close_icon();
             $( nTr ).attr('class', 'active');
             oTable.fnOpen( nTr, fnFormatDetails(oTable, nTr), 'details active' );
@@ -211,7 +211,7 @@ function generic_button(rule_id, name) {
     $( button ).attr('type', 'submit');
     $( button ).attr('title', name);
     $( button ).html( name );
-    return button
+    return button;
 }
 
 
@@ -244,7 +244,7 @@ function resize_input_element( input_element, size=7 ) {
 // a generic input filed element
 function standard_input( nTr, element, value) {
     "use strict";
-    var rule_id = nTr.id
+    var rule_id = nTr.id;
     var element_id = document.getElementById(element.id + '_' + rule_id);
     $( element_id ).empty();
 
@@ -262,7 +262,7 @@ function standard_input( nTr, element, value) {
 // generic option input element
 function option_input( nTr, element, options, value ) {
     "use strict";
-    var rule_id = nTr.id
+    var rule_id = nTr.id;
     var select = document.createElement( 'select' );
     $( select ).prop('class', 'form-control');
     $( select ).attr('id', 'input_' + element.id + '_' + rule_id );
@@ -274,7 +274,6 @@ function option_input( nTr, element, options, value ) {
         option.innerHTML = entry;
         select.appendChild(option);
     });
-    var rule_id = nTr.id
     var element_id = document.getElementById(element.id + '_' + rule_id);
     $( element_id ).empty();
     var wrapper = resize_input_element( select, 12 );
@@ -297,7 +296,7 @@ function remove_editable_fields_on_row( oTable, nTr ) {
     var aData = oTable.fnGetData( nTr );
     var rule_id = nTr.id;
     var elements = [dt_mappings, dt_backgroundrate, dt_priority, dt_product,
-                    dt_channel, dt_comment, dt_updatetype]
+                    dt_channel, dt_comment, dt_updatetype];
     elements.forEach(function(element){
         reset_element(element, rule_id, aData[element.col]);
     });
@@ -307,7 +306,7 @@ function remove_editable_fields_on_row( oTable, nTr ) {
 // datalist element (for mapping)
 function add_datalist( nTr, element, value ) {
     "use strict";
-    var rule_id = nTr.id
+    var rule_id = nTr.id;
     var element_id = document.getElementById(element.id + '_' + rule_id);
     $( element_id ).empty();
 
@@ -323,7 +322,7 @@ function add_datalist( nTr, element, value ) {
     element_id.appendChild( input );
 
     get_mappings( function(mappings) {
-        mappings['mappings'].forEach(function(mapping) {
+        mappings.mappings.forEach(function(mapping) {
             var option = document.createElement( 'option' );
             $( option ).attr('value', mapping);
             datalist.appendChild( option );
@@ -343,7 +342,7 @@ function get_products() {
 function fnFormatMain( oTable, nTr ) {
     "use strict";
     var aData = oTable.fnGetData( nTr );
-    var rule_id = nTr.id
+    var rule_id = nTr.id;
     var products = get_products();
     add_datalist( nTr, dt_mappings, aData[dt_mappings.col]);
     standard_input( nTr, dt_backgroundrate, aData[dt_backgroundrate.col]);
@@ -358,7 +357,7 @@ function fnFormatMain( oTable, nTr ) {
 
 // this manages the detail
 function fnFormatDetails ( oTable, nTr ) {
-    "use strict"
+    "use strict";
     fnFormatMain(oTable, nTr);
     var aData = oTable.fnGetData( nTr );
     var rule_id = nTr.id;
@@ -371,7 +370,7 @@ function fnFormatDetails ( oTable, nTr ) {
     details.appendChild( div_space_top );
     var elements = [dt_version, dt_buildid, dt_locale, dt_distribution,
                     dt_buildtarget, dt_osversion, dt_distversion,
-                    dt_headerarch, dt_versiondata,]
+                    dt_headerarch, dt_versiondata,];
     elements.forEach(function(element) {
         details.appendChild( detail_item( rule_id,
                                           element,
@@ -455,7 +454,7 @@ function getData( rule_id ) {
     "use strict";
     rule_id = '_' + rule_id;
     // $( '#input_' + dt_mappings.id + rule_id ).val
-    var rule_nu = rule_id.replace('_rule_', '')
+    var rule_nu = rule_id.replace('_rule_', '');
     // returns the default value, not the one entered
     var mapping_value = document.getElementById( 'input_' + dt_mappings.id + rule_id ).value;
     var data = {
@@ -549,7 +548,7 @@ function activate_buttons( nTr ) {
         var button_id = $( this ).attr('id');
         button_id = button_id.split('_')[1];
         $( this ).click(function() {
-            deleteRule(button_id, data['versiondata'], data['token']);
+            deleteRule(button_id, data.versiondata, data.token);
         });
     });
 
@@ -567,7 +566,7 @@ function activate_buttons( nTr ) {
 
 function edit_row( nTr ) {
     "use strict";
-    var rule_id = nTr.id
+    var rule_id = nTr.id;
     /* rule_id = rule_id.replace('rule_', '_r'); */
     var data = getData( rule_id );
     console.log( data );
