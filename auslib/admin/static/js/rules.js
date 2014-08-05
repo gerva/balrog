@@ -308,8 +308,11 @@ function add_datalist( nTr, element, value ) {
     "use strict";
     var rule_id = nTr.id;
     var element_id = document.getElementById(element.id + '_' + rule_id);
+    // datalist id == list_mappings_<num>
+    // mappings id == input_mappings_<num>
     $( element_id ).empty();
 
+    // select current datalist
     var datalist = document.createElement( 'datalist' );
     var datalist_id = 'list_' + element.id + '_' + rule_id;
     $( datalist ).attr( 'id', datalist_id );
@@ -323,34 +326,6 @@ function add_datalist( nTr, element, value ) {
 
     get_mappings( value, function(mappings) {
         mappings.mappings.forEach(function(mapping) {
-            var option = document.createElement( 'option' );
-            $( option ).attr('value', mapping);
-            datalist.appendChild( option );
-        });
-    });
-    element_id.appendChild( datalist );
-}
-
-// updates the datalist filed when new text is entered
-function update_datalist(current_mappings) {
-    // select this mappings input
-    var current_value = $( current_mappings ).val();
-    // select current datalist
-    // datalist id == list_mappings_<num>
-    // mappings id == input_mappings_<num>
-    var datalist_id = $(current_mappings).attr('id').replace('input', 'list');
-    // empty datalist
-    // $( datalist ).empty() causes =>  Error: variable has been optimized out
-    // when trying to append a new child
-    // let's remove it instead
-    $( datalist_id ).remove();
-    // ... now recreate it
-    var datalist = document.createElement( 'datalist' );
-    $( datalist ).attr( 'id', datalist_id );
-
-    // and now repopulate it with new values
-    get_mappings( current_value, function(mappings) {
-        mappings.mappings.forEach(function(mapping) {
             // our backend provides a json formatted lists of mappings
             // forEach() iterates through the results;
             // results are generated on server side with the following
@@ -363,10 +338,29 @@ function update_datalist(current_mappings) {
             // and set the option value to 'mapping'
             $( option ).attr('value', mapping);
             // append option to datalist
-            $( datalist ).append( $( option ) );
+            datalist.appendChild( option );
         });
     });
-    $( current_mappings ).append( $( datalist ) );
+    element_id.appendChild( datalist );
+}
+
+function update_datalist(current_mappings) {
+    // select this mappings input
+    var current_value = $( current_mappings ).val();
+    var datalist_id = $(current_mappings).attr('id').replace('input', 'list');
+    $( datalist_id ).empty();
+    var datalist = document.getElementById(datalist_id);
+    // and now repopulate it with new values
+    get_mappings( current_value, function(mappings) {
+        mappings.mappings.forEach(function(mapping) {
+            var option = document.createElement( 'option' );
+            // and set the option value to 'mapping'
+            $( option ).attr('value', mapping);
+            // append option to datalist
+            datalist.appendChild( option );
+        });
+    });
+    // no need to append datalist to other elements.
 }
 
 
