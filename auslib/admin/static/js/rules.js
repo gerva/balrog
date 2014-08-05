@@ -321,7 +321,7 @@ function add_datalist( nTr, element, value ) {
     $( input ).attr( 'value', value );
     element_id.appendChild( input );
 
-    get_mappings( function(mappings) {
+    get_mappings( value, function(mappings) {
         mappings.mappings.forEach(function(mapping) {
             var option = document.createElement( 'option' );
             $( option ).attr('value', mapping);
@@ -330,6 +330,45 @@ function add_datalist( nTr, element, value ) {
     });
     element_id.appendChild( datalist );
 }
+
+// updates the datalist filed when new text is entered
+function update_datalist(current_mappings) {
+    // select this mappings input
+    var current_value = $( current_mappings ).val();
+    // select current datalist
+    // datalist id == list_mappings_<num>
+    // mappings id == input_mappings_<num>
+    var datalist_id = $(current_mappings).attr('id').replace('input', 'list');
+    // empty datalist
+    // $( datalist ).empty() causes =>  Error: variable has been optimized out
+    // when trying to append a new child
+    // let's remove it instead
+    $( datalist_id ).remove();
+    // ... now recreate it
+    var datalist = document.createElement( 'datalist' );
+    $( datalist ).attr( 'id', datalist_id );
+
+    // and now repopulate it with new values
+    get_mappings( current_value, function(mappings) {
+        mappings.mappings.forEach(function(mapping) {
+            // our backend provides a json formatted lists of mappings
+            // forEach() iterates through the results;
+            // results are generated on server side with the following
+            // query (more or less...)
+            //
+            // select mappings where mapping like '%<current_value>%'
+            //
+            // create a new option for each result provided by the backend
+            var option = document.createElement( 'option' );
+            // and set the option value to 'mapping'
+            $( option ).attr('value', mapping);
+            // append option to datalist
+            $( datalist ).append( $( option ) );
+        });
+    });
+    $( current_mappings ).append( $( datalist ) );
+}
+
 
 // get a list of products, do no hardcode, add an entry point in the backend
 function get_products() {
@@ -345,6 +384,12 @@ function fnFormatMain( oTable, nTr ) {
     var rule_id = nTr.id;
     var products = get_products();
     add_datalist( nTr, dt_mappings, aData[dt_mappings.col]);
+
+    // update datalist when input changes
+    var current_mappings = '#input_' + dt_mappings.id + '_' + rule_id
+    $( current_mappings ).keyup( function() {
+        update_datalist(current_mappings)
+    });
     standard_input( nTr, dt_backgroundrate, aData[dt_backgroundrate.col]);
     standard_input( nTr, dt_priority, aData[dt_priority.col]);
     option_input( nTr, dt_product, products, aData[dt_product.col]);
@@ -395,19 +440,27 @@ function getRuleUrl(rule_id) {
     "use strict";
     var rule_number = rule_id.replace('rule_', '');
     rule_number = rule_number.replace('r_', '');
-    url = SCRIPT_ROOT + '/rules/' + rule_number;
-    $.ajax(url, {
-        type: 'get',
-        dataType: 'json',
-        success: callback,
-    });
+    return SCRIPT_ROOT + '/rules/' + rule_number;
 }
 
 function submitRuleForm(rule_id, data){
+    "use strict";
     var url = getRuleUrl(rule_id);
 
-    return $.ajax(url, {'type': 'post', 'data': data, 'dataType': 'json'})
-        .error(handleError)
+    // post data to url
+    $.ajax(url, {'type': 'post', 'data': data, 'dataType': 'json'})
+        .error(function (request, status, error) {
+            // ops... error!
+            window.console && console.log(request);
+            window.console && console.log(status);
+            window.console && console.log(error);
+            var bad_element = request.responseText;
+            var message = 'Error updating rule: ' + rule_id;
+            message = message + ' ' + bad_element + ' has a wrong value!';
+            message = message + ' ' + '(click to remove this message)';
+            // Alertify.log(message, "error", 5);
+            alertify.error(message);
+        })
         .success(function(data) {
             $('#input_data_version_' + rule_id).val(data.new_data_version);
             alertify.success('Rule updated!');
@@ -415,6 +468,7 @@ function submitRuleForm(rule_id, data){
 }
 
 function deleteRule(rule_id, versiondata, token) {
+    "use strict";
     var data = $.param({
         'data_version': versiondata,
         'csrf_token': token,
@@ -429,22 +483,6 @@ function deleteRule(rule_id, versiondata, token) {
             alertify.success('Rule deleted!');
         });
 }
-
-/*
-function submitNewRuleForm(ruleForm, table) {
-    url = getRuleAPIUrl();
-    data = getData('new_rule', ruleForm);
-
-    preAJAXLoad(ruleForm);
-
-    $.ajax(url, {'type': 'post', 'data': data})
-    .error(handleError)
-    .success(function(data) {
-        $.get(getRuleUrl(data))
-        .error(handleError)
-    });
-}
-*/
 
 function getRuleAPIUrl() {
     return SCRIPT_ROOT + '/rules';
@@ -480,40 +518,13 @@ function getData( rule_id ) {
 }
 
 
-function get_mappings(callback) {
-    var url = SCRIPT_ROOT + '/mappings';
-    $.ajax(url, {
+function get_mappings(value, callback) {
+    var url = SCRIPT_ROOT + '/mappings/' + value;
+    return $.ajax(url, {
         type: 'get',
         dataType: 'json',
         success: callback,
     });
-}
-
-function submitRuleForm(rule_id, data){
-    var url = getRuleUrl(rule_id);
-
-    return $.ajax(url, {'type': 'post', 'data': data, 'dataType': 'json'})
-        .error(handleError)
-        .success(function(data) {
-            $('#input_data_version_' + rule_id).val(data.new_data_version);
-            alertify.success('Rule updated!');
-        });
-}
-
-function deleteRule(rule_id, versiondata, token) {
-    var data = $.param({
-        'data_version': versiondata,
-        'csrf_token': token,
-    });
-    var url = getRuleUrl(rule_id) + '?' + data;
-    return $.ajax(url, {'type': 'delete', 'data': data, 'dataType': 'json'})
-        .error(handleError)
-        .success(function(data) {
-            table = $('#rules_table').dataTable();
-            row = $('#rule_' + rule_id).get(0);
-            table.fnDeleteRow(row);
-            alertify.success('Rule deleted!');
-        });
 }
 
 function submitNewRuleForm(ruleForm, table) {
@@ -569,6 +580,6 @@ function edit_row( nTr ) {
     var rule_id = nTr.id;
     /* rule_id = rule_id.replace('rule_', '_r'); */
     var data = getData( rule_id );
-    console.log( data );
+    window.console && console.log(data);
     submitRuleForm( nTr.id, data );
 }
