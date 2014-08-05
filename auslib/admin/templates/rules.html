@@ -13,11 +13,6 @@
 {% endblock %}
 {% block bottom %}
 {{ super() }}
-<script type='text/javascript' src='{{ url_for('static', filename='js/jquery.dataTables.min.js') }}'></script>
-<script type='text/javascript' src='{{ url_for('static', filename='js/jquery.dataTables.fnAddTr.js') }}'></script>
-<script type='text/javascript' src='{{ url_for('static', filename='js/jquery-ui-1.10.4.min.js') }}'></script>
-<script type='text/javascript' src='{{ url_for('static', filename='js/dataTables.bootstrap.js') }}'></script>
-<script type='text/javascript' src='{{ url_for('static', filename='js/rules.js') }}'></script>
 {% endblock %}
 
 {% block container_class %}container-fluid{% endblock %}
@@ -37,4 +32,9 @@
     {% include 'fragments/rules.html' %}
 </div>
 </div><!-- tab-content -->
+<script type='text/javascript' src='{{ url_for('static', filename='js/jquery.dataTables.min.js') }}'></script>
+<script type='text/javascript' src='{{ url_for('static', filename='js/jquery.dataTables.fnAddTr.js') }}'></script>
+<script type='text/javascript' src='{{ url_for('static', filename='js/jquery-ui-1.10.4.min.js') }}'></script>
+<script type='text/javascript' src='{{ url_for('static', filename='js/dataTables.bootstrap.js') }}'></script>
+<script type='text/javascript' src='{{ url_for('static', filename='js/rules.js') }}'></script>
 {% endblock %}
