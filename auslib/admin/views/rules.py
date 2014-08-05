@@ -101,6 +101,12 @@ class MappingsView(AdminView):
         mappings = [m['name'] for m in db.releases.getNames(limit=20)]
         return jsonify({'mappings': mappings})
 
+class CompletePartialMapping(AdminView):
+    """/mappings/<name>"""
+    def get(self, name):
+        mappings = [m['name'] for m in db.releases.completePartialMapping(name, limit=20)]
+        return jsonify({'mappings': mappings})
+
 
 class SingleRuleView(AdminView):
     """ /rules/<rule_id> """

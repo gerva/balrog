@@ -19,7 +19,7 @@ from auslib.admin.views.permissions import UsersView, PermissionsView, \
 from auslib.admin.views.releases import SingleLocaleView, SingleBlobView, \
     SingleReleaseView, ReleasesPageView, ReleaseHistoryView
 from auslib.admin.views.rules import RulesPageView, RulesAPIView, RuleAddView,\
-    SingleRuleView, RuleHistoryView, MappingsView
+    SingleRuleView, RuleHistoryView, MappingsView, CompletePartialMapping
 from auslib.admin.views.history import DiffView, FieldView
 from auslib.admin.views.index import IndexPageView, RecentChangesTableView
 
@@ -66,3 +66,4 @@ app.add_url_rule('/history/view/<type_>/<change_id>/<field>', view_func=FieldVie
 app.add_url_rule('/recent_changes_table.html', view_func=RecentChangesTableView.as_view(''))
 app.add_url_rule('/', view_func=IndexPageView.as_view('index.html'))
 app.add_url_rule('/mappings', view_func=MappingsView.as_view('mappings'))
+app.add_url_rule('/mappings/<name>', view_func=CompletePartialMapping.as_view('mappings'))

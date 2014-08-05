@@ -938,6 +938,14 @@ class Releases(AUSTable):
     def getNames(self, limit=10):
         return self.select(columns=[self.name], distinct=True, limit=limit)
 
+
+    def completePartialMapping(self, name, limit=10):
+        return self.select(columns=[self.name],
+                           where=[self.name.like('%{0}%'.format(name))],
+                           distinct=True,
+                           limit=limit)
+
+
 class Permissions(AUSTable):
     """allPermissions defines the structure and possible options for all
        available permissions. Most permissions are identified by an URL,
