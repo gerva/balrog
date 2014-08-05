@@ -1,22 +1,4 @@
 <form class="form-horizontal" role="form" id="new_rule_form" onsubmit='submitNewRuleForm($("#new_rule_form"), $("#rules_table")); return false;'>
-<!--
-        <th>Mapping</th>
-        <th>Background Rate</th>
-        <th>Priority</th>
-        <th>Product</th>
-        <th>Version</th>
-        <th>Build ID</th>
-        <th>Channel</th>
-        <th>Locale</th>
-        <th>Distribution</th>
-        <th>Build Target</th>
-        <th>OS Version</th>
-        <th>Dist Version</th>
-        <th>Comment</th>
-        <th>Update Type</th>
-        <th>Header Architecture</th>
-        <th>Update</th>
--->
 {{ new_rule_form.hidden_tag() }}
 {%- for item in [ "mapping",
                   "backgroundRate",
@@ -46,3 +28,25 @@
      <input class="btn btn-default" type="submit" name="submit" value="Add" />
    </div>
 </form>
+
+<table id="add_rule" class="table table-condensed">
+  <tr>
+    <th>Mapping</th>
+    <th>Background Rate</th>
+    <th>Priority</th>
+    <th>Product</th>
+    <th>Version</th>
+    <th>Build ID</th>
+    <th>Channel</th>
+    <th>Locale</th>
+    <th>Distribution</th>
+    <th>Build Target</th>
+    <th>OS Version</th>
+    <th>Dist Version</th>
+    <th>Comment</th>
+    <th>Update Type</th>
+    <th>Header Architecture</th>
+    <th>Update</th>
+ </tr>
+</table>
+

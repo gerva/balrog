@@ -25,55 +25,174 @@ $.fn.dataTableExt.afnSortData['dom-select'] = function  ( oSettings, iColumn )
     dataTables variables
 */
 
-var dt_mappings       = { 'col': 1,  'id': 'mapping',              'label': 'Version',              'disabled': false, };
-var dt_backgroundrate = { 'col': 2,  'id': 'backgroundRate',       'label': 'Build Id',             'disabled': false, };
-var dt_priority       = { 'col': 3,  'id': 'priority',             'label': 'Priority',             'disabled': false, };
-var dt_product        = { 'col': 4,  'id': 'product',              'label': 'Product',              'disabled': false, };
-var dt_version        = { 'col': 5,  'id': 'version',              'label': 'Version',              'disabled': false, };
-var dt_buildid        = { 'col': 6,  'id': 'build_id',             'label': 'Build ID',             'disabled': false, };
-var dt_channel        = { 'col': 7,  'id': 'channel',              'label': 'Channel',              'disabled': false, };
-var dt_locale         = { 'col': 8,  'id': 'locale',               'label': 'Locale',               'disabled': false, };
-var dt_distribution   = { 'col': 9,  'id': 'distribution',         'label': 'Distribution',         'disabled': false, };
-var dt_buildtarget    = { 'col': 10, 'id': 'build_target',         'label': 'Build Target',         'disabled': false, };
-var dt_osversion      = { 'col': 11, 'id': 'os_version',           'label': 'OS Version',           'disabled': false, };
-var dt_distversion    = { 'col': 12, 'id': 'dist_version',         'label': 'Dist Version',         'disabled': false, };
-var dt_comment        = { 'col': 13, 'id': 'comment',              'label': 'Comment',              'disabled': false, };
-var dt_updatetype     = { 'col': 14, 'id': 'update_type',          'label': 'Update Type',          'disabled': false, };
-var dt_headerarch     = { 'col': 15, 'id': 'headers_architecture', 'label': 'Headers Architecture', 'disabled': false, };
-var dt_versiondata    = { 'col': 16, 'id': 'version_data',         'label': 'Version Data',         'disabled': true, };
-var dt_csrftoken      = { 'col': 17, 'id': 'csrf_token',           'label': '',                     'disabled': false, };
+var dt_mappings = {
+    'col': 1,  'id': 'mapping',
+    'label': 'Version','disabled': false,
+    'type': 'datalist', 'position': 'main',
+    'init_value': '',
+};
 
+var dt_backgroundrate = {
+    'col': 2, 'id': 'backgroundRate',
+    'label': 'Build Id', 'disabled': false,
+    'type': 'datalist', 'position': 'main',
+    'init_value': 0,
+};
+
+var dt_priority = {
+    'col': 3, 'id': 'priority',
+    'label': 'Priority', 'disabled': false,
+    'type': 'input', 'position': 'main',
+    'init_value': 0,
+};
+
+var dt_product = {
+    'col': 4, 'id': 'product',
+    'label': 'Product', 'disabled': false,
+    'type': 'dropdown', 'position': 'main',
+    'init_value': 'Firefox', 'source': get_products(),
+};
+
+var dt_version = {
+    'col': 5, 'id': 'version',
+    'label': 'Version', 'disabled': false,
+    'type': 'datalist', 'position': 'details',
+    'init_value': '',
+};
+
+var dt_buildid = {
+    'col': 6, 'id': 'build_id',
+    'label': 'Build ID', 'disabled': false,
+    'type': 'input', 'position': 'details',
+    'init_value': '',
+};
+
+var dt_channel = {
+    'col': 7, 'id': 'channel',
+    'label': 'Channel', 'disabled': false,
+    'type': 'input', 'position': 'main',
+    'init_value': '',
+};
+var dt_locale = {
+    'col': 8, 'id': 'locale',
+    'label': 'Locale', 'disabled': false,
+    'type': 'input', 'position': 'details',
+    'init_value': '',
+};
+var dt_distribution = {
+    'col': 9, 'id': 'distribution',
+    'label': 'Distribution', 'disabled': false,
+    'type': 'input', 'position': 'details',
+    'init_value': '',
+};
+var dt_buildtarget = {
+    'col': 10, 'id': 'build_target',
+    'label': 'Build Target', 'disabled': false,
+    'type': 'input', 'position': 'details',
+    'init_value': '',
+};
+var dt_osversion = {
+    'col': 11, 'id': 'os_version',
+    'label': 'OS Version', 'disabled': false,
+    'type': 'input', 'position': 'details',
+    'init_value': '',
+};
+
+var dt_distversion = {
+    'col': 12, 'id': 'dist_version',
+    'label': 'Dist Version', 'disabled': false,
+    'type': 'input', 'position': 'details',
+    'init_value': '',
+};
+
+var dt_comment = {
+    'col': 13, 'id': 'comment',
+    'label': 'Comment', 'disabled': false,
+    'type': 'input', 'position': 'main',
+    'init_value': '',
+};
+
+var dt_updatetype = {
+    'col': 14, 'id': 'update_type',
+    'label': 'Update Type', 'disabled': false,
+    'type': 'dropdown', 'position': 'main',
+    'init_value': 'minor', 'source': get_update_type(),
+};
+
+var dt_headerarch = {
+    'col': 15, 'id': 'headers_architecture',
+    'label': 'Headers Architecture', 'disabled': false,
+    'type': 'datalist', 'position': 'details',
+    'init_value': '',
+};
+
+var dt_versiondata = {
+    'col': 16, 'id': 'version_data',
+    'label': 'Version Data', 'disabled': true,
+    'type': 'datalist', 'position': 'details',
+    'init_value': 0,
+};
+
+var dt_csrftoken = {
+    'col': 17, 'id': 'csrf_token',
+    'label': '', 'disabled': false,
+    'type': 'datalist', 'position': 'details',
+    'init_value': 0,  // there's not init_value for csrf token
+};
+
+
+// all elements
+var dt_all = [
+    dt_version,
+    dt_buildid,
+    dt_locale,
+    dt_distribution,
+    dt_buildtarget,
+    dt_osversion,
+    dt_distversion,
+    dt_headerarch,
+    dt_versiondata,
+    dt_csrftoken,
+    dt_mappings,
+    dt_backgroundrate,
+    dt_priority,
+    dt_product,
+    dt_channel,
+    dt_updatetype,
+    dt_comment
+];
+
+
+// main elements
+// elements listed here appear in the main area
+var dt_main = [];
+dt_all.forEach(function(element){
+    if ( element.position == 'main' ) {
+        dt_main.push(element);
+    }
+});
 
 // details elements
 // elements listed here appear in the detail area
-var dt_details = [
-    dt_version.col,
-    dt_buildid.col,
-    dt_locale.col,
-    dt_distribution.col,
-    dt_buildtarget.col,
-    dt_osversion.col,
-    dt_distversion.col,
-    dt_headerarch.col,
-    dt_versiondata.col,
-    dt_csrftoken.col,
-];
+var dt_details = [];
+dt_all.forEach(function(element){
+    if ( element.position == 'details' ) {
+        dt_details.push(element);
+    }
+});
 
-// main elements
-// elements always shown
-var dt_main = [
-    dt_mappings.col,
-    dt_backgroundrate.col,
-    dt_priority.col,
-    dt_product.col,
-    dt_channel.col,
-    dt_updatetype.col,
-    dt_comment.col
-];
 
-// all elements
-// all the elements: main + details, sorted by id
-var dt_all = $.merge(dt_main, dt_details).sort(function(a,b){return a-b;});
+// columns that will appear in details section
+var details_columns = [];
+dt_details.forEach(function(element){
+    details_columns.push(element.col);
+});
+
+// all cloumns
+var all_columns = [];
+dt_all.forEach(function(element){
+    all_columns.push(element.col);
+});
 
 // open details icon
 function open_icon() {
@@ -89,7 +208,9 @@ function close_icon() {
 // * hides the details
 // * scales the main elements so they fit in the page
 // * adds the button for expanding the details
-$(document).ready(function() {
+
+function create_rules_table() {
+// $(document).ready(function() {
     // Insert a 'details' column to the table
     var nCloneTh = document.createElement( 'th' );
     var nCloneTd = document.createElement( 'td' );
@@ -103,17 +224,18 @@ $(document).ready(function() {
         this.insertBefore(  nCloneTd.cloneNode( true ), this.childNodes[0] );
     } );
 
+
     var oTable = $('#rules_table').dataTable({
         // disable automatic column width calculation
         "bAutoWidth": false,
         "aoColumnDefs": [
              // The aTarget numbers refer to the columns in the dataTable on which to apply the functions
              // hide details
-             { "bVisible": false, "aTargets": dt_details },
+             { "bVisible": false, "aTargets": details_columns },
              // make the 1st column (hide/show details) not sortable
              { "bSortable": false, "aTargets": [ 0 ] },
              // make all columns searchable
-             { "bSearchable": "true", "aTargets": dt_all },
+             { "bSearchable": "true", "aTargets": all_columns },
              // background rate and priority are numeric fields, so just tell
              // datatables we want to sort them in a numeric fashion
              { "sType": "numeric", "aTargets": [ dt_backgroundrate.col - 1 ,
@@ -159,7 +281,7 @@ $(document).ready(function() {
             }
         }
     } );
-} );
+}
 
 // format the details section
 function detail_item(id, element, value, disabled=false) {
@@ -371,6 +493,10 @@ function get_products() {
     return ['', 'Firefox', 'Fennec', 'Thunderbird'];
 }
 
+function get_update_type(){
+    return [ 'minor', 'major' ];
+}
+
 // formats the main section of the rules table
 function fnFormatMain( oTable, nTr ) {
     "use strict";
@@ -380,16 +506,16 @@ function fnFormatMain( oTable, nTr ) {
     add_datalist( nTr, dt_mappings, aData[dt_mappings.col]);
 
     // update datalist when input changes
-    var current_mappings = '#input_' + dt_mappings.id + '_' + rule_id
+    var current_mappings = '#input_' + dt_mappings.id + '_' + rule_id;
     $( current_mappings ).keyup( function() {
-        update_datalist(current_mappings)
+        update_datalist(current_mappings);
     });
     standard_input( nTr, dt_backgroundrate, aData[dt_backgroundrate.col]);
     standard_input( nTr, dt_priority, aData[dt_priority.col]);
     option_input( nTr, dt_product, products, aData[dt_product.col]);
     standard_input( nTr, dt_channel, aData[dt_channel.col]);
     standard_input( nTr, dt_comment, aData[dt_comment.col]);
-    var update_type = [ 'minor', 'major' ];
+    var update_type = get_update_type();
     option_input( nTr, dt_updatetype, update_type, aData[dt_updatetype.col]);
 }
 
@@ -445,9 +571,6 @@ function submitRuleForm(rule_id, data){
     $.ajax(url, {'type': 'post', 'data': data, 'dataType': 'json'})
         .error(function (request, status, error) {
             // ops... error!
-            window.console && console.log(request);
-            window.console && console.log(status);
-            window.console && console.log(error);
             var bad_element = request.responseText;
             var message = 'Error updating rule: ' + rule_id;
             message = message + ' ' + bad_element + ' has a wrong value!';
@@ -574,6 +697,56 @@ function edit_row( nTr ) {
     var rule_id = nTr.id;
     /* rule_id = rule_id.replace('rule_', '_r'); */
     var data = getData( rule_id );
-    window.console && console.log(data);
+    // window.console && console.log(data);
     submitRuleForm( nTr.id, data );
+}
+
+
+function transform_to_datalist(id, element) {
+    "use strict";
+    $( id ).clone().attr('type','datalist').insertAfter( id ).prev().remove();
+}
+
+function transform_to_input(id, element) {
+    "use strict";
+    // there's nothing to do here
+}
+
+function transform_to_dropdow(id, element) {
+    "use strict";
+    // select input parent and...
+    var dropdown_parent = $( id ).parent();
+    // remove the input field
+    $( id ).remove();
+    // create a  select element
+    var select = $( '<select>' ).appendTo( dropdown_parent );
+    // and set the form-control field (for bootstrap)
+    $( select ).prop('class', 'form-control');
+    var options = [];
+    // now get all options
+    element.source.forEach(function(option){
+        var option_element = $( '<option>' ).appendTo( $( select ) );
+        $( option_element ).attr('value', option);
+        $( option_element ).text(option);
+    });
+}
+
+function create_datatable_add_rule() {
+    "use stict";
+    // Insert a 'details' column to the table
+    dt_all.forEach(function(element){
+        var item_id = "#new_rule-" + element.id + "_new";
+        switch (element.type) {
+            case 'datalist':
+                transform_to_datalist(item_id, element);
+                break;
+            case 'input':
+                transform_to_input(item_id, element);
+                break;
+            case 'dropdown':
+                transform_to_dropdow(item_id, element);
+                break;
+        }
+
+    });
 }

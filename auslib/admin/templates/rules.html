@@ -10,6 +10,12 @@
     .ui-autocomplete{ max-height:600px; overflow-y: auto; overflow-x: hidden;}
     input, select {width: 6em;}
 </style>
+<script type='text/javascript' src='{{ url_for('static', filename='js/jquery-2.1.0.min.js') }}'></script>
+<script type='text/javascript' src='{{ url_for('static', filename='js/jquery-ui-1.10.4.min.js') }}'></script>
+<script type='text/javascript' src='{{ url_for('static', filename='js/jquery.dataTables.min.js') }}'></script>
+<script type='text/javascript' src='{{ url_for('static', filename='js/jquery.dataTables.fnAddTr.js') }}'></script>
+<script type='text/javascript' src='{{ url_for('static', filename='js/dataTables.bootstrap.js') }}'></script>
+<script type='text/javascript' src='{{ url_for('static', filename='js/rules.js') }}'></script>
 {% endblock %}
 {% block bottom %}
 {{ super() }}
@@ -32,9 +38,4 @@
     {% include 'fragments/rules.html' %}
 </div>
 </div><!-- tab-content -->
-<script type='text/javascript' src='{{ url_for('static', filename='js/jquery.dataTables.min.js') }}'></script>
-<script type='text/javascript' src='{{ url_for('static', filename='js/jquery.dataTables.fnAddTr.js') }}'></script>
-<script type='text/javascript' src='{{ url_for('static', filename='js/jquery-ui-1.10.4.min.js') }}'></script>
-<script type='text/javascript' src='{{ url_for('static', filename='js/dataTables.bootstrap.js') }}'></script>
-<script type='text/javascript' src='{{ url_for('static', filename='js/rules.js') }}'></script>
 {% endblock %}
