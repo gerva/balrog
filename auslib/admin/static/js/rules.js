@@ -35,7 +35,7 @@ var dt_mappings = {
 var dt_backgroundrate = {
     'col': 2, 'id': 'backgroundRate',
     'label': 'Build Id', 'disabled': false,
-    'type': 'datalist', 'position': 'main',
+    'type': 'input', 'position': 'main',
     'init_value': 0,
 };
 
@@ -56,7 +56,7 @@ var dt_product = {
 var dt_version = {
     'col': 5, 'id': 'version',
     'label': 'Version', 'disabled': false,
-    'type': 'datalist', 'position': 'details',
+    'type': 'input', 'position': 'details',
     'init_value': '',
 };
 
@@ -122,21 +122,21 @@ var dt_updatetype = {
 var dt_headerarch = {
     'col': 15, 'id': 'headers_architecture',
     'label': 'Headers Architecture', 'disabled': false,
-    'type': 'datalist', 'position': 'details',
+    'type': 'input', 'position': 'details',
     'init_value': '',
 };
 
 var dt_versiondata = {
     'col': 16, 'id': 'version_data',
     'label': 'Version Data', 'disabled': true,
-    'type': 'datalist', 'position': 'details',
+    'type': 'input', 'position': 'details',
     'init_value': 0,
 };
 
 var dt_csrftoken = {
     'col': 17, 'id': 'csrf_token',
     'label': '', 'disabled': false,
-    'type': 'datalist', 'position': 'details',
+    'type': 'input', 'position': 'details',
     'init_value': 0,  // there's not init_value for csrf token
 };
 
@@ -466,12 +466,23 @@ function add_datalist( nTr, element, value ) {
     element_id.appendChild( datalist );
 }
 
-function update_datalist(current_mappings) {
+function update_datalist(id) {
     // select this mappings input
-    var current_value = $( current_mappings ).val();
-    var datalist_id = $(current_mappings).attr('id').replace('input', 'list');
-    $( datalist_id ).empty();
+    var current_value = $( id ).val();
+    var my_id = $( id ).attr('id');
+    var datalist_id = null;
+    // this function is called in add and edit_view rules
+    // mappings has different ids in these two pages
+    // new_rule-mappings_new (add) input_mappings_ruleXXX (edit/view)
+    if ( my_id.indexOf('input') >= 0) {
+        datalist_id = my_id.replace('input', 'list');
+    }
+    else if ( my_id.indexOf('_new') >= 0 ) {
+        datalist_id = my_id.replace('_new', '_list');
+    }
     var datalist = document.getElementById(datalist_id);
+    // remove old values
+    $( datalist ).empty();
     // and now repopulate it with new values
     get_mappings( current_value, function(mappings) {
         mappings.mappings.forEach(function(mapping) {
@@ -704,7 +715,16 @@ function edit_row( nTr ) {
 
 function transform_to_datalist(id, element) {
     "use strict";
-    $( id ).clone().attr('type','datalist').insertAfter( id ).prev().remove();
+    var datalist_id = $( id ).attr('id').replace('_new', '_list');
+    $( id ).attr('list', datalist_id);
+    var datalist = $( '<datalist>' ).appendTo( $( id ) );
+    $( datalist ).attr('id', datalist_id);
+    // if id contains mappings
+    if (id.indexOf("mappings")) {
+        $( id ).keyup( function() {
+            update_datalist(id);
+       });
+    }
 }
 
 function transform_to_input(id, element) {
