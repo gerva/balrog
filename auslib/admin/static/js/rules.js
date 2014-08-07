@@ -793,7 +793,11 @@ function create_datatable_add_rule() {
         // and now we can delete the original element
         $( item_id ).closest('.form-group').remove();
     });
+    // move the add button at the bottom of this page
+    var button = $( '#button_add_new_rule' );
+    $( button ).parent().clone().appendTo( $( form ) );
+    $( button ).remove();
+
     // todo
-    //  * move add button at the bottom of this page
     //  * hide/show details
 }
