@@ -14,8 +14,7 @@
                   "dist_version",
                   "comment",
                   "update_type",
-                  "header_arch",
-                  "update_type"] %}
+                  "header_arch",] %}
   {%- set element = new_rule_form[item] %}
   <div class="form-group">
     {{ element.label(class="col-sm-2 control-label")|safe }}
@@ -28,25 +27,3 @@
      <input class="btn btn-default" type="submit" name="submit" value="Add" />
    </div>
 </form>
-
-<table id="add_rule" class="table table-condensed">
-  <tr>
-    <th>Mapping</th>
-    <th>Background Rate</th>
-    <th>Priority</th>
-    <th>Product</th>
-    <th>Version</th>
-    <th>Build ID</th>
-    <th>Channel</th>
-    <th>Locale</th>
-    <th>Distribution</th>
-    <th>Build Target</th>
-    <th>OS Version</th>
-    <th>Dist Version</th>
-    <th>Comment</th>
-    <th>Update Type</th>
-    <th>Header Architecture</th>
-    <th>Update</th>
- </tr>
-</table>
-

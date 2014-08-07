@@ -120,7 +120,7 @@ var dt_updatetype = {
 };
 
 var dt_headerarch = {
-    'col': 15, 'id': 'headers_architecture',
+    'col': 15, 'id': 'header_arch',
     'label': 'Headers Architecture', 'disabled': false,
     'type': 'input', 'position': 'details',
     'init_value': '',
@@ -188,7 +188,7 @@ dt_details.forEach(function(element){
     details_columns.push(element.col);
 });
 
-// all cloumns
+// all columns
 var all_columns = [];
 dt_all.forEach(function(element){
     all_columns.push(element.col);
@@ -531,7 +531,7 @@ function fnFormatMain( oTable, nTr ) {
 }
 
 
-// this manages the detail
+// this manages the details
 function fnFormatDetails ( oTable, nTr ) {
     "use strict";
     fnFormatMain(oTable, nTr);
@@ -739,11 +739,15 @@ function transform_to_dropdow(id, element) {
     // remove the input field
     $( id ).remove();
     // create a  select element
-    var select = $( '<select>' ).appendTo( dropdown_parent );
+    var select = $( '<select>' ).appendTo( $( dropdown_parent ) );
+    // assign an id to this element
+    // id already starts with '#', just remove the first occurrence of #
+    // so we don't have ##<my_id>
+    $( select ).attr('id', id.replace('#', ''));
     // and set the form-control field (for bootstrap)
     $( select ).prop('class', 'form-control');
     var options = [];
-    // now get all options
+    // now get all option
     element.source.forEach(function(option){
         var option_element = $( '<option>' ).appendTo( $( select ) );
         $( option_element ).attr('value', option);
@@ -753,8 +757,17 @@ function transform_to_dropdow(id, element) {
 
 function create_datatable_add_rule() {
     "use stict";
-    // Insert a 'details' column to the table
-    dt_all.forEach(function(element){
+    var form = $( '#new_rule_form' );
+    // create main/details
+    var main = $( '<div>' ).appendTo( $( form ) );
+    $( main ).attr('id', 'new_rule_main');
+
+    var details = $( '<div>' ).appendTo( $( form ) );
+    $( details ).attr('id', 'new_rule_details');
+
+    // add_rule.html create a table made of inputs,
+    // we need to update it so we can use datalist/select/...
+    dt_all.forEach(function(element) {
         var item_id = "#new_rule-" + element.id + "_new";
         switch (element.type) {
             case 'datalist':
@@ -767,6 +780,20 @@ function create_datatable_add_rule() {
                 transform_to_dropdow(item_id, element);
                 break;
         }
-
+        // append a copy of this element to main/details
+        var new_element = $( item_id ).closest('.form-group').clone();
+        switch (element.position) {
+            case 'main':
+                $( new_element ).appendTo( $( main ) );
+                break;
+            case 'details':
+                $( new_element ).appendTo( $( details ) );
+                break;
+        }
+        // and now we can delete the original element
+        $( item_id ).closest('.form-group').remove();
     });
+    // todo
+    //  * move add button at the bottom of this page
+    //  * hide/show details
 }
