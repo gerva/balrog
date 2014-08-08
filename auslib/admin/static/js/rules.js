@@ -405,9 +405,9 @@ function option_input( nTr, element, options, value ) {
 
 function reset_element(element, rule_id, value) {
     "use strict";
-    var element = document.getElementById(element.id + '_' + rule_id);
-    $( element ).empty();
-    element.innerHTML = value;
+    var element_id = document.getElementById(element.id + '_' + rule_id);
+    $( element_id ).empty();
+    element_id.innerHTML = value;
 }
 
 
@@ -518,7 +518,7 @@ function fnFormatMain( oTable, nTr ) {
 
     // update datalist when input changes
     var current_mappings = '#input_' + dt_mappings.id + '_' + rule_id;
-    $( current_mappings ).keyup( function() {
+    $( current_mappings ).keyup(function() {
         update_datalist(current_mappings);
     });
     standard_input( nTr, dt_backgroundrate, aData[dt_backgroundrate.col]);
@@ -616,6 +616,34 @@ function getRuleAPIUrl() {
     return SCRIPT_ROOT + '/rules';
 }
 
+function getNewRuleData() {
+    // todo
+    // * merge this function with getData()
+    "use strict";
+    var data = [];
+    dt_all.forEach(function(element) {
+        var id = $( '[id$=' + element.id + '_new]' );
+        data[element.id] = $( id ).val();
+        if ( element.type == 'datalist' ) {
+            // datalist.val() returns the default value,
+            // not the current selected value
+            // handle this special case here
+        }
+   });
+   // data is almost ready...
+   // remove versiondata if it's on this page
+    var index = data.indexOf(dt_versiondata.id);
+    if(index != -1) {
+        data.splice(index, 1);
+    }
+    // csrf token is not in an input field,
+    // we need to get it before posting any request
+    data[dt_csrftoken.id] = $( '#new_rule-csrf_token' ).val();
+    // data is ready
+    return data;
+
+}
+
 function getData( rule_id ) {
     "use strict";
     rule_id = '_' + rule_id;
@@ -655,25 +683,23 @@ function get_mappings(value, callback) {
     });
 }
 
-function submitNewRuleForm(ruleForm, table) {
-    url = getRuleAPIUrl();
-    data = getData('new_rule', ruleForm);
-
-    preAJAXLoad(ruleForm);
-
+function addNewRule() {
+    "use strict";
+    // adds a new rule
+    var url = getRuleAPIUrl();
+    // get data from the form
+    var data = getNewRuleData();
+    // post the data
     $.ajax(url, {'type': 'post', 'data': data})
-    .error(handleError)
+    .error(function(request, status, error) {
+        // just for debugging...
+        console.log(status);
+        console.log(error);
+    })
     .success(function(data) {
-        $.get(getRuleUrl(data))
-        .error(handleError)
-        .success(function(data) {
-            postAJAXLoad(ruleForm);
-            alertify.success('Rule added!');
-            table.dataTable().fnAddTr($(data)[0]);
-        });
+        alertify.success('Rule added!');
     });
 }
-
 
 function activate_buttons( nTr ) {
     // edit
@@ -715,16 +741,11 @@ function edit_row( nTr ) {
 
 function transform_to_datalist(id, element) {
     "use strict";
-    var datalist_id = $( id ).attr('id').replace('_new', '_list');
+    var input_id = $( id ).attr('id');
+    var datalist_id = input_id.replace('_new', '_list');
     $( id ).attr('list', datalist_id);
     var datalist = $( '<datalist>' ).appendTo( $( id ) );
     $( datalist ).attr('id', datalist_id);
-    // if id contains mappings
-    if (id.indexOf("mappings")) {
-        $( id ).keyup( function() {
-            update_datalist(id);
-       });
-    }
 }
 
 function transform_to_input(id, element) {
@@ -755,7 +776,7 @@ function transform_to_dropdow(id, element) {
     });
 }
 
-function create_datatable_add_rule() {
+function update_add_new_rule_page() {
     "use stict";
     var form = $( '#new_rule_form' );
     // create main/details
@@ -792,6 +813,13 @@ function create_datatable_add_rule() {
         }
         // and now we can delete the original element
         $( item_id ).closest('.form-group').remove();
+    });
+
+    // keyup functions
+    var mapping_id = "#new_rule-" + dt_mappings.id + "_new";
+    $( mapping_id ).keyup( function(e) {
+        console.log(e);
+        update_datalist( mapping_id );
     });
     // move the add button at the bottom of this page
     var button = $( '#button_add_new_rule' );

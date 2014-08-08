@@ -1,4 +1,4 @@
-<form class="form-horizontal" role="form" id="new_rule_form" onsubmit='submitNewRuleForm($("#new_rule_form"), $("#rules_table")); return false;'>
+<form class="form-horizontal" role="form" id="new_rule_form" onsubmit='addNewRule(); return false;'>
 {{ new_rule_form.hidden_tag() }}
 {%- for item in [ "mapping",
                   "backgroundRate",
