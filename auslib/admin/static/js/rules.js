@@ -579,20 +579,28 @@ function submitRuleForm(rule_id, data){
     var url = getRuleUrl(rule_id);
 
     // post data to url
-    $.ajax(url, {'type': 'post', 'data': data, 'dataType': 'json'})
-        .error(function (request, status, error) {
-            // ops... error!
-            var bad_element = request.responseText;
-            var message = 'Error updating rule: ' + rule_id;
-            message = message + ' ' + bad_element + ' has a wrong value!';
-            message = message + ' ' + '(click to remove this message)';
-            // Alertify.log(message, "error", 5);
-            alertify.error(message);
-        })
-        .success(function(data) {
-            $('#input_data_version_' + rule_id).val(data.new_data_version);
-            alertify.success('Rule updated!');
-        });
+    $.ajax(url, {
+        'type': 'post',
+        'data': data,
+        'dataType': 'json'
+    })
+    .error(function (request, status, error) {
+        // ops... error!
+        console.log(request);
+        console.log(status);
+        console.log(error);
+        var bad_element = request.responseText;
+        var message = 'Error updating rule: ' + rule_id;
+        message = message + ' ' + bad_element + ' has a wrong value!';
+        message = message + ' ' + '(click to remove this message)';
+        // Alertify.log(message, "error", 5);
+        alertify.error(message);
+    })
+    .always(function(data){})
+    .done(function(data) {
+        $('#input_data_version_' + rule_id).val(data.new_data_version);
+        alertify.success('Rule updated!');
+    });
 }
 
 function deleteRule(rule_id, versiondata, token) {
@@ -692,7 +700,11 @@ function addNewRule() {
     // get data from the form
     var data = getNewRuleData();
     // post the data
-    $.ajax(url, {'type': 'post', 'data': data, 'dataType': 'json'})
+    $.ajax(url, {
+        'type': 'post',
+        'data': data,
+        'dataType': 'json'
+    })
     .error(function(request, status, error) {
         // just for debugging...
         console.log(request);
@@ -708,6 +720,7 @@ function activate_buttons( nTr ) {
     // edit
     $( ":button[id$='_edit']" ).click(function() {
         edit_row( nTr );
+        return false;
     });
 
     // delete
@@ -717,6 +730,7 @@ function activate_buttons( nTr ) {
         button_id = button_id.split('_')[1];
         $( this ).click(function() {
             deleteRule(button_id, data.versiondata, data.token);
+            return false;
         });
     });
 
