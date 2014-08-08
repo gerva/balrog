@@ -620,7 +620,7 @@ function getNewRuleData() {
     // todo
     // * merge this function with getData()
     "use strict";
-    var data = [];
+    var data = {};
     dt_all.forEach(function(element) {
         var id = $( '[id$=' + element.id + '_new]' );
         data[element.id] = $( id ).val();
@@ -631,11 +631,14 @@ function getNewRuleData() {
         }
    });
    // data is almost ready...
+/*
+   data[dt_versiondata.id] = 0;
    // remove versiondata if it's on this page
     var index = data.indexOf(dt_versiondata.id);
     if(index != -1) {
         data.splice(index, 1);
     }
+*/
     // csrf token is not in an input field,
     // we need to get it before posting any request
     data[dt_csrftoken.id] = $( '#new_rule-csrf_token' ).val();
@@ -685,14 +688,14 @@ function get_mappings(value, callback) {
 
 function addNewRule() {
     "use strict";
-    // adds a new rule
     var url = getRuleAPIUrl();
     // get data from the form
     var data = getNewRuleData();
     // post the data
-    $.ajax(url, {'type': 'post', 'data': data})
+    $.ajax(url, {'type': 'post', 'data': data, 'dataType': 'json'})
     .error(function(request, status, error) {
         // just for debugging...
+        console.log(request);
         console.log(status);
         console.log(error);
     })
@@ -822,8 +825,11 @@ function update_add_new_rule_page() {
         update_datalist( mapping_id );
     });
     // move the add button at the bottom of this page
+    // by default withDataAndEvents = false and all events get lost
     var button = $( '#button_add_new_rule' );
-    $( button ).parent().clone().appendTo( $( form ) );
+    $( button ).parent()
+        .clone(withDataAndEvents=true)
+        .appendTo( $( form ) );
     $( button ).remove();
 
     // todo
